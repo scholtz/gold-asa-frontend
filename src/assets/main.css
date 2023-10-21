@@ -1,0 +1,31 @@
+html,
+body {
+  font-family: 'Roboto';
+  font-size: 22px;
+  margin: 0;
+  padding: 0;
+}
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /*new*/
+}
+
+.wallets-page {
+  background-size: cover;
+  background-image: url('/auth-cover.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.logo {
+  font-family: 'Squada One';
+  font-size: 3em;
+  color: #d4aa00ff !important;
+  margin: 1em;
+  display: inline-block;
+}
+.p-menuitem-content a {
+  text-decoration: none;
+}
