@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: asagold
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asagold-web-main-landing-deployment
+  namespace: asagold
+spec:
+  selector:
+    matchLabels:
+      app: asagold-web-main-landing
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: asagold-web-main-landing
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: asagold-web-main-landing
+          image: scholtz2/asa-gold-fe:1.2023.10.21-main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 2
+            terminationGracePeriodSeconds: 1
+      #     volumeMounts:
+      #       - name: asagold-main-conf
+      #         mountPath: /app/config.json
+      #         subPath: config.json
+      # volumes:
+      #   - name: asagold-main-conf
+      #     configMap:
+      #       name: asagold-main-conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: asagold-service-landing
+  namespace: asagold
+spec:
+  type: ClusterIP
+  selector:
+    app: asagold-web-main-landing
+  ports:
+    - name: http
+      protocol: TCP
+      appProtocol: http
+      port: 8080
+      targetPort: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: asagold-web-main
+  namespace: asagold
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  tls:
+    - hosts:
+        - asa.gold
+        - www.asa.gold
+      secretName: tls-www.asa.gold
+  rules:
+    - host: www.asa.gold
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: asagold-service-landing
+                port:
+                  number: 8080
+    - host: asa.gold
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: asagold-service-landing
+                port:
+                  number: 8080
