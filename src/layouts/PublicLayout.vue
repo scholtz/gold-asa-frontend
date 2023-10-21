@@ -5,7 +5,7 @@ import TopHeader from '@/components/TopHeader.vue'
   <div class="flex flex-column justify-content-center min-h-full p-0 m-0">
     <Toast />
     <TopHeader />
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 flex flex-column">
       <slot />
     </div>
   </div>

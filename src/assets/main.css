@@ -6,8 +6,6 @@ body {
   padding: 0;
 }
 #app {
-  display: flex;
-  flex-direction: column;
   height: 100vh; /*new*/
 }
 
@@ -22,10 +20,25 @@ body {
 .logo {
   font-family: 'Squada One';
   font-size: 3em;
-  color: #d4aa00ff !important;
+  color: #d4aa00ff;
   margin: 1em;
   display: inline-block;
 }
 .p-menuitem-content a {
   text-decoration: none;
+}
+.p-panel-title,
+h1 {
+  color: #d4aa00ff;
+}
+
+.p-toggleable-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1 !important;
+}
+.p-panel-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1 !important;
 }

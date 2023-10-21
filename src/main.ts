@@ -1,5 +1,5 @@
 import 'algorand-authentication-component-vue/dist/style.css'
-import 'primevue/resources/themes/lara-light-indigo/theme.css'
+
 import 'primeflex/primeflex.scss'
 import './assets/main.css'
 
