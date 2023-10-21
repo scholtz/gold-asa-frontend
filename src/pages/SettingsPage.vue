@@ -15,7 +15,7 @@ console.log('store', store)
   >
     <p class="m-0"></p>
     <div class="card">
-      <h5>Blockchain configuration</h5>
+      <h4>Blockchain configuration</h4>
       <div class="field grid">
         <label for="algodnode" class="col-12 mb-2 md:col-2 md:mb-0">Blockchain endpoint</label>
         <div class="col-12 md:col-10">
@@ -51,7 +51,7 @@ console.log('store', store)
           />
         </div>
       </div>
-      <h5>Theme setup</h5>
+      <h4>Theme setup</h4>
       <div class="field grid">
         <label for="lastname4" class="col-12 mb-2 md:col-2 md:mb-0">Theme</label>
         <div class="col-12 md:col-10">
@@ -67,7 +67,7 @@ console.log('store', store)
           >
         </div>
       </div>
-      <h5>Default configuration</h5>
+      <h4>Default configuration</h4>
       <div class="field grid">
         <label class="col-12 mb-2 md:col-2 md:mb-0">Danger zone</label>
         <div class="col-12 md:col-10">
