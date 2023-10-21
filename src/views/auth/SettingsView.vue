@@ -4,6 +4,6 @@ import Layout from '@/layouts/AuthLayout.vue'
 
 <template>
   <Layout>
-    <h1>About us</h1>
+    <h1>Settings</h1>
   </Layout>
 </template>

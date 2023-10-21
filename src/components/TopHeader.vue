@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Menubar from 'primevue/menubar'
 import Button from 'primevue/button'
+import Badge from 'primevue/badge'
 import { ref } from 'vue'
 
 const items = ref([
@@ -44,6 +45,7 @@ const items = ref([
     <div class="flex flex-row">
       <span class="logo m-4">ASA - Real gold</span>
       <div class="flex-grow-1"></div>
+      <Badge value="IN DEVELOPMENT" severity="danger" class="align-self-center m-4"></Badge>
       <Button
         severity="link"
         class="flex flex-column align-content-center align-items-center align-self-center my-4 p-2 w-4rem"
