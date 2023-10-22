@@ -53,13 +53,12 @@ export const useAppStore = defineStore('app', () => {
     const stateFromStorage = localStorage.getItem('state')
     if (stateFromStorage) {
       const istate = JSON.parse(stateFromStorage) as IState
-      initState.algodHost = istate.algodHost
-      initState.algodPort = istate.algodPort
-      initState.algodToken = istate.algodToken
-      initState.theme = istate.theme
-      initState.authState = istate.authState
-      initState.tokens = istate.tokens
-      initState.env = istate.env
+      if (istate.algodHost) initState.algodHost = istate.algodHost
+      if (istate.algodPort) initState.algodPort = istate.algodPort
+      if (istate.algodToken) initState.algodToken = istate.algodToken
+      if (istate.theme) initState.theme = istate.theme
+      if (istate.tokens) initState.tokens = istate.tokens
+      if (istate.env) initState.env = istate.env
     }
   } catch (e: any) {
     console.error(e)
