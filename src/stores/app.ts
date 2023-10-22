@@ -13,7 +13,7 @@ interface IState {
   theme: string
   currentTheme: string
   authState: IAlgorandAuthenticationStore
-  authComponent: typeof AlgorandAuthentication | null
+  authComponent: any
   env: 'mainnet-v1.0' | 'testnet-v1.0'
   tokens: {
     gold: number

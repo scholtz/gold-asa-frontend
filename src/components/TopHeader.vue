@@ -49,8 +49,14 @@ function logout() {
     console.error('Unable to logout, authcomponent not initialized', store.state.authComponent)
     return
   }
+  console.log('sending logout')
   store.state.authComponent?.logout()
+  store.state.authState.isAuthenticated = false
+  store.state.authState.arc76email = ''
+  store.state.authState.arc14Header = ''
+  store.state.authState.account = ''
   router.push('/')
+  console.log('logout sent')
 }
 </script>
 

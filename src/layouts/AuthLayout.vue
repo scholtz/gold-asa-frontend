@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TopHeader from '@/components/TopHeader.vue'
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import algosdk from 'algosdk'
 
 import { useToast } from 'primevue/usetoast'
@@ -69,6 +69,11 @@ async function logout() {
   const logout = await authComponent.value.logout()
   console.log('logout', logout)
 }
+
+onMounted(() => {
+  store.state.authComponent = authComponent.value
+  console.log('store.state.authComponent', store.state.authComponent)
+})
 </script>
 
 <template>

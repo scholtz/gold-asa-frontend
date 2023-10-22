@@ -16,7 +16,10 @@ body {
   background-attachment: fixed;
   background-position: center;
 }
-
+.wallet-settings,
+.wallet-options {
+  color: #111;
+}
 .logo {
   font-family: 'Squada One';
   font-size: 3em;
