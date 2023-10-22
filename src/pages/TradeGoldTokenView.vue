@@ -15,6 +15,8 @@ interface IState {
   quoteGoldAlgo: SwapQuote | null
   quoteBtcGold: SwapQuote | null
   quoteGoldBtc: SwapQuote | null
+  quoteCustomGold: SwapQuote | null
+  quoteGoldCustom: SwapQuote | null
 }
 const defaultState: IState = {
   quantity: 1,
@@ -23,7 +25,9 @@ const defaultState: IState = {
   quoteAlgoGold: null,
   quoteGoldAlgo: null,
   quoteBtcGold: null,
-  quoteGoldBtc: null
+  quoteGoldBtc: null,
+  quoteCustomGold: null,
+  quoteGoldCustom: null
 }
 const state = reactive(defaultState)
 
@@ -39,20 +43,25 @@ function getFolksClient() {
   return null
 }
 async function fetchQuote(swapMode: SwapMode, fromAssetId: number, toAssetId: number) {
-  const client = getFolksClient()
-  const amount: number | bigint = BigInt(state.quantity * 10 ** 6)
-  const feeBps: number | bigint = 10
-  const referrer: string = 'AWALLETCPHQPJGCZ6AHLIFPHWBHUEHQ7VBYJVVGQRRY4MEIGWUBKCQYP4Y'
-  const maxGroupSize: number = 15
-  return await client?.fetchSwapQuote(
-    fromAssetId,
-    toAssetId,
-    amount,
-    swapMode,
-    maxGroupSize,
-    feeBps,
-    referrer
-  )
+  try {
+    const client = getFolksClient()
+    const amount: number | bigint = BigInt(state.quantity * 10 ** 6)
+    const feeBps: number | bigint = 10
+    const referrer: string = 'AWALLETCPHQPJGCZ6AHLIFPHWBHUEHQ7VBYJVVGQRRY4MEIGWUBKCQYP4Y'
+    const maxGroupSize: number = 15
+    return await client?.fetchSwapQuote(
+      fromAssetId,
+      toAssetId,
+      amount,
+      swapMode,
+      maxGroupSize,
+      feeBps,
+      referrer
+    )
+  } catch (e) {
+    console.error(`failed fetch ${fromAssetId} to ${toAssetId}`, e)
+    return null
+  }
 }
 async function fetchQuotes() {
   state.quoteUsdcGold = (await fetchQuote(
@@ -85,6 +94,18 @@ async function fetchQuotes() {
     store.state.tokens.gold,
     store.state.tokens.btc
   )) as SwapQuote
+  if (store.state.customToken) {
+    state.quoteBtcGold = (await fetchQuote(
+      SwapMode.FIXED_OUTPUT,
+      store.state.customToken,
+      store.state.tokens.gold
+    )) as SwapQuote
+    state.quoteGoldBtc = (await fetchQuote(
+      SwapMode.FIXED_INPUT,
+      store.state.tokens.gold,
+      store.state.customToken
+    )) as SwapQuote
+  }
 }
 onMounted(async () => {
   await fetchQuotes()
@@ -176,6 +197,27 @@ console.log('store', store)
           <span>{{ Number(state.quoteGoldBtc?.quoteAmount) / (state.quantity * 10 ** 6) }}</span>
           <div class="m-1">@</div>
           <div class="currency m-1">BTC</div>
+          <Button class="m-1">Sell gold</Button>
+          <div class="flex-grow-1"></div>
+        </div>
+      </div>
+
+      <div class="col-12 md:col-6" v-if="state.quoteCustomGold">
+        <div class="flex flex-row align-items-center align-self-center">
+          <div class="flex-grow-1"></div>
+          <Button class="m-1">Buy gold</Button>
+          <div class="currency m-1">{{ store.state.customToken }}</div>
+          <div class="m-1">@</div>
+          <div class="m-1">
+            {{ Number(state.quoteCustomGold?.quoteAmount) / (state.quantity * 10 ** 6) }}
+          </div>
+        </div>
+      </div>
+      <div class="col-12 md:col-6" v-if="state.quoteGoldCustom">
+        <div class="flex flex-row align-items-center align-self-center">
+          <span>{{ Number(state.quoteGoldCustom?.quoteAmount) / (state.quantity * 10 ** 6) }}</span>
+          <div class="m-1">@</div>
+          <div class="currency m-1">{{ store.state.customToken }}</div>
           <Button class="m-1">Sell gold</Button>
           <div class="flex-grow-1"></div>
         </div>

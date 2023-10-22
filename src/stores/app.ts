@@ -21,6 +21,7 @@ interface IState {
     algo: number
     btc: number
   }
+  customToken: number | null
 }
 
 const defaultState: IState = {
@@ -43,6 +44,7 @@ const defaultState: IState = {
     algo: 0,
     btc: 67396528
   },
+  customToken: null,
   authComponent: null,
   env: 'testnet-v1.0'
 }
@@ -59,6 +61,7 @@ export const useAppStore = defineStore('app', () => {
       if (istate.theme) initState.theme = istate.theme
       if (istate.tokens) initState.tokens = istate.tokens
       if (istate.env) initState.env = istate.env
+      if (istate.customToken) initState.customToken = istate.customToken
     }
   } catch (e: any) {
     console.error(e)
