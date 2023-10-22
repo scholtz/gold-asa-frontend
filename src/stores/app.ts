@@ -1,6 +1,7 @@
 import { reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { usePrimeVue } from 'primevue/config'
+import { ref } from 'vue'
 
 import type { IAlgorandAuthenticationStore } from 'algorand-authentication-component-vue'
 import { AlgorandAuthentication } from 'algorand-authentication-component-vue'
@@ -12,7 +13,7 @@ interface IState {
   theme: string
   currentTheme: string
   authState: IAlgorandAuthenticationStore
-  authComponent: ref<InstanceType<typeof AlgorandAuthentication>> | null
+  authComponent: typeof AlgorandAuthentication | null
   env: 'mainnet-v1.0' | 'testnet-v1.0'
   tokens: {
     gold: number
@@ -37,8 +38,8 @@ const defaultState: IState = {
     arc76email: ''
   },
   tokens: {
-    gold: 0,
-    usdc: 67395862,
+    gold: 450822081,
+    usdc: 37074699,
     algo: 0,
     btc: 67396528
   },
@@ -47,12 +48,18 @@ const defaultState: IState = {
 }
 export const useAppStore = defineStore('app', () => {
   const PrimeVue = usePrimeVue()
-  let initState = defaultState
+  const initState = defaultState
   try {
     const stateFromStorage = localStorage.getItem('state')
     if (stateFromStorage) {
       const istate = JSON.parse(stateFromStorage) as IState
-      initState = { ...initState, istate }
+      initState.algodHost = istate.algodHost
+      initState.algodPort = istate.algodPort
+      initState.algodToken = istate.algodToken
+      initState.theme = istate.theme
+      initState.authState = istate.authState
+      initState.tokens = istate.tokens
+      initState.env = istate.env
     }
   } catch (e: any) {
     console.error(e)
@@ -95,8 +102,8 @@ export const useMainnet = () => {
   app.state.env = 'mainnet-v1.0'
   app.state.tokens = {
     gold: 450822081,
-    usdc: 67395862,
-    algo: 37074699,
+    usdc: 37074699,
+    algo: 0,
     btc: 67396528
   }
 }
@@ -108,8 +115,8 @@ export const useTestnet = () => {
   app.state.env = 'testnet-v1.0'
   app.state.tokens = {
     gold: 450822081,
-    usdc: 67395862,
-    algo: 37074699,
+    usdc: 37074699,
+    algo: 0,
     btc: 67396528
   }
 }

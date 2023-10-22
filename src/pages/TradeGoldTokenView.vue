@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { FolksRouterClient, Network, SwapMode, SwapQuote } from '@folks-router/js-sdk'
+import { FolksRouterClient, Network, SwapMode } from '@folks-router/js-sdk'
+import type { SwapQuote } from '@folks-router/js-sdk'
 import Panel from 'primevue/panel'
 import Button from 'primevue/button'
 import { useAppStore } from '@/stores/app'
