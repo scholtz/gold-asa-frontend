@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@blockshake/defly-connect": "^1.1.6",
+    "@folks-router/js-sdk": "^0.0.4",
     "@perawallet/connect": "^1.3.3",
     "@randlabs/myalgo-connect": "^1.4.2",
     "@thencc/any-wallet": "^0.2.10",

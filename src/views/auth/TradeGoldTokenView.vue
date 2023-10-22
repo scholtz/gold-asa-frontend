@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
+import TradeGoldTokenView from '@/pages/TradeGoldTokenView.vue'
 </script>
 
 <template>
   <Layout>
-    <h1>Trade gold token</h1>
+    <TradeGoldTokenView />
   </Layout>
 </template>

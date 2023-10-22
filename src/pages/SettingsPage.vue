@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Panel from 'primevue/panel'
 import Button from 'primevue/button'
-import { useAppStore, resetConfiguration } from '@/stores/app'
+import { useAppStore, resetConfiguration, useMainnet, useTestnet } from '@/stores/app'
 
 const store = useAppStore()
 console.log('store', store)
@@ -16,6 +16,13 @@ console.log('store', store)
     <p class="m-0"></p>
     <div class="card">
       <h4>Blockchain configuration</h4>
+      <div class="field grid">
+        <label for="algodnode" class="col-12 mb-2 md:col-2 md:mb-0">Network defaults</label>
+        <div class="col-12 md:col-10">
+          <Button @click="useMainnet" class="my-2 mr-2">Algorand Mainnet</Button>
+          <Button @click="useTestnet" class="m-2">Algorand Testnet</Button>
+        </div>
+      </div>
       <div class="field grid">
         <label for="algodnode" class="col-12 mb-2 md:col-2 md:mb-0">Blockchain endpoint</label>
         <div class="col-12 md:col-10">

@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import TopHeader from '@/components/TopHeader.vue'
 
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import algosdk from 'algosdk'
 
 import { useToast } from 'primevue/usetoast'
+import { useAppStore } from '@/stores/app'
+
+const store = useAppStore()
 const toast = useToast()
 
 import { AlgorandAuthentication } from 'algorand-authentication-component-vue'
@@ -12,31 +15,15 @@ import type {
   IAlgorandAuthenticationStore,
   INotification
 } from 'algorand-authentication-component-vue'
-const defaultAuthState: IAlgorandAuthenticationStore = {
-  isAuthenticated: false,
-  arc14Header: '',
-  wallet: '',
-  account: '',
-  count: 0,
-  arc76email: ''
-}
-const authState = reactive({
-  isAuthenticated: defaultAuthState.isAuthenticated,
-  arc14Header: defaultAuthState.arc14Header,
-  wallet: defaultAuthState.wallet,
-  account: defaultAuthState.account,
-  count: defaultAuthState.count,
-  arc76email: defaultAuthState.arc76email
-})
 
 function onStateChange(e: IAlgorandAuthenticationStore) {
   console.log('onStateChange', e)
-  authState.isAuthenticated = e.isAuthenticated
-  authState.arc14Header = e.arc14Header
-  authState.wallet = e.wallet
-  authState.account = e.account
-  authState.count = e.count
-  authState.arc76email = e.arc76email
+  store.state.authState.isAuthenticated = e.isAuthenticated
+  store.state.authState.arc14Header = e.arc14Header
+  store.state.authState.wallet = e.wallet
+  store.state.authState.account = e.account
+  store.state.authState.count = e.count
+  store.state.authState.arc76email = e.arc76email
 }
 function onNotification(e: INotification) {
   try {
@@ -57,13 +44,12 @@ function onNotification(e: INotification) {
 }
 console.log('AlgorandAuthentication', AlgorandAuthentication)
 const authComponent = ref<InstanceType<typeof AlgorandAuthentication>>()
-
 async function signTx() {
   if (!authComponent?.value) return
 
   const tx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
     amount: 0,
-    from: authState.account,
+    from: store.state.authState.account,
     suggestedParams: {
       fee: 0,
       firstRound: 32961555,
@@ -72,7 +58,7 @@ async function signTx() {
       lastRound: 32962555,
       flatFee: true
     },
-    to: authState.account
+    to: store.state.authState.account
   })
 
   const signed = await authComponent.value.sign([algosdk.encodeUnsignedTransaction(tx)])
