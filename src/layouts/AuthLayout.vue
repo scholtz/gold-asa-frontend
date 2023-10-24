@@ -86,8 +86,9 @@ onMounted(() => {
         ref="authComponent"
         :wallets="['pera', 'exodus', 'defly', 'myalgo', 'mnemonic']"
         useDemoMnemonics="novel consider desert ribbon cage first audit couple discover seed text guard crater exchange roof stable march tortoise hockey magic dawn jacket cricket ability bright"
-        algodHost="https://mainnet-api.algonode.cloud"
-        :algodPort="443"
+        :algodHost="store.state.algodHost"
+        :algodPort="store.state.algodPort"
+        :algodToken="store.state.algodToken"
       >
         <TopHeader />
         <div class="flex-grow-1">

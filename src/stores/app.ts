@@ -23,7 +23,12 @@ interface IState {
   }
   customToken: number | null
 }
-
+const tokens = {
+  gold: 67395862,
+  usdc: 37074699,
+  algo: 0,
+  btc: 67396528
+}
 const defaultState: IState = {
   algodHost: 'https://testnet-api.algonode.cloud',
   algodPort: 443,
@@ -38,12 +43,7 @@ const defaultState: IState = {
     count: 0,
     arc76email: ''
   },
-  tokens: {
-    gold: 450822081,
-    usdc: 37074699,
-    algo: 0,
-    btc: 67396528
-  },
+  tokens: tokens,
   customToken: null,
   authComponent: null,
   env: 'testnet-v1.0'
@@ -102,12 +102,7 @@ export const useMainnet = () => {
   app.state.algodPort = 443
   app.state.algodToken = ''
   app.state.env = 'mainnet-v1.0'
-  app.state.tokens = {
-    gold: 450822081,
-    usdc: 37074699,
-    algo: 0,
-    btc: 67396528
-  }
+  app.state.tokens = tokens
 }
 export const useTestnet = () => {
   const app = useAppStore()
@@ -115,10 +110,5 @@ export const useTestnet = () => {
   app.state.algodPort = 443
   app.state.algodToken = ''
   app.state.env = 'testnet-v1.0'
-  app.state.tokens = {
-    gold: 450822081,
-    usdc: 37074699,
-    algo: 0,
-    btc: 67396528
-  }
+  app.state.tokens = tokens
 }

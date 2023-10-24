@@ -73,6 +73,26 @@ const router = createRouter({
       path: '/auth/settings',
       name: 'auth-settings',
       component: () => import('../views/auth/SettingsView.vue')
+    },
+    {
+      path: '/buy-gold-with-eur',
+      name: 'public-buy-gold-with-eur',
+      component: () => import('../views/public/TradeGoldTokenFiatView.vue')
+    },
+    {
+      path: '/auth/buy-gold-with-eur',
+      name: 'auth-buy-gold-with-eur',
+      component: () => import('../views/auth/TradeGoldTokenFiatView.vue')
+    },
+    {
+      path: '/my-gold-transactions',
+      name: 'public-my-gold-transactions',
+      component: () => import('../views/public/MyTransactionsView.vue')
+    },
+    {
+      path: '/auth/my-gold-transactions',
+      name: 'auth-my-gold-transactions',
+      component: () => import('../views/auth/MyTransactionsView.vue')
     }
   ]
 })
