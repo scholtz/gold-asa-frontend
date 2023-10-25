@@ -24,7 +24,7 @@ interface IState {
   customToken: number | null
 }
 const tokens = {
-  gold: 67395862,
+  gold: 450822081,
   usdc: 37074699,
   algo: 0,
   btc: 67396528
