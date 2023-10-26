@@ -99,12 +99,6 @@ async function fetchQuote(swapMode: SwapMode, fromAssetId: number, toAssetId: nu
 async function fetchQuotes() {
   state.quoteUsdcGold = null
   state.quoteGoldUsdc = null
-  state.quoteAlgoGold = null
-  state.quoteGoldAlgo = null
-  state.quoteBtcGold = null
-  state.quoteGoldBtc = null
-  state.quoteCustomGold = null
-  state.quoteGoldCustom = null
   state.quoteUsdcGold = (await fetchQuote(
     SwapMode.FIXED_OUTPUT,
     store.state.tokens.usdc,
@@ -115,6 +109,8 @@ async function fetchQuotes() {
     store.state.tokens.gold,
     store.state.tokens.usdc
   )) as SwapQuote
+  state.quoteAlgoGold = null
+  state.quoteGoldAlgo = null
   state.quoteAlgoGold = (await fetchQuote(
     SwapMode.FIXED_OUTPUT,
     store.state.tokens.algo,
@@ -125,6 +121,8 @@ async function fetchQuotes() {
     store.state.tokens.gold,
     store.state.tokens.algo
   )) as SwapQuote
+  state.quoteBtcGold = null
+  state.quoteGoldBtc = null
   state.quoteBtcGold = (await fetchQuote(
     SwapMode.FIXED_OUTPUT,
     store.state.tokens.btc,
@@ -136,6 +134,8 @@ async function fetchQuotes() {
     store.state.tokens.btc
   )) as SwapQuote
   if (store.state.customToken) {
+    state.quoteCustomGold = null
+    state.quoteGoldCustom = null
     state.quoteCustomGold = (await fetchQuote(
       SwapMode.FIXED_OUTPUT,
       store.state.customToken,
@@ -191,7 +191,7 @@ onMounted(async () => {
     await fetchQuotes()
     await loadAccount()
     console.log('log')
-  }, 10000)
+  }, 30000)
 })
 onBeforeUnmount(() => {
   if (state.interval) {
@@ -370,7 +370,7 @@ async function optIn(assetId: number) {
     <div v-if="state.lastError">
       <Message severity="error" @close="state.lastError = ''">{{ state.lastError }}</Message>
     </div>
-    <table :class="refreshCount">
+    <table :class="refreshCount" id="tradingtable">
       <tr>
         <th class="text-right">Your balance</th>
         <th class="text-right">Action button</th>
@@ -590,3 +590,8 @@ async function optIn(assetId: number) {
     </table>
   </Panel>
 </template>
+<style>
+#tradingtable tr {
+  height: 3em;
+}
+</style>
