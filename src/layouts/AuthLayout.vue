@@ -11,12 +11,9 @@ const store = useAppStore()
 const toast = useToast()
 
 import { AlgorandAuthentication } from 'algorand-authentication-component-vue'
-import type {
-  IAlgorandAuthenticationStore,
-  INotification
-} from 'algorand-authentication-component-vue'
+import type { IAuthenticationStore, INotification } from 'algorand-authentication-component-vue'
 
-function onStateChange(e: IAlgorandAuthenticationStore) {
+function onStateChange(e: IAuthenticationStore) {
   console.log('onStateChange', e)
   store.state.authState.isAuthenticated = e.isAuthenticated
   store.state.authState.arc14Header = e.arc14Header
@@ -24,6 +21,7 @@ function onStateChange(e: IAlgorandAuthenticationStore) {
   store.state.authState.account = e.account
   store.state.authState.count = e.count
   store.state.authState.arc76email = e.arc76email
+  store.state.authState.anyWallet = e.anyWallet
 }
 function onNotification(e: INotification) {
   try {
@@ -73,6 +71,8 @@ async function logout() {
 onMounted(() => {
   store.state.authComponent = authComponent.value
   console.log('store.state.authComponent', store.state.authComponent)
+
+  console.log('store.state.anyWallet', store.state.authState.anyWallet)
 })
 </script>
 
@@ -89,6 +89,7 @@ onMounted(() => {
         :algodHost="store.state.algodHost"
         :algodPort="store.state.algodPort"
         :algodToken="store.state.algodToken"
+        :store="store.state.authState"
       >
         <TopHeader />
         <div class="flex-grow-1">

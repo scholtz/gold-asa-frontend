@@ -5,18 +5,20 @@ import Panel from 'primevue/panel'
 import Button from 'primevue/button'
 import { useAppStore } from '@/stores/app'
 import InputNumber from 'primevue/inputnumber'
-import { onMounted, reactive } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { Buffer } from 'buffer'
 import TabMenuTradeToken from '@/components/TabMenuTradeToken.vue'
 import router from '@/router'
 import Message from 'primevue/message'
-
+import getAsa from '@/scripts/algo/getAsa'
 import algosdk from 'algosdk'
+import getAlgodClient from '@/scripts/algo/getAlgodClient'
 const toast = useToast()
 
 interface IState {
   quantity: number
+  quantityQuote: number
   quoteUsdcGold: SwapQuote | null
   quoteGoldUsdc: SwapQuote | null
   quoteAlgoGold: SwapQuote | null
@@ -27,6 +29,7 @@ interface IState {
   quoteGoldCustom: SwapQuote | null
   lastError: string
   accountInformation: IAccountInfo | null
+  interval: NodeJS.Timeout | null
 }
 interface IAccountInfo {
   address: string
@@ -39,7 +42,8 @@ interface IAssetInfo {
   'is-frozen': boolean
 }
 const defaultState: IState = {
-  quantity: 1,
+  quantity: 0.1,
+  quantityQuote: 0.1,
   quoteUsdcGold: null,
   quoteGoldUsdc: null,
   quoteAlgoGold: null,
@@ -49,9 +53,11 @@ const defaultState: IState = {
   quoteCustomGold: null,
   quoteGoldCustom: null,
   lastError: '',
-  accountInformation: null
+  accountInformation: null,
+  interval: null
 }
 const state = reactive(defaultState)
+const refreshCount = ref(1)
 
 const store = useAppStore()
 
@@ -67,7 +73,12 @@ function getFolksClient() {
 async function fetchQuote(swapMode: SwapMode, fromAssetId: number, toAssetId: number) {
   try {
     const client = getFolksClient()
-    const amount: number | bigint = BigInt(state.quantity * 10 ** 6)
+    const algodClient = getAlgodClient(store.state)
+    const goldAsa = await getAsa(algodClient, store.state.tokens.gold)
+    state.quantityQuote = state.quantity
+    const amount: number | bigint = BigInt(
+      state.quantityQuote * 10 ** goldAsa?.params?.decimals ?? 6
+    )
     const feeBps: number | bigint = 10
     const referrer: string = 'AWALLETCPHQPJGCZ6AHLIFPHWBHUEHQ7VBYJVVGQRRY4MEIGWUBKCQYP4Y'
     const maxGroupSize: number = 15
@@ -86,6 +97,14 @@ async function fetchQuote(swapMode: SwapMode, fromAssetId: number, toAssetId: nu
   }
 }
 async function fetchQuotes() {
+  state.quoteUsdcGold = null
+  state.quoteGoldUsdc = null
+  state.quoteAlgoGold = null
+  state.quoteGoldAlgo = null
+  state.quoteBtcGold = null
+  state.quoteGoldBtc = null
+  state.quoteCustomGold = null
+  state.quoteGoldCustom = null
   state.quoteUsdcGold = (await fetchQuote(
     SwapMode.FIXED_OUTPUT,
     store.state.tokens.usdc,
@@ -117,37 +136,67 @@ async function fetchQuotes() {
     store.state.tokens.btc
   )) as SwapQuote
   if (store.state.customToken) {
-    state.quoteBtcGold = (await fetchQuote(
+    state.quoteCustomGold = (await fetchQuote(
       SwapMode.FIXED_OUTPUT,
       store.state.customToken,
       store.state.tokens.gold
     )) as SwapQuote
-    state.quoteGoldBtc = (await fetchQuote(
+    state.quoteGoldCustom = (await fetchQuote(
       SwapMode.FIXED_INPUT,
       store.state.tokens.gold,
       store.state.customToken
     )) as SwapQuote
   }
+  refreshCount.value++
 }
-
+function format(number: number | undefined | bigint, assetId: number) {
+  if (number === undefined) return '-'
+  const asa = tokens.data[assetId]
+  if (!asa || !asa.params || !asa.params.decimals) return number
+  return (Number(number) / 10 ** asa.params.decimals).toFixed(asa.params.decimals)
+}
 async function loadAccount() {
   if (!store.state.authState.isAuthenticated) return
   if (!store.state.authState.account) return
 
-  var algodClient = new algosdk.Algodv2(
-    store.state.algodToken,
-    store.state.algodHost,
-    store.state.algodPort
-  )
-
+  const algodClient = getAlgodClient(store.state)
   const accountInfo = await algodClient.accountInformation(store.state.authState.account).do()
   state.accountInformation = accountInfo as IAccountInfo
+  refreshCount.value++
   console.log('accountInfo', state.accountInformation)
 }
 
+interface ITokens {
+  [key: string]: Record<string, any>
+}
+const tokensDefault: ITokens = { data: {} }
+const tokens = reactive(tokensDefault)
+async function loadTokens() {
+  const algodClient = getAlgodClient(store.state)
+  const gold = await getAsa(algodClient, store.state.tokens.gold)
+  console.log('gold', gold)
+  tokens.data[store.state.tokens.gold] = gold
+  console.log('tokens.data[store.state.tokens.gold]', tokens)
+  tokens.data[store.state.tokens.algo] = await getAsa(algodClient, store.state.tokens.algo)
+  tokens.data[store.state.tokens.usdc] = await getAsa(algodClient, store.state.tokens.usdc)
+  tokens.data[store.state.tokens.btc] = await getAsa(algodClient, store.state.tokens.btc)
+  refreshCount.value++
+}
 onMounted(async () => {
   await fetchQuotes()
   await loadAccount()
+  await loadTokens()
+
+  state.interval = setInterval(async () => {
+    await fetchQuotes()
+    await loadAccount()
+    console.log('log')
+  }, 10000)
+})
+onBeforeUnmount(() => {
+  if (state.interval) {
+    clearTimeout(state.interval)
+  }
 })
 console.log('store', store)
 function delay(ms: number) {
@@ -163,7 +212,7 @@ async function executeQuote(quote: SwapQuote) {
         life: 5000
       })
       await delay(1000)
-      router.push('/auth/trade-gold/')
+      store.state.authComponent?.auth()
       return
     }
     const slippage = Math.round(10) // 10 = 0.1%
@@ -176,11 +225,23 @@ async function executeQuote(quote: SwapQuote) {
       algosdk.decodeUnsignedTransaction(Buffer.from(txn, 'base64'))
     )
     if (!unsignedTxns) throw new Error('Did not receive any txs from folks router')
-    const grouped = algosdk.assignGroupID(unsignedTxns)
-    console.log('tosign', grouped)
+    const unsignedTxnsWithoutGroup = unsignedTxns.map((tx) => {
+      tx.group = undefined
+      return tx
+    })
+    const grouped = algosdk.assignGroupID(unsignedTxnsWithoutGroup)
+    console.log(
+      'tosign',
+      grouped,
+      grouped.map((tx) => tx.txID())
+    )
     const groupedEncoded = grouped.map((tx) => tx.toByte())
     const txs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
-    console.log('txs', txs)
+    console.log(
+      'txs',
+      txs,
+      txs.map((tx) => algosdk.decodeSignedTransaction(tx).txn.txID())
+    )
     if (txs.length != grouped.length) {
       throw new Error(
         `Signing did not return same number of transactions. To be signed was ${grouped.length}, signed: ${txs.length}`
@@ -200,11 +261,7 @@ async function executeQuote(quote: SwapQuote) {
         `Signing did not return same number of transactions. To be signed was ${grouped.length}, signed: ${txs.length}`
       )
     }
-    var algodClient = new algosdk.Algodv2(
-      store.state.algodToken,
-      store.state.algodHost,
-      store.state.algodPort
-    )
+    const algodClient = getAlgodClient(store.state)
     const { txId } = await algodClient.sendRawTransaction(txs).do()
     toast.add({
       severity: 'info',
@@ -221,15 +278,14 @@ async function executeQuote(quote: SwapQuote) {
     state.lastError = e.message
     toast.add({ severity: 'error', detail: e.message, life: 5000 })
   }
+  await delay(100)
+  await fetchQuotes()
+  await loadAccount()
 }
 
 async function optIn(assetId: number) {
   try {
-    var algodClient = new algosdk.Algodv2(
-      store.state.algodToken,
-      store.state.algodHost,
-      store.state.algodPort
-    )
+    const algodClient = getAlgodClient(store.state)
     console.log('opting into asset ' + assetId)
     const params = await algodClient.getTransactionParams().do()
     const txParams = {
@@ -289,12 +345,15 @@ async function optIn(assetId: number) {
 </script>
 <template>
   <TabMenuTradeToken />
-  <Panel header="Trade gold" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
-    <h4>
-      Blockchain trade - using DEX aggregator
-      <a href="https://www.folksrouter.io" target="_blank">Folks router</a>
-    </h4>
-    <div class="flex flex-row">
+  <Panel header="xx" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
+    <template #header>
+      <h4>
+        Blockchain trade - using DEX aggregator
+        <a href="https://www.folksrouter.io" target="_blank">Folks router</a>
+      </h4>
+    </template>
+
+    <div class="flex flex-row my-2">
       <InputNumber
         class="flex-grow-1 mr-2"
         v-model="state.quantity"
@@ -302,7 +361,7 @@ async function optIn(assetId: number) {
         showButtons
         :min="0"
         :max="100"
-        :step="0.0001"
+        :step="0.1"
         :minFractionDigits="6"
         suffix=" g"
       />
@@ -311,134 +370,223 @@ async function optIn(assetId: number) {
     <div v-if="state.lastError">
       <Message severity="error" @close="state.lastError = ''">{{ state.lastError }}</Message>
     </div>
-    <div class="grid">
-      <div
+    <table :class="refreshCount">
+      <tr>
+        <th class="text-right">Your balance</th>
+        <th class="text-right">Action button</th>
+        <th class="text-right">Token</th>
+        <th></th>
+        <th class="text-left">Price</th>
+        <th class="text-right">Price</th>
+        <th></th>
+        <th class="text-left">Token</th>
+        <th class="text-left">Action button</th>
+        <th class="text-left">Your balance</th>
+      </tr>
+      <tr
+        v-if="
+          state.accountInformation &&
+          !state.accountInformation.assets.find(
+            (token) => token['asset-id'] == store.state.tokens.gold
+          )
+        "
+      >
+        <td colspan="10" class="text-center">
+          <Button @click="optIn(store.state.tokens.gold)">Open Gold account</Button>
+        </td>
+      </tr>
+      <tr
         v-if="
           state.accountInformation &&
           !state.accountInformation.assets.find(
             (token) => token['asset-id'] == store.state.tokens.usdc
           )
         "
-        class="col-12 align-items-center align-self-center text-center m-1"
       >
-        <Button @click="optIn(store.state.tokens.usdc)">Open USDC account</Button>
-      </div>
-      <div v-else>
-        <div class="col-12 md:col-6 text-right" v-if="state.quoteUsdcGold">
-          <div class="flex flex-row align-items-center align-self-center">
-            <div class="flex-grow-1"></div>
-            <Button class="m-1" @click="executeQuote(state.quoteUsdcGold)">Buy gold</Button>
-            <div class="currency m-1">USDC</div>
-            <div class="m-1">@</div>
-            <div class="m-1">
-              {{ Number(state.quoteUsdcGold?.quoteAmount) / (state.quantity * 10 ** 6) }}
-            </div>
-          </div>
-        </div>
-        <div class="col-12 md:col-6" v-if="state.quoteGoldUsdc">
-          <div class="flex flex-row align-items-center align-self-center">
-            <span>{{ Number(state.quoteGoldUsdc?.quoteAmount) / (state.quantity * 10 ** 6) }}</span>
-            <div class="m-1">@</div>
-            <div class="currency m-1">USDC</div>
-            <Button class="m-1" @click="executeQuote(state.quoteGoldUsdc)">Sell gold</Button>
-            <div class="flex-grow-1"></div>
-          </div>
-        </div>
-      </div>
+        <td colspan="10" class="text-center">
+          <Button @click="optIn(store.state.tokens.usdc)">Open USDC account</Button>
+        </td>
+      </tr>
+      <tr v-else>
+        <td class="text-right">
+          {{
+            format(
+              state.accountInformation?.assets?.find(
+                (token) => token['asset-id'] == store.state.tokens.usdc
+              )?.amount,
+              store.state.tokens.usdc
+            )
+          }}
+        </td>
+        <td class="text-right">
+          <Button v-if="state.quoteUsdcGold" class="m-1" @click="executeQuote(state.quoteUsdcGold)"
+            >Buy gold</Button
+          >
+        </td>
+        <td class="text-right">
+          <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
+            :title="store.state.tokens.usdc.toString()"
+            >USDC</span
+          >
+        </td>
+        <td class="text-right">@</td>
+        <td v-if="state.quoteUsdcGold?.quoteAmount">
+          {{
+            (Number(state.quoteUsdcGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
+          }}
+        </td>
+        <td v-else>No quote</td>
+        <td class="text-right" v-if="state.quoteGoldUsdc?.quoteAmount">
+          {{
+            (Number(state.quoteGoldUsdc?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
+          }}
+        </td>
+        <td class="text-right" v-else>No quote</td>
+        <td>@</td>
+        <td>
+          <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
+            :title="store.state.tokens.usdc.toString()"
+            >USDC</span
+          >
+        </td>
+        <td>
+          <Button v-if="state.quoteGoldUsdc" class="m-1" @click="executeQuote(state.quoteGoldUsdc)"
+            >Sell gold</Button
+          >
+        </td>
+        <td>
+          {{
+            format(
+              state.accountInformation?.assets?.find(
+                (token) => token['asset-id'] == store.state.tokens.gold
+              )?.amount,
+              store.state.tokens.gold
+            )
+          }}
+        </td>
+      </tr>
 
-      <div class="col-12 md:col-6" v-if="state.quoteAlgoGold">
-        <div class="flex flex-row align-items-center align-self-center">
-          <div class="flex-grow-1"></div>
-          <Button class="m-1" @click="executeQuote(state.quoteAlgoGold)">Buy gold</Button>
-          <div class="currency m-1">Algo</div>
-          <div class="m-1">@</div>
-          <div class="m-1">
-            {{ Number(state.quoteAlgoGold?.quoteAmount) / (state.quantity * 10 ** 6) }}
-          </div>
-        </div>
-      </div>
-      <div class="col-12 md:col-6" v-if="state.quoteGoldAlgo">
-        <div class="flex flex-row align-items-center align-self-center">
-          <span>{{ Number(state.quoteGoldAlgo?.quoteAmount) / (state.quantity * 10 ** 6) }}</span>
-          <div class="m-1">@</div>
-          <div class="currency m-1">Algo</div>
-          <Button class="m-1" @click="executeQuote(state.quoteGoldAlgo)">Sell gold</Button>
-          <div class="flex-grow-1"></div>
-        </div>
-      </div>
-
-      <div
+      <tr>
+        <td class="text-right">
+          {{ format(state.accountInformation?.amount, store.state.tokens.algo) }}
+        </td>
+        <td class="text-right">
+          <Button v-if="state.quoteAlgoGold" class="m-1" @click="executeQuote(state.quoteAlgoGold)"
+            >Buy gold</Button
+          >
+        </td>
+        <td class="text-right">
+          <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
+            :title="store.state.tokens.algo.toString()"
+            >Algo</span
+          >
+        </td>
+        <td class="text-right">@</td>
+        <td v-if="state.quoteAlgoGold?.quoteAmount">
+          {{
+            (Number(state.quoteAlgoGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
+          }}
+        </td>
+        <td v-else>No quote</td>
+        <td class="text-right" v-if="state.quoteGoldAlgo?.quoteAmount">
+          {{
+            (Number(state.quoteGoldAlgo?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
+          }}
+        </td>
+        <td class="text-right" v-else>No quote</td>
+        <td>@</td>
+        <td>
+          <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
+            :title="store.state.tokens.algo.toString()"
+            >Algo</span
+          >
+        </td>
+        <td>
+          <Button v-if="state.quoteGoldAlgo" class="m-1" @click="executeQuote(state.quoteGoldAlgo)"
+            >Sell gold</Button
+          >
+        </td>
+        <td>
+          {{
+            format(
+              state.accountInformation?.assets?.find(
+                (token) => token['asset-id'] == store.state.tokens.gold
+              )?.amount,
+              store.state.tokens.gold
+            )
+          }}
+        </td>
+      </tr>
+      <tr
         v-if="
           state.accountInformation &&
           !state.accountInformation.assets.find(
             (token) => token['asset-id'] == store.state.tokens.btc
           )
         "
-        class="col-12 align-items-center align-self-center text-center m-1"
       >
-        <Button @click="optIn(store.state.tokens.btc)">Open BTC account</Button>
-      </div>
-      <div v-else>
-        <div class="col-12 md:col-6" v-if="state.quoteBtcGold">
-          <div class="flex flex-row align-items-center align-self-center">
-            <div class="flex-grow-1"></div>
-            <Button class="m-1" @click="executeQuote(state.quoteBtcGold)">Buy gold</Button>
-            <div class="currency m-1">BTC</div>
-            <div class="m-1">@</div>
-            <div class="m-1">
-              {{ Number(state.quoteBtcGold?.quoteAmount) / (state.quantity * 10 ** 6) }}
-            </div>
-          </div>
-        </div>
-        <div class="col-12 md:col-6" v-if="state.quoteGoldBtc">
-          <div class="flex flex-row align-items-center align-self-center">
-            <span>{{ Number(state.quoteGoldBtc?.quoteAmount) / (state.quantity * 10 ** 6) }}</span>
-            <div class="m-1">@</div>
-            <div class="currency m-1">BTC</div>
-            <Button class="m-1" @click="executeQuote(state.quoteGoldBtc)">Sell gold</Button>
-            <div class="flex-grow-1"></div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        v-if="
-          store.state.customToken &&
-          state.accountInformation &&
-          !state.accountInformation.assets.find(
-            (token) => token['asset-id'] == store.state.customToken
-          )
-        "
-        class="col-12 align-items-center align-self-center text-center m-1"
-      >
-        <Button @click="optIn(store.state.customToken)"
-          >Open {{ store.state.customToken }} account</Button
-        >
-      </div>
-      <div v-else>
-        <div class="col-12 md:col-6" v-if="state.quoteCustomGold">
-          <div class="flex flex-row align-items-center align-self-center">
-            <div class="flex-grow-1"></div>
-            <Button class="m-1" @click="executeQuote(state.quoteCustomGold)">Buy gold</Button>
-            <div class="currency m-1">{{ store.state.customToken }}</div>
-            <div class="m-1">@</div>
-            <div class="m-1">
-              {{ Number(state.quoteCustomGold?.quoteAmount) / (state.quantity * 10 ** 6) }}
-            </div>
-          </div>
-        </div>
-        <div class="col-12 md:col-6" v-if="state.quoteGoldCustom">
-          <div class="flex flex-row align-items-center align-self-center">
-            <span>{{
-              Number(state.quoteGoldCustom?.quoteAmount) / (state.quantity * 10 ** 6)
-            }}</span>
-            <div class="m-1">@</div>
-            <div class="currency m-1">{{ store.state.customToken }}</div>
-            <Button class="m-1" @click="executeQuote(state.quoteGoldCustom)">Sell gold</Button>
-            <div class="flex-grow-1"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <td colspan="10" class="text-center">
+          <Button @click="optIn(store.state.tokens.btc)">Open BTC account</Button>
+        </td>
+      </tr>
+      <tr v-else>
+        <td class="text-right">
+          {{
+            format(
+              state.accountInformation?.assets?.find(
+                (token) => token['asset-id'] == store.state.tokens.btc
+              )?.amount,
+              store.state.tokens.btc
+            )
+          }}
+        </td>
+        <td class="text-right">
+          <Button v-if="state.quoteBtcGold" class="m-1" @click="executeQuote(state.quoteBtcGold)"
+            >Buy gold</Button
+          >
+        </td>
+        <td class="text-right">
+          <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
+            :title="store.state.tokens.btc.toString()"
+            >BTC</span
+          >
+        </td>
+        <td class="text-right">@</td>
+        <td v-if="state.quoteBtcGold?.quoteAmount">
+          {{
+            (Number(state.quoteBtcGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
+          }}
+        </td>
+        <td v-else>No quote</td>
+        <td class="text-right" v-if="state.quoteGoldBtc?.quoteAmount">
+          {{
+            (Number(state.quoteGoldBtc?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
+          }}
+        </td>
+        <td class="text-right" v-else>No quote</td>
+        <td>@</td>
+        <td>
+          <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
+            :title="store.state.tokens.btc.toString()"
+            >BTC</span
+          >
+        </td>
+        <td>
+          <Button v-if="state.quoteGoldBtc" class="m-1" @click="executeQuote(state.quoteGoldBtc)"
+            >Sell gold</Button
+          >
+        </td>
+        <td>
+          {{
+            format(
+              state.accountInformation?.assets?.find(
+                (token) => token['asset-id'] == store.state.tokens.gold
+              )?.amount,
+              store.state.tokens.gold
+            )
+          }}
+        </td>
+      </tr>
+    </table>
   </Panel>
 </template>

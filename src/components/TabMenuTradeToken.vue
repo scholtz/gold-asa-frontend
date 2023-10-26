@@ -3,27 +3,24 @@ import { ref } from 'vue'
 
 import TabMenu from 'primevue/tabmenu'
 import { useRouter, RouterLink } from 'vue-router'
-import { useAppStore } from '@/stores/app'
 
-const store = useAppStore()
 const router = useRouter()
 
-const authPrefix = store.state.authState.isAuthenticated ? '/auth' : ''
 const tabMenuItems = ref([
   {
     label: 'Blockchain trading',
     icon: 'pi pi-fw pi-home',
-    route: authPrefix + '/trade-gold'
+    route: '/trade-gold'
   },
   {
     label: 'Fiat payment',
     icon: 'pi pi-fw pi-home',
-    route: authPrefix + '/buy-gold-with-eur'
+    route: '/buy-gold-with-eur'
   },
   {
     label: 'Transactions',
     icon: 'pi pi-fw pi-home',
-    route: authPrefix + '/my-gold-transactions'
+    route: '/my-gold-transactions'
   }
 ])
 const active = ref(-1)

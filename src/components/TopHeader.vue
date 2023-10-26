@@ -10,37 +10,36 @@ const router = useRouter()
 const store = useAppStore()
 console.log('store', store)
 console.log('router', router)
-const authPrefix = store.state.authState.isAuthenticated ? '/auth' : ''
 const items = ref([
   {
     label: 'Home',
     icon: 'pi pi-fw pi-home',
-    route: authPrefix + '/'
+    route: '/'
   },
   {
     label: 'Trade gold token',
     icon: 'pi pi-fw pi-money-bill',
-    route: authPrefix + '/trade-gold'
+    route: '/trade-gold'
   },
   {
     label: 'Buy gold coins',
     icon: 'pi pi-fw pi-shopping-cart',
-    route: authPrefix + '/buy-gold-coins'
+    route: '/buy-gold-coins'
   },
   {
     label: 'Proof of reserves',
     icon: 'pi pi-fw pi-verified',
-    route: authPrefix + '/proof-of-reserve'
+    route: '/proof-of-reserve'
   },
   {
     label: 'About ASA.Gold',
     icon: 'pi pi-fw pi-users',
-    route: authPrefix + '/about-asa-gold'
+    route: '/about-asa-gold'
   },
   {
     label: 'Contact us',
     icon: 'pi pi-fw pi-send',
-    route: authPrefix + '/contact-us'
+    route: '/contact-us'
   }
 ])
 
@@ -63,9 +62,7 @@ function logout() {
 <template>
   <header>
     <div class="flex flex-row">
-      <Button class="logo m-4" severity="link" @click="$router.push(authPrefix + '/')"
-        >ASA - Real gold</Button
-      >
+      <Button class="logo m-4" severity="link" @click="$router.push('/')">ASA - Real gold</Button>
       <div class="flex-grow-1"></div>
       <div class="flex flex-column m-4">
         <Badge
@@ -91,7 +88,7 @@ function logout() {
       <Button
         severity="link"
         class="flex flex-column align-content-center align-items-center align-self-center my-4 p-2 w-4rem"
-        @click="$router.push(authPrefix + '/settings')"
+        @click="$router.push('/settings')"
       >
         <span class="pi pi-cog"></span>
         <div class="m-1">Settings</div>
@@ -99,7 +96,7 @@ function logout() {
       <Button
         severity="link"
         class="flex flex-column align-content-center align-items-center align-self-center m-4 p-2 w-4rem"
-        @click="$router.push('/auth')"
+        @click="store.state.authComponent?.auth()"
         v-if="!store.state.authState.isAuthenticated"
       >
         <span class="pi pi-user"></span>

@@ -1,18 +1,16 @@
 import { reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { usePrimeVue } from 'primevue/config'
-import { ref } from 'vue'
 
-import type { IAlgorandAuthenticationStore } from 'algorand-authentication-component-vue'
-import { AlgorandAuthentication } from 'algorand-authentication-component-vue'
+import { AuthenticationStore } from 'algorand-authentication-component-vue'
 
-interface IState {
+export interface IState {
   algodHost: string
   algodPort: number
   algodToken: string
   theme: string
   currentTheme: string
-  authState: IAlgorandAuthenticationStore
+  authState: AuthenticationStore
   authComponent: any
   env: 'mainnet-v1.0' | 'testnet-v1.0'
   tokens: {
@@ -24,7 +22,7 @@ interface IState {
   customToken: number | null
 }
 const tokens = {
-  gold: 450822081,
+  gold: 67395862,
   usdc: 37074699,
   algo: 0,
   btc: 67396528
@@ -35,14 +33,7 @@ const defaultState: IState = {
   algodToken: '',
   theme: 'md-light-indigo',
   currentTheme: 'md-light-indigo',
-  authState: {
-    isAuthenticated: false,
-    arc14Header: '',
-    wallet: '',
-    account: '',
-    count: 0,
-    arc76email: ''
-  },
+  authState: new AuthenticationStore(),
   tokens: tokens,
   customToken: null,
   authComponent: null,
