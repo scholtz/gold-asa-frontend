@@ -23,7 +23,7 @@
     "@walletconnect/modal": "^2.6.2",
     "@walletconnect/sign-client": "^2.10.2",
     "@walletconnect/types": "^2.10.2",
-    "algorand-authentication-component-vue": "file:../algorand-authentication-component-vue",
+    "algorand-authentication-component-vue": "^1.0.20",
     "algosdk": "^2.7.0",
     "buffer": "^6.0.3",
     "pinia": "^2.1.7",
