@@ -48,6 +48,11 @@ const router = createRouter({
       path: '/my-gold-transactions',
       name: 'auth-my-gold-transactions',
       component: () => import('../views/MyTransactionsView.vue')
+    },
+    {
+      path: '/email-validation',
+      name: 'auth-email-validation',
+      component: () => import('../views/EmailValidation.vue')
     }
   ]
 })

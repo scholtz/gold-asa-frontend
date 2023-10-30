@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import MyTransactionsView from '@/pages/MyTransactionsView.vue'
+import TabMenuTradeToken from '@/components/TabMenuTradeToken.vue'
 </script>
-
 <template>
-  <Layout>
-    <MyTransactionsView />
-  </Layout>
+  <Layout> <TabMenuTradeToken /></Layout>
 </template>

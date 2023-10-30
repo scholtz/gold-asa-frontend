@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import TradeGoldTokenFiatView from '@/pages/TradeGoldTokenFiatView.vue'
+import TabMenuTradeToken from '@/components/TabMenuTradeToken.vue'
 </script>
-
 <template>
-  <Layout>
-    <TradeGoldTokenFiatView />
-  </Layout>
+  <Layout> <TabMenuTradeToken /></Layout>
 </template>
