@@ -22,7 +22,7 @@ spec:
         - name: regcred
       containers:
         - name: asagold-web-main-landing
-          image: scholtz2/asa-gold-fe:1.2023.10.29-main
+          image: scholtz2/asa-gold-fe:1.2023.10.30-main
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
