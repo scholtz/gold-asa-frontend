@@ -37,7 +37,7 @@ const router = createRouter({
     {
       path: '/settings',
       name: 'auth-settings',
-      component: () => import('../views/SettingsView.vue')
+      component: () => import('../views/Settings/SettingsView.vue')
     },
     {
       path: '/buy-gold-with-eur',
@@ -52,7 +52,22 @@ const router = createRouter({
     {
       path: '/email-validation',
       name: 'auth-email-validation',
-      component: () => import('../views/EmailValidation.vue')
+      component: () => import('../views/Settings/EmailValidation.vue')
+    },
+    {
+      path: '/email-validation/:code',
+      name: 'auth-email-validation-with-code',
+      component: () => import('../views/Settings/EmailValidation.vue')
+    },
+    {
+      path: '/terms/:id',
+      name: 'terms-and-conditions',
+      component: () => import('../views/Terms/TermsIndex.vue')
+    },
+    {
+      path: '/gdpr/:id',
+      name: 'gdpr',
+      component: () => import('../views/GDPR/GdprIndex.vue')
     }
   ]
 })

@@ -81,6 +81,7 @@ onMounted(() => {
     <Toast />
     <Suspense>
       <AlgorandAuthentication
+        arc14Realm="ASA.Gold"
         @onStateChange="onStateChange"
         @onNotification="onNotification"
         ref="authComponent"
