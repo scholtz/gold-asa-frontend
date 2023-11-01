@@ -13,6 +13,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 
 import { bffAccount, bffSendVerificationEmail, bffSendVerifyEmailCode } from '@/scripts/axios/BFF'
 import { useRoute } from 'vue-router'
+import { stat } from 'fs'
 const toast = useToast()
 const store = useAppStore()
 const status = reactive({
@@ -22,6 +23,7 @@ const status = reactive({
   gdpr: '2023-10-31',
   hasMarketing: false,
   sendingEmail: false,
+  emailSent: false,
   sendingVerification: false,
   code: '',
   bffSendVerifyEmailCodeResult: { success: false, transactionId: null }
@@ -76,6 +78,7 @@ async function verify() {
       status.gdpr,
       status.hasMarketing
     )
+    status.emailSent = true
     console.log('email', email)
   } catch (err: any) {
     console.error('err.bffSendVerificationEmail', err)
@@ -179,7 +182,7 @@ onMounted(async () => {
         </div>
         <div class="field grid">
           <div class="col-12 md:col-10 md:col-offset-2">
-            <Button class="my-2" @click="verify" :disabled="status.sendingEmail"
+            <Button class="my-2" @click="verify" :disabled="status.sendingEmail || status.emailSent"
               ><ProgressSpinner
                 v-if="status.sendingEmail"
                 style="width: 1em; height: 1em"
@@ -188,6 +191,9 @@ onMounted(async () => {
                 class="mx-1"
               />Verify
             </Button>
+          </div>
+          <div v-if="status.emailSent" class="col-12 md:col-10 md:col-offset-2">
+            Please check your mailbox
           </div>
         </div>
         <Divider />
