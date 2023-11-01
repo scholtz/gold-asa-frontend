@@ -24,7 +24,7 @@ const status = reactive({
   sendingEmail: false,
   sendingVerification: false,
   code: '',
-  bffSendVerifyEmailCodeResult: { success: false }
+  bffSendVerifyEmailCodeResult: { success: false, transactionId: null }
 })
 if (store.state.authState?.arc76email) {
   status.email = store.state.authState?.arc76email
@@ -221,7 +221,18 @@ onMounted(async () => {
           v-if="status.bffSendVerifyEmailCodeResult.success"
           class="col-12 md:col-10 md:col-offset-2"
         >
-          Thank you for validating the email address
+          Thank you for validating your email address
+        </div>
+        <div
+          v-if="status.bffSendVerifyEmailCodeResult.transactionId"
+          class="col-12 md:col-10 md:col-offset-2"
+        >
+          We have funded you few algorand tokens so that you can opt in to gold asa.
+          <a
+            :href="`https://testnet.algoexplorer.com/${status.bffSendVerifyEmailCodeResult.transactionId}`"
+            target="_blank"
+            >Check the transaction</a
+          >
         </div>
       </div>
     </Panel>
