@@ -3,7 +3,14 @@ import { defineStore } from 'pinia'
 import { usePrimeVue } from 'primevue/config'
 
 import { AuthenticationStore } from 'algorand-authentication-component-vue'
-
+export interface IAccount {
+  email: string
+  termsAndConditions: string
+  marketingConsent: boolean
+  lastEmailValidationTime: Date
+  gdpr: string
+  funded: number
+}
 export interface IState {
   algodHost: string
   algodPort: number
@@ -20,12 +27,17 @@ export interface IState {
     btc: number
   }
   customToken: number | null
+  account: IAccount | null
+  reloadAccount(): Promise<void>
 }
 const tokens = {
   gold: 67395862,
   usdc: 37074699,
   algo: 0,
   btc: 67396528
+}
+const reloadAccount = (): Promise<void> => {
+  console.log('reload account base')
 }
 const defaultState: IState = {
   algodHost: 'https://testnet-api.algonode.cloud',
@@ -37,7 +49,9 @@ const defaultState: IState = {
   tokens: tokens,
   customToken: null,
   authComponent: null,
-  env: 'testnet-v1.0'
+  env: 'testnet-v1.0',
+  account: null,
+  reloadAccount: reloadAccount
 }
 export const useAppStore = defineStore('app', () => {
   const PrimeVue = usePrimeVue()

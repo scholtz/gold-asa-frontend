@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import TopHeader from '@/components/TopHeader.vue'
+import ForcedEmailVerification from '@/components/ForcedEmailVerification.vue'
 
 import { onMounted, ref } from 'vue'
 import algosdk from 'algosdk'
@@ -93,9 +94,11 @@ onMounted(() => {
         :store="store.state.authState"
       >
         <TopHeader />
-        <div class="flex-grow-1">
-          <slot />
-        </div>
+        <ForcedEmailVerification>
+          <div class="flex-grow-1">
+            <slot />
+          </div>
+        </ForcedEmailVerification>
       </AlgorandAuthentication>
     </Suspense>
   </div>

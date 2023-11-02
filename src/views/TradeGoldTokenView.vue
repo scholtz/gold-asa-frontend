@@ -195,7 +195,9 @@ onMounted(async () => {
 })
 onBeforeUnmount(() => {
   if (state.interval) {
+    console.log('clearing timer')
     clearTimeout(state.interval)
+    state.interval = null
   }
 })
 console.log('store', store)
