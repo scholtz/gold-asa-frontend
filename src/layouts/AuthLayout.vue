@@ -43,31 +43,6 @@ function onNotification(e: INotification) {
 }
 console.log('AlgorandAuthentication', AlgorandAuthentication)
 const authComponent = ref<InstanceType<typeof AlgorandAuthentication>>()
-async function signTx() {
-  if (!authComponent?.value) return
-
-  const tx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-    amount: 0,
-    from: store.state.authState.account,
-    suggestedParams: {
-      fee: 0,
-      firstRound: 32961555,
-      genesisHash: 'wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=',
-      genesisID: 'mainnet-v1.0',
-      lastRound: 32962555,
-      flatFee: true
-    },
-    to: store.state.authState.account
-  })
-
-  const signed = await authComponent.value.sign([algosdk.encodeUnsignedTransaction(tx)])
-  console.log('signed', signed)
-}
-async function logout() {
-  if (!authComponent?.value) return
-  const logout = await authComponent.value.logout()
-  console.log('logout', logout)
-}
 
 onMounted(() => {
   store.state.authComponent = authComponent.value
