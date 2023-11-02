@@ -10,7 +10,7 @@ import Panel from 'primevue/panel'
       <p>Progress we have made so far:</p>
       <ul>
         <li>
-          Oct 16th 2023 : Web2 Authentication Experience - We created
+          Oct 19th 2023 : Web2 Authentication Experience - We created
           <a href="https://github.com/scholtz/algorand-authentication-component-vue"
             >algorand-authentication-component-vue</a
           >
