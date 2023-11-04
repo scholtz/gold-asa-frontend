@@ -1,31 +1,21 @@
 import { Contract } from '@algorandfoundation/tealscript';
-type AsaData = { 
   // state
   // 1 : In reserve [changeQuotation callable]
   // 2 : Not for sale (nft can be withdrawn from reserve)
   // 3 : Secondary trading [changeQuotation callable]
   // 4 : Requested parcel delivery - Activate parcel delivery process by owner of the NFT
   // 5 : Shipped to customer or in the parcel delivery process
-  state: uint64; // see above
+// seller : who receives the tokens. In case of public audit reserves this MUST be the reserve account of the token issued
+// owner : who can update this record.. 
+//  vaultOwnerAddress : the original owner address. This address can change the status of the coin 4->5 (user requested parcel delivery -> in parcel delivery)
+// weight : weight of the gold in gold coin in grams
+// QUOTES - available options to purchase this asset
+// quoteAsset1: quote in uint64.. this amount of asset1 (gold token) must be paid in order to allow transfer of this token
+// asset1 : gold token asset id
+// quoteAsset2 : quote in uint64.. this amount of asset2 (fe usdc token) must be paid in order to allow transfer of this token
+// asset2 : fe usdc asset id
 
-  seller: Address; // who receives the tokens. In case of public audit reserves this MUST be the reserve account of the token issued
-  owner: Address; // who can update this record.. the reserve address must 
-  vaultOwnerAddress: Address; // the original owner address. This address can change the status of the coin 3->4 (user requested parcel delivery -> in parcel delivery)
-
-  weight: uint64; // weight of the gold in gold coin in grams
-
-  // QUOTES - available options to purchase this asset
-  quoteAsset1: uint64; // quote in uint64.. this amount of asset1 (gold token) must be paid in order to allow transfer of this token
-  asset1: Asset; // gold token asset id
-  quoteAsset2: uint64;  // quote in uint64.. this amount of asset2 (fe usdc token) must be paid in order to allow transfer of this token
-  asset2: Asset; // fe usdc asset id
-  quoteAsset3: uint64; 
-  asset3: Asset;
-  quoteAsset4: uint64; 
-  asset4: Asset;
-  quoteAsset5: uint64; 
-  asset5: Asset;
-};
+type AsaData = {state:uint64;seller:Address;owner:Address;vaultOwnerAddress:Address;weight:uint64;quoteAsset1:uint64;asset1:Asset;quoteAsset2:uint64;asset2:Asset;quoteAsset3:uint64;asset3:Asset;quoteAsset4:uint64;asset4:Asset;quoteAsset5:uint64;asset5:Asset};
 
 const SCALE = 10_000;
 
@@ -45,26 +35,28 @@ class AsaGoldSmartcontract extends Contract {
    *
    * @param nftDepositTx NFT deposit tx
    * @param vaultOwnerAddress Address of the account which can set state Shipped to customer
-   * @param numbers Address of the account which can set state Shipped to customer
+   * @param weight The weight of the gold contained in the gold coin
+   * @param price The price in gold token for which the asset can be sold to clients
    * @returns The sum of a and b
    */
   public sellAssetWithDeposit(nftDepositTx: AssetTransferTxn,  vaultOwnerAddress: Address, tokenAsset: Asset, weight: uint64, price: uint64): void {
     
-    assert(!this.data(nftDepositTx.xferAsset).exists) // the asset must not be defined
+    assert(!this.data(nftDepositTx.xferAsset).exists); // the asset must not be defined
+    // owner : person who made deposit of this nft is owner
+    // vaultOwnerAddress : when the sale is done, the received assets will go back to reserve account of the gold token
+    // quoteAsset2 : initial deposit can be sold only for the gold token asset
 
-    var goldTokenAsset = tokenAsset
-    var one: uint64  = 1;
-    const newItem: AsaData = { 
-      state: one, // must be 1 on deposit nft
-
-      seller: goldTokenAsset.reserve,  // when the sale is done, the received assets will go back to reserve account of the gold token
-      owner : this.txn.sender, // person who made deposit of this nft is owner
+    assert(weight > 0)
+    assert(tokenAsset.reserve.hasAsset(tokenAsset)) // check if the reserve address is active
+    const newItem :AsaData = { 
+      state: 1,
+      seller: tokenAsset.reserve, 
+      owner : this.txn.sender, 
       vaultOwnerAddress: vaultOwnerAddress,
       weight: weight,
-
       quoteAsset1: price,
-      asset1: goldTokenAsset,
-      quoteAsset2: 0, // initial deposit can be sold only for the gold token asset
+      asset1: tokenAsset,
+      quoteAsset2: 0, 
       asset2: Asset.zeroIndex,
       quoteAsset3: 0,
       asset3: Asset.zeroIndex,
@@ -73,14 +65,12 @@ class AsaGoldSmartcontract extends Contract {
       quoteAsset5: 0,
       asset5: Asset.zeroIndex
     };
-    
     verifyTxn(nftDepositTx, {
       assetAmount: { greaterThan: 0 },
       assetReceiver: this.app.address,
       sender: this.txn.sender
     });
-    assert(newItem.weight > 0)
-    assert(newItem.seller.hasAsset(goldTokenAsset)) // check if the reserve address is active
+    
     assert(nftDepositTx.xferAsset.total == 1) // there is always only one nft representation for the gold coin
     // check if nft is present when put on sale
     assert(this.app.address.assetBalance(nftDepositTx.xferAsset) == 1)
@@ -187,11 +177,10 @@ class AsaGoldSmartcontract extends Contract {
   /**
    * Change price quotes for NFT on sale
    *
-   * @param a
-   * @param b
-   * @returns The sum of a and b
+   * @param nftAsset The gold coin NFT asset
+   * @param numbers The bytes containing quoteAsset1, asset1, quoteAsset2 .. asset5
    */
-  public changeQuotation(nftAsset: Asset, numbers: String): void {
+  public changeQuotation(nftAsset: Asset, numbers: string): void {
     const old = this.data(nftAsset).value
 
     const newItem: AsaData = { 
@@ -200,16 +189,16 @@ class AsaGoldSmartcontract extends Contract {
       owner : old.owner,
       vaultOwnerAddress : old.vaultOwnerAddress,
       weight : old.weight,
-      quoteAsset1: btoi(numbers.substring(0,8)),
-      asset1: Asset.fromID(btoi(numbers.substring(8,8))),
-      quoteAsset2: btoi(numbers.substring(16,8)),
-      asset2: Asset.fromID(btoi(numbers.substring(24,8))),
-      quoteAsset3: btoi(numbers.substring(32,8)),
-      asset3: Asset.fromID(btoi(numbers.substring(40,8))),
-      quoteAsset4: btoi(numbers.substring(48,8)),
-      asset4: Asset.fromID(btoi(numbers.substring(56,8))),
-      quoteAsset5: btoi(numbers.substring(64,8)),
-      asset5: Asset.fromID(btoi(numbers.substring(72,8)))
+      quoteAsset1: btoi(substring3(numbers,0,8)),
+      asset1: Asset.fromID(btoi(substring3(numbers,8,8))),
+      quoteAsset2: btoi(substring3(numbers,16,8)),
+      asset2: Asset.fromID(btoi(substring3(numbers,24,8))),
+      quoteAsset3: btoi(substring3(numbers,32,8)),
+      asset3: Asset.fromID(btoi(substring3(numbers,40,8))),
+      quoteAsset4: btoi(substring3(numbers,48,8)),
+      asset4: Asset.fromID(btoi(substring3(numbers,56,8))),
+      quoteAsset5: btoi(substring3(numbers,64,8)),
+      asset5: Asset.fromID(btoi(substring3(numbers,72,8)))
     };
     
     assert(this.txn.sender == old.owner) // only owner can change quotation
@@ -319,7 +308,7 @@ class AsaGoldSmartcontract extends Contract {
       fee: 0
     })
   }
-  public depositNFT(nftDepositTx: AssetTransferTxn, seller: Address, numbers: String): void {
+  public depositNFT(nftDepositTx: AssetTransferTxn, seller: Address, numbers: string): void {
     assert(this.data(nftDepositTx.xferAsset).exists) // the asset must not be defined
     const old = this.data(nftDepositTx.xferAsset).value
 
@@ -329,16 +318,16 @@ class AsaGoldSmartcontract extends Contract {
       owner : this.txn.sender,
       vaultOwnerAddress : old.vaultOwnerAddress,
       weight : old.weight,
-      quoteAsset1: btoi(numbers.substring(0,8)),
-      asset1: Asset.fromID(btoi(numbers.substring(8,8))),
-      quoteAsset2: btoi(numbers.substring(16,8)),
-      asset2: Asset.fromID(btoi(numbers.substring(24,8))),
-      quoteAsset3: btoi(numbers.substring(32,8)),
-      asset3: Asset.fromID(btoi(numbers.substring(40,8))),
-      quoteAsset4: btoi(numbers.substring(48,8)),
-      asset4: Asset.fromID(btoi(numbers.substring(56,8))),
-      quoteAsset5: btoi(numbers.substring(64,8)),
-      asset5: Asset.fromID(btoi(numbers.substring(72,8)))
+      quoteAsset1: btoi(substring3(numbers,0,8)),
+      asset1: Asset.fromID(btoi(substring3(numbers,8,8))),
+      quoteAsset2: btoi(substring3(numbers,16,8)),
+      asset2: Asset.fromID(btoi(substring3(numbers,24,8))),
+      quoteAsset3: btoi(substring3(numbers,32,8)),
+      asset3: Asset.fromID(btoi(substring3(numbers,40,8))),
+      quoteAsset4: btoi(substring3(numbers,48,8)),
+      asset4: Asset.fromID(btoi(substring3(numbers,56,8))),
+      quoteAsset5: btoi(substring3(numbers,64,8)),
+      asset5: Asset.fromID(btoi(substring3(numbers,72,8)))
     };
     
     verifyTxn(nftDepositTx, {

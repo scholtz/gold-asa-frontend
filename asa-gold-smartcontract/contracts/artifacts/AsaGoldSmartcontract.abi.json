@@ -3,38 +3,194 @@
   "desc": "",
   "methods": [
     {
-      "name": "doMath",
+      "name": "createApplication",
       "args": [
         {
-          "name": "a",
+          "name": "fee",
           "type": "uint64",
-          "desc": "The first number"
-        },
-        {
-          "name": "b",
-          "type": "uint64",
-          "desc": "The second number"
-        },
-        {
-          "name": "operation",
-          "type": "string",
-          "desc": "The operation to perform. Can be either 'sum' or 'difference'"
+          "desc": ""
         }
       ],
-      "desc": "A method that takes two numbers and does either addition or subtraction",
-      "returns": {
-        "type": "uint64",
-        "desc": "The result of the operation"
-      }
-    },
-    {
-      "name": "createApplication",
       "desc": "",
       "returns": {
         "type": "void",
         "desc": ""
-      },
-      "args": []
+      }
+    },
+    {
+      "name": "sellAssetWithDeposit",
+      "args": [
+        {
+          "name": "nftDepositTx",
+          "type": "axfer",
+          "desc": "NFT deposit tx"
+        },
+        {
+          "name": "vaultOwnerAddress",
+          "type": "address",
+          "desc": "Address of the account which can set state Shipped to customer"
+        },
+        {
+          "name": "tokenAsset",
+          "type": "asset",
+          "desc": ""
+        },
+        {
+          "name": "weight",
+          "type": "uint64",
+          "desc": "The weight of the gold contained in the gold coin"
+        },
+        {
+          "name": "price",
+          "type": "uint64",
+          "desc": "The price in gold token for which the asset can be sold to clients"
+        }
+      ],
+      "desc": "Deposit Gold coin NFT, set seller owner and price for sale",
+      "returns": {
+        "type": "void",
+        "desc": "The sum of a and b"
+      }
+    },
+    {
+      "name": "buyNFT",
+      "args": [
+        {
+          "name": "purchaseAssetDepositTx",
+          "type": "axfer",
+          "desc": "Transfer to the smart contract with the purchase price"
+        },
+        {
+          "name": "nftAsset",
+          "type": "asset",
+          "desc": "Identifies NFT which client wants to buy"
+        }
+      ],
+      "desc": "Client can buy NFT which is for sale on the reserve sale or secondary sale",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
+    },
+    {
+      "name": "changeQuotation",
+      "args": [
+        {
+          "name": "nftAsset",
+          "type": "asset",
+          "desc": "The gold coin NFT asset"
+        },
+        {
+          "name": "numbers",
+          "type": "string",
+          "desc": "The bytes containing quoteAsset1, asset1, quoteAsset2 .. asset5"
+        }
+      ],
+      "desc": "Change price quotes for NFT on sale",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
+    },
+    {
+      "name": "requestParcelDelivery",
+      "args": [
+        {
+          "name": "nftAsset",
+          "type": "asset",
+          "desc": ""
+        }
+      ],
+      "desc": "",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
+    },
+    {
+      "name": "setParcelDelivery",
+      "args": [
+        {
+          "name": "nftAsset",
+          "type": "asset",
+          "desc": ""
+        }
+      ],
+      "desc": "",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
+    },
+    {
+      "name": "setNotForSale",
+      "args": [
+        {
+          "name": "nftAsset",
+          "type": "asset",
+          "desc": ""
+        }
+      ],
+      "desc": "",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
+    },
+    {
+      "name": "withdrawNFT",
+      "args": [
+        {
+          "name": "nftAsset",
+          "type": "asset",
+          "desc": ""
+        }
+      ],
+      "desc": "",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
+    },
+    {
+      "name": "optinAsset",
+      "args": [
+        {
+          "name": "nftAsset",
+          "type": "asset",
+          "desc": ""
+        }
+      ],
+      "desc": "",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
+    },
+    {
+      "name": "depositNFT",
+      "args": [
+        {
+          "name": "nftDepositTx",
+          "type": "axfer",
+          "desc": ""
+        },
+        {
+          "name": "seller",
+          "type": "address",
+          "desc": ""
+        },
+        {
+          "name": "numbers",
+          "type": "string",
+          "desc": ""
+        }
+      ],
+      "desc": "",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
     }
   ]
 }
