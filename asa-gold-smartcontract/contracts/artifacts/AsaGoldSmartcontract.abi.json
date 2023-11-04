@@ -38,18 +38,18 @@
         {
           "name": "weight",
           "type": "uint64",
-          "desc": "The weight of the gold contained in the gold coin"
+          "desc": ""
         },
         {
           "name": "price",
           "type": "uint64",
-          "desc": "The price in gold token for which the asset can be sold to clients"
+          "desc": ""
         }
       ],
       "desc": "Deposit Gold coin NFT, set seller owner and price for sale",
       "returns": {
         "type": "void",
-        "desc": "The sum of a and b"
+        "desc": ""
       }
     },
     {
@@ -78,12 +78,12 @@
         {
           "name": "nftAsset",
           "type": "asset",
-          "desc": "The gold coin NFT asset"
+          "desc": ""
         },
         {
           "name": "numbers",
           "type": "string",
-          "desc": "The bytes containing quoteAsset1, asset1, quoteAsset2 .. asset5"
+          "desc": ""
         }
       ],
       "desc": "Change price quotes for NFT on sale",
