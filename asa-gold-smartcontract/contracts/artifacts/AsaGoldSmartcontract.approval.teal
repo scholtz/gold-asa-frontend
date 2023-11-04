@@ -710,7 +710,7 @@ skip_or0:
 	box_put
 	retsub
 
-// changeQuotation(string,asset)void
+// changeQuotation(uint64[9],asset)void
 //
 // Change price quotes for NFT on sale
 //
@@ -720,16 +720,20 @@ skip_or0:
 abi_route_changeQuotation:
 	byte 0x; dup // push empty bytes to fill the stack frame for this subroutine's local variables
 
-	// numbers: string
+	// numbers: uint64[9]
 	txna ApplicationArgs 2
-	extract 2 0
+	dup
+	len
+	int 72
+	==
+	assert
 
 	// nftAsset: asset
 	txna ApplicationArgs 1
 	btoi
 	txnas Assets
 
-	// execute changeQuotation(string,asset)void
+	// execute changeQuotation(uint64[9],asset)void
 	callsub changeQuotation
 	int 1
 	return
@@ -750,16 +754,16 @@ changeQuotation:
 	//       owner: old.owner,
 	//       vaultOwnerAddress: old.vaultOwnerAddress,
 	//       weight: old.weight,
-	//       quoteAsset1: btoi(numbers.substring(0, 8)),
-	//       asset1: Asset.fromID(btoi(numbers.substring(8, 16))),
-	//       quoteAsset2: btoi(numbers.substring(16, 24)),
-	//       asset2: Asset.fromID(btoi(numbers.substring(24, 32))),
-	//       quoteAsset3: btoi(numbers.substring(32, 40)),
-	//       asset3: Asset.fromID(btoi(numbers.substring(40, 48))),
-	//       quoteAsset4: btoi(numbers.substring(48, 56)),
-	//       asset4: Asset.fromID(btoi(numbers.substring(56, 64))),
-	//       quoteAsset5: btoi(numbers.substring(64, 72)),
-	//       asset5: Asset.fromID(btoi(numbers.substring(72, 80))),
+	//       quoteAsset1: numbers[0],
+	//       asset1: Asset.fromID(numbers[1]),
+	//       quoteAsset2: numbers[2],
+	//       asset2: Asset.fromID(numbers[3]),
+	//       quoteAsset3: numbers[4],
+	//       asset3: Asset.fromID(numbers[5]),
+	//       quoteAsset4: numbers[6],
+	//       asset4: Asset.fromID(numbers[7]),
+	//       quoteAsset5: numbers[8],
+	//       asset5: Asset.fromID(numbers[8]),
 	//     }
 	frame_dig -3 // storage key//old
 	box_get
@@ -789,53 +793,53 @@ changeQuotation:
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 0 8
+	frame_dig -2 // numbers: uint64[9]
+	extract 0 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 8 16
+	frame_dig -2 // numbers: uint64[9]
+	extract 8 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 16 24
+	frame_dig -2 // numbers: uint64[9]
+	extract 16 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 24 32
+	frame_dig -2 // numbers: uint64[9]
+	extract 24 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 32 40
+	frame_dig -2 // numbers: uint64[9]
+	extract 32 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 40 48
+	frame_dig -2 // numbers: uint64[9]
+	extract 40 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 48 56
+	frame_dig -2 // numbers: uint64[9]
+	extract 48 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 56 64
+	frame_dig -2 // numbers: uint64[9]
+	extract 56 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 64 72
+	frame_dig -2 // numbers: uint64[9]
+	extract 64 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	substring 72 80
+	frame_dig -2 // numbers: uint64[9]
+	extract 64 8
 	btoi
 	itob
 	concat
@@ -1353,13 +1357,17 @@ optinAsset:
 	itxn_submit
 	retsub
 
-// depositNFT(string,address,axfer)void
+// depositNFT(uint64[9],address,axfer)void
 abi_route_depositNFT:
 	byte 0x; dup // push empty bytes to fill the stack frame for this subroutine's local variables
 
-	// numbers: string
+	// numbers: uint64[9]
 	txna ApplicationArgs 2
-	extract 2 0
+	dup
+	len
+	int 72
+	==
+	assert
 
 	// seller: address
 	txna ApplicationArgs 1
@@ -1379,7 +1387,7 @@ abi_route_depositNFT:
 	==
 	assert
 
-	// execute depositNFT(string,address,axfer)void
+	// execute depositNFT(uint64[9],address,axfer)void
 	callsub depositNFT
 	int 1
 	return
@@ -1411,16 +1419,16 @@ depositNFT:
 	//       owner: this.txn.sender,
 	//       vaultOwnerAddress: old.vaultOwnerAddress,
 	//       weight: old.weight,
-	//       quoteAsset1: btoi(numbers.substring(0, 8)),
-	//       asset1: Asset.fromID(btoi(numbers.substring(8, 16))),
-	//       quoteAsset2: btoi(numbers.substring(16, 24)),
-	//       asset2: Asset.fromID(btoi(numbers.substring(24, 32))),
-	//       quoteAsset3: btoi(numbers.substring(32, 40)),
-	//       asset3: Asset.fromID(btoi(numbers.substring(40, 48))),
-	//       quoteAsset4: btoi(numbers.substring(48, 56)),
-	//       asset4: Asset.fromID(btoi(numbers.substring(56, 64))),
-	//       quoteAsset5: btoi(numbers.substring(64, 72)),
-	//       asset5: Asset.fromID(btoi(numbers.substring(72, 80))),
+	//       quoteAsset1: numbers[0],
+	//       asset1: Asset.fromID(numbers[1]),
+	//       quoteAsset2: numbers[2],
+	//       asset2: Asset.fromID(numbers[3]),
+	//       quoteAsset3: numbers[4],
+	//       asset3: Asset.fromID(numbers[5]),
+	//       quoteAsset4: numbers[6],
+	//       asset4: Asset.fromID(numbers[7]),
+	//       quoteAsset5: numbers[8],
+	//       asset5: Asset.fromID(numbers[8]),
 	//     }
 	byte 0x0000000000000003
 	frame_dig -2 // seller: address
@@ -1439,53 +1447,53 @@ depositNFT:
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 0 8
+	frame_dig -3 // numbers: uint64[9]
+	extract 0 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 8 16
+	frame_dig -3 // numbers: uint64[9]
+	extract 8 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 16 24
+	frame_dig -3 // numbers: uint64[9]
+	extract 16 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 24 32
+	frame_dig -3 // numbers: uint64[9]
+	extract 24 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 32 40
+	frame_dig -3 // numbers: uint64[9]
+	extract 32 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 40 48
+	frame_dig -3 // numbers: uint64[9]
+	extract 40 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 48 56
+	frame_dig -3 // numbers: uint64[9]
+	extract 48 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 56 64
+	frame_dig -3 // numbers: uint64[9]
+	extract 56 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 64 72
+	frame_dig -3 // numbers: uint64[9]
+	extract 64 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	substring 72 80
+	frame_dig -3 // numbers: uint64[9]
+	extract 64 8
 	btoi
 	itob
 	concat
@@ -1570,13 +1578,13 @@ create_NoOp:
 call_NoOp:
 	method "sellAssetWithDeposit(axfer,address,asset,uint64,uint64)void"
 	method "buyNFT(axfer,asset)void"
-	method "changeQuotation(asset,string)void"
+	method "changeQuotation(asset,uint64[9])void"
 	method "requestParcelDelivery(asset)void"
 	method "setParcelDelivery(asset)void"
 	method "setNotForSale(asset)void"
 	method "withdrawNFT(asset)void"
 	method "optinAsset(asset)void"
-	method "depositNFT(axfer,address,string)void"
+	method "depositNFT(axfer,address,uint64[9])void"
 	txna ApplicationArgs 0
 	match abi_route_sellAssetWithDeposit abi_route_buyNFT abi_route_changeQuotation abi_route_requestParcelDelivery abi_route_setParcelDelivery abi_route_setNotForSale abi_route_withdrawNFT abi_route_optinAsset abi_route_depositNFT
 	err

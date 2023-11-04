@@ -200,7 +200,7 @@ class AsaGoldSmartcontract extends Contract {
    * @param b
    * @returns The sum of a and b
    */
-  public changeQuotation(nftAsset: Asset, numbers: String): void {
+  public changeQuotation(nftAsset: Asset, numbers: StaticArray<uint64, 9>): void {
     const old = this.data(nftAsset).value;
 
     const newItem: AsaData = {
@@ -209,16 +209,16 @@ class AsaGoldSmartcontract extends Contract {
       owner: old.owner,
       vaultOwnerAddress: old.vaultOwnerAddress,
       weight: old.weight,
-      quoteAsset1: btoi(numbers.substring(0, 8)),
-      asset1: Asset.fromID(btoi(numbers.substring(8, 16))),
-      quoteAsset2: btoi(numbers.substring(16, 24)),
-      asset2: Asset.fromID(btoi(numbers.substring(24, 32))),
-      quoteAsset3: btoi(numbers.substring(32, 40)),
-      asset3: Asset.fromID(btoi(numbers.substring(40, 48))),
-      quoteAsset4: btoi(numbers.substring(48, 56)),
-      asset4: Asset.fromID(btoi(numbers.substring(56, 64))),
-      quoteAsset5: btoi(numbers.substring(64, 72)),
-      asset5: Asset.fromID(btoi(numbers.substring(72, 80))),
+      quoteAsset1: numbers[0],
+      asset1: Asset.fromID(numbers[1]),
+      quoteAsset2: numbers[2],
+      asset2: Asset.fromID(numbers[3]),
+      quoteAsset3: numbers[4],
+      asset3: Asset.fromID(numbers[5]),
+      quoteAsset4: numbers[6],
+      asset4: Asset.fromID(numbers[7]),
+      quoteAsset5: numbers[8],
+      asset5: Asset.fromID(numbers[8]),
     };
 
     assert(this.txn.sender == old.owner); // only owner can change quotation
@@ -332,7 +332,7 @@ class AsaGoldSmartcontract extends Contract {
     });
   }
 
-  public depositNFT(nftDepositTx: AssetTransferTxn, seller: Address, numbers: String): void {
+  public depositNFT(nftDepositTx: AssetTransferTxn, seller: Address, numbers: StaticArray<uint64, 9>): void {
     assert(this.data(nftDepositTx.xferAsset).exists); // the asset must not be defined
     const old = this.data(nftDepositTx.xferAsset).value;
 
@@ -342,16 +342,16 @@ class AsaGoldSmartcontract extends Contract {
       owner: this.txn.sender,
       vaultOwnerAddress: old.vaultOwnerAddress,
       weight: old.weight,
-      quoteAsset1: btoi(numbers.substring(0, 8)),
-      asset1: Asset.fromID(btoi(numbers.substring(8, 16))),
-      quoteAsset2: btoi(numbers.substring(16, 24)),
-      asset2: Asset.fromID(btoi(numbers.substring(24, 32))),
-      quoteAsset3: btoi(numbers.substring(32, 40)),
-      asset3: Asset.fromID(btoi(numbers.substring(40, 48))),
-      quoteAsset4: btoi(numbers.substring(48, 56)),
-      asset4: Asset.fromID(btoi(numbers.substring(56, 64))),
-      quoteAsset5: btoi(numbers.substring(64, 72)),
-      asset5: Asset.fromID(btoi(numbers.substring(72, 80))),
+      quoteAsset1: numbers[0],
+      asset1: Asset.fromID(numbers[1]),
+      quoteAsset2: numbers[2],
+      asset2: Asset.fromID(numbers[3]),
+      quoteAsset3: numbers[4],
+      asset3: Asset.fromID(numbers[5]),
+      quoteAsset4: numbers[6],
+      asset4: Asset.fromID(numbers[7]),
+      quoteAsset5: numbers[8],
+      asset5: Asset.fromID(numbers[8]),
     };
 
     verifyTxn(nftDepositTx, {

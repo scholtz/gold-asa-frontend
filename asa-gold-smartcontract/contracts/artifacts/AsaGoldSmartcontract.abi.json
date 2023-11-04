@@ -82,7 +82,7 @@
         },
         {
           "name": "numbers",
-          "type": "string",
+          "type": "uint64[9]",
           "desc": ""
         }
       ],
@@ -182,7 +182,7 @@
         },
         {
           "name": "numbers",
-          "type": "string",
+          "type": "uint64[9]",
           "desc": ""
         }
       ],
