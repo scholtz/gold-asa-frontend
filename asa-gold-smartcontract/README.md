@@ -1,5 +1,7 @@
 # TEALScript Project
 
+![Overview](overview.png)
+
 ## Documentation
 
 For TEALScript documentation, go to https://tealscript.algo.xyz

@@ -16,15 +16,15 @@ type AsaData = {
 
   // QUOTES - available options to purchase this asset
   quoteAsset1: uint64; // quote in uint64.. this amount of asset1 (gold token) must be paid in order to allow transfer of this token
-  asset1: Asset; // gold token asset id
+  asset1?: Asset; // gold token asset id
   quoteAsset2: uint64;  // quote in uint64.. this amount of asset2 (fe usdc token) must be paid in order to allow transfer of this token
-  asset2: Asset; // fe usdc asset id
+  asset2?: Asset; // fe usdc asset id
   quoteAsset3: uint64; 
-  asset3: Asset;
+  asset3?: Asset;
   quoteAsset4: uint64; 
-  asset4: Asset;
+  asset4?: Asset;
   quoteAsset5: uint64; 
-  asset5: Asset;
+  asset5?: Asset;
 };
 
 const SCALE = 10_000;
@@ -32,7 +32,7 @@ const SCALE = 10_000;
 // eslint-disable-next-line no-unused-vars
 class AsaGoldSmartcontract extends Contract {
   data = BoxMap<Asset, AsaData>();
-  reserves = BoxMap<Asset, uint64>();
+  //reserves = BoxMap<Asset, uint64>();
   governor = GlobalStateKey<Address>({ key: 'g' }); // account which receives royalty payments
   fee = GlobalStateKey<uint64>({ key: 'f' });
 
@@ -49,9 +49,13 @@ class AsaGoldSmartcontract extends Contract {
    * @returns The sum of a and b
    */
   public sellAssetWithDeposit(nftDepositTx: AssetTransferTxn,  vaultOwnerAddress: Address, tokenAsset: Asset, weight: uint64, price: uint64): void {
+    
+    assert(!this.data(nftDepositTx.xferAsset).exists) // the asset must not be defined
+
     var goldTokenAsset = tokenAsset
+    var one: uint64  = 1;
     const newItem: AsaData = { 
-      state: 1, // must be 1 on deposit nft
+      state: one, // must be 1 on deposit nft
 
       seller: goldTokenAsset.reserve,  // when the sale is done, the received assets will go back to reserve account of the gold token
       owner : this.txn.sender, // person who made deposit of this nft is owner
@@ -61,13 +65,13 @@ class AsaGoldSmartcontract extends Contract {
       quoteAsset1: price,
       asset1: goldTokenAsset,
       quoteAsset2: 0, // initial deposit can be sold only for the gold token asset
-      asset2: Asset.fromID(0),
+      asset2: undefined,
       quoteAsset3: 0,
-      asset3: Asset.fromID(0),
+      asset3: undefined,
       quoteAsset4: 0,
-      asset4: Asset.fromID(0),
+      asset4: undefined,
       quoteAsset5: 0,
-      asset5: Asset.fromID(0)
+      asset5: undefined
     };
     
     verifyTxn(nftDepositTx, {
@@ -78,14 +82,18 @@ class AsaGoldSmartcontract extends Contract {
     assert(newItem.weight > 0)
     assert(newItem.seller.hasAsset(goldTokenAsset)) // check if the reserve address is active
     assert(nftDepositTx.xferAsset.total == 1) // there is always only one nft representation for the gold coin
-    
+    // check if nft is present when put on sale
+    assert(this.app.address.assetBalance(nftDepositTx.xferAsset) == 1)
+
     // if item exists - rewrite
     this.data(nftDepositTx.xferAsset).value = newItem
-    var newReserves = newItem.weight
-    if(this.reserves(goldTokenAsset).exists){
-      newReserves += this.reserves(goldTokenAsset).value
-    }
-    this.reserves(goldTokenAsset).value = newReserves;
+
+    // RESERVES MANAGEMENT
+    // var newReserves = newItem.weight
+    // if(this.reserves(goldTokenAsset).exists){
+    //   newReserves += this.reserves(goldTokenAsset).value
+    // }
+    // this.reserves(goldTokenAsset).value = newReserves;
   }
 
   /**
@@ -146,6 +154,8 @@ class AsaGoldSmartcontract extends Contract {
 
     assert(old.state == 1 || old.state == 3) // on sale of nft we check that the old state is either new nft or secondary sale
     assert(newItem.state == 2) // new state must be always not for sale
+    // check if nft is present when put on sale
+    assert(this.app.address.assetBalance(nftAsset) == 1)
 
     var fee = purchaseAssetDepositTx.assetAmount * this.fee.value / SCALE
 
@@ -168,9 +178,10 @@ class AsaGoldSmartcontract extends Contract {
     // rewrite item
     this.data(nftAsset).value = newItem
 
-    if(old.state == 1){ // we just sold the NFT from the reserves
-      this.reserves(old.asset1).value = this.reserves(old.asset1).value - old.weight
-    }
+    // RESERVES MANAGEMENT
+    // if(old.state == 1){ // we just sold the NFT from the reserves
+    //   this.reserves(old.asset1).value = this.reserves(old.asset1).value - old.weight
+    // }
   }
   
   /**
@@ -180,7 +191,7 @@ class AsaGoldSmartcontract extends Contract {
    * @param b
    * @returns The sum of a and b
    */
-  public changeQuotation(nftAsset: Asset,  numbers: String): void {
+  public changeQuotation(nftAsset: Asset, numbers: String): void {
     const old = this.data(nftAsset).value
 
     const newItem: AsaData = { 
@@ -202,7 +213,8 @@ class AsaGoldSmartcontract extends Contract {
     };
     
     assert(this.txn.sender == old.owner) // only owner can change quotation
-
+    // check if nft is present when put on sale
+    assert(this.app.address.assetBalance(nftAsset) == 1)
     assert(newItem.state == 1 || newItem.state == 3 ) // current state must be in reserve or in secondary trading
     // rewrite
     this.data(nftAsset).value = newItem
@@ -258,10 +270,89 @@ class AsaGoldSmartcontract extends Contract {
     // rewrite asset
     this.data(nftAsset).value = newItem
   }
-  public setNotForSale(): void {
+  public setNotForSale(nftAsset: Asset): void {
+    const old = this.data(nftAsset).value
+    const newItem: AsaData = { 
+      state: 2, // 2 - not for sale
+      seller: old.seller,
+      owner : old.owner,
+      vaultOwnerAddress : old.vaultOwnerAddress,
+      weight : old.weight,
+      quoteAsset1: 0,
+      asset1: Asset.fromID(0),
+      quoteAsset2: 0,
+      asset2: Asset.fromID(0),
+      quoteAsset3: 0,
+      asset3: Asset.fromID(0),
+      quoteAsset4: 0,
+      asset4:Asset.fromID(0),
+      quoteAsset5: 0,
+      asset5: Asset.fromID(0)
+    };
+    assert(old.state == 3) // only sold nfts can be requested for parcel delivery
+    assert(this.txn.sender == old.owner) // owner of NFT can set NFT not to be onsale
+    // rewrite asset
+    this.data(nftAsset).value = newItem
   }
   public withdrawNFT(nftAsset: Asset): void {
+    const old = this.data(nftAsset).value
+    
+    assert(this.txn.sender == old.owner) // only owner can withdraw
+    assert(old.state == 2 || old.state == 4 || old.state == 5 ) // allow withdraw NFT only if not on sale or in parcel
+
+    // send purchase price minus fees to seller
+    sendAssetTransfer({
+      assetAmount: 1,
+      xferAsset: nftAsset,
+      assetReceiver: old.owner,
+      fee: 0
+    })
+
   }
-  public depositNFT(nftAsset: Asset): void {
+  public optinAsset(nftAsset: Asset): void {
+    // anybody can opt in any asset
+    sendAssetTransfer({
+      assetAmount: 0,
+      xferAsset: nftAsset,
+      assetReceiver: this.app.address,
+      assetSender: this.app.address,
+      fee: 0
+    })
+  }
+  public depositNFT(nftDepositTx: AssetTransferTxn, seller: Address, numbers: String): void {
+    assert(this.data(nftDepositTx.xferAsset).exists) // the asset must not be defined
+    const old = this.data(nftDepositTx.xferAsset).value
+
+    const newItem: AsaData = { 
+      state: 3, 
+      seller: seller,
+      owner : this.txn.sender,
+      vaultOwnerAddress : old.vaultOwnerAddress,
+      weight : old.weight,
+      quoteAsset1: btoi(numbers.substring(0,8)),
+      asset1: Asset.fromID(btoi(numbers.substring(8,8))),
+      quoteAsset2: btoi(numbers.substring(16,8)),
+      asset2: Asset.fromID(btoi(numbers.substring(24,8))),
+      quoteAsset3: btoi(numbers.substring(32,8)),
+      asset3: Asset.fromID(btoi(numbers.substring(40,8))),
+      quoteAsset4: btoi(numbers.substring(48,8)),
+      asset4: Asset.fromID(btoi(numbers.substring(56,8))),
+      quoteAsset5: btoi(numbers.substring(64,8)),
+      asset5: Asset.fromID(btoi(numbers.substring(72,8)))
+    };
+    
+    verifyTxn(nftDepositTx, {
+      assetAmount: { greaterThan: 0 },
+      assetReceiver: this.app.address,
+      sender: this.txn.sender
+    });
+
+    // check if nft is present when put on sale
+    assert(this.app.address.assetBalance(nftDepositTx.xferAsset) == 1)
+    assert(old.state == 2 || old.state == 3) // allow withdraw NFT only if in secondary market. if parcel requested do not allow
+
+    // rewrite
+    this.data(nftDepositTx.xferAsset).value = newItem
   }
 }
+
