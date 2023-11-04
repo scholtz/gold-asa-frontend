@@ -5,42 +5,126 @@ import * as algokit from '@algorandfoundation/algokit-utils';
 import algosdk from 'algosdk';
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing';
 import { AsaGoldSmartcontractClient } from '../contracts/clients/AsaGoldSmartcontractClient';
+import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount';
+import { AppMetadata, AppReference } from '@algorandfoundation/algokit-utils/types/app';
 
 const fixture = algorandFixture();
 
 let appClient: AsaGoldSmartcontractClient;
-
+let goldToken: number;
+let appRef: AppMetadata | AppReference ;
+let accountDeploy: algosdk.Account;
 describe('AsaGoldSmartcontract', () => {
   beforeEach(fixture.beforeEach);
 
   beforeAll(async () => {
     await fixture.beforeEach();
-    const { algod, testAccount } = fixture.context;
-    const sender = algosdk.generateAccount();
+    const { algod, generateAccount } = fixture.context;
+     accountDeploy = await generateAccount({initialFunds: new AlgoAmount({
+        algos: 1
+    }), suppressLog: false})
 
     appClient = new AsaGoldSmartcontractClient(
       {
-        sender: testAccount,
+        sender: accountDeploy,
         resolveBy: 'id',
         id: 0,
       },
       algod,
     );
 
-    await appClient.create.createApplication({});
+    const app = await appClient.create.createApplication({fee: 10}); // 10/10000 = 0.1%
+     appRef = await appClient.appClient.getAppReference();
+    
+    const accountDeployGoldToken = await generateAccount({initialFunds: new AlgoAmount({
+        algos: 1
+    }), suppressLog: false})
+    
+    const goldTokenTx = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
+      from: accountDeployGoldToken.addr,
+      reserve: accountDeployGoldToken.addr,
+      decimals: 6,
+      defaultFrozen: false,
+      total: 1_000_000_000_000_000,
+      assetName: "GOLD",
+      assetURL: "https://asa.gold",
+      manager: accountDeployGoldToken.addr,
+      unitName: "GOLD",
+      suggestedParams: await algod.getTransactionParams().do(),
+    });
+
+    const tx = await algod.sendRawTransaction(goldTokenTx.signTxn(accountDeployGoldToken.sk)).do();
+    const tx2 = await algokit.waitForConfirmation(tx.txId, 3, algod);
+    goldToken = Number(tx2.assetIndex)
   });
 
-  test('sum', async () => {
-    const a = 13;
-    const b = 37;
-    const sum = await appClient.doMath({ a, b, operation: 'sum' });
-    expect(sum.return?.valueOf()).toBe(BigInt(a + b));
+  test('goldToken is issued', async () => {
+    expect(goldToken).toBeGreaterThan(0);
   });
 
-  test('difference', async () => {
-    const a = 13;
-    const b = 37;
-    const diff = await appClient.doMath({ a, b, operation: 'difference' });
-    expect(diff.return?.valueOf()).toBe(BigInt(a >= b ? a - b : b - a));
+  test('sellAssetWithDeposit test', async () => {
+    
+    const { algod, generateAccount } = fixture.context;
+    const accountDeployNFT = await generateAccount({initialFunds: new AlgoAmount({
+        algos: 1
+    }), suppressLog: false})
+    const params = await algod.getTransactionParams().do()
+    const goldTokenTx = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
+      from: accountDeployNFT.addr,
+      reserve: accountDeployNFT.addr,
+      decimals: 0,
+      defaultFrozen: false,
+      total: 1,
+      assetName: "NFT",
+      assetURL: "https://asa.gold",
+      manager: accountDeployNFT.addr,
+      unitName: "NFT",
+      suggestedParams: {...params},
+    });
+    const tx = await algod.sendRawTransaction(goldTokenTx.signTxn(accountDeployNFT.sk)).do();
+    const tx2 = await algokit.waitForConfirmation(tx.txId, 3, algod);
+    var nftAsset = Number(tx2.assetIndex)
+
+    const fundAppTx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: accountDeployNFT.addr,
+      to: appRef.appAddress,
+      amount: 200000,
+      suggestedParams: {...params},
+    });
+    const fundAppTxResult = await algod.sendRawTransaction(fundAppTx.signTxn(accountDeployNFT.sk)).do();
+
+    await appClient.optinAsset({nftAsset: nftAsset },{sendParams:{
+      fee: new AlgoAmount({microAlgos: 2000})
+    }});
+    
+
+    var appClient2 = new AsaGoldSmartcontractClient(
+      {
+        sender: accountDeployNFT,
+        resolveBy: 'id',
+        id: appRef.appId,
+      },
+      algod,
+    );
+
+    const depositTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+      from: accountDeployNFT.addr,
+      amount: 1,
+      assetIndex: nftAsset,
+      to: appRef.appAddress,
+      suggestedParams: {...params, fee: 1000},
+    });
+    const sell = await appClient2.sellAssetWithDeposit({
+      nftDepositTx: depositTx,
+      nftAsset: nftAsset,
+      price: 101000,
+      tokenAsset: goldToken,
+      vaultOwnerAddress: accountDeploy.addr,
+      weight: 100000
+    },{sendParams:{
+      fee: new AlgoAmount({microAlgos: 2000}),
+    }});
+    console.log("sell.confirmations",sell.confirmations);
   });
+
 });

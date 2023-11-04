@@ -31,6 +31,11 @@
           "desc": "Address of the account which can set state Shipped to customer"
         },
         {
+          "name": "nftAsset",
+          "type": "asset",
+          "desc": ""
+        },
+        {
           "name": "tokenAsset",
           "type": "asset",
           "desc": ""
