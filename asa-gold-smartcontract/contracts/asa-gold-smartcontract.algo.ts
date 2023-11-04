@@ -16,15 +16,15 @@ type AsaData = {
 
   // QUOTES - available options to purchase this asset
   quoteAsset1: uint64; // quote in uint64.. this amount of asset1 (gold token) must be paid in order to allow transfer of this token
-  asset1?: Asset; // gold token asset id
+  asset1: Asset; // gold token asset id
   quoteAsset2: uint64;  // quote in uint64.. this amount of asset2 (fe usdc token) must be paid in order to allow transfer of this token
-  asset2?: Asset; // fe usdc asset id
+  asset2: Asset; // fe usdc asset id
   quoteAsset3: uint64; 
-  asset3?: Asset;
+  asset3: Asset;
   quoteAsset4: uint64; 
-  asset4?: Asset;
+  asset4: Asset;
   quoteAsset5: uint64; 
-  asset5?: Asset;
+  asset5: Asset;
 };
 
 const SCALE = 10_000;
@@ -65,13 +65,13 @@ class AsaGoldSmartcontract extends Contract {
       quoteAsset1: price,
       asset1: goldTokenAsset,
       quoteAsset2: 0, // initial deposit can be sold only for the gold token asset
-      asset2: undefined,
+      asset2: Asset.zeroIndex,
       quoteAsset3: 0,
-      asset3: undefined,
+      asset3: Asset.zeroIndex,
       quoteAsset4: 0,
-      asset4: undefined,
+      asset4: Asset.zeroIndex,
       quoteAsset5: 0,
-      asset5: undefined
+      asset5: Asset.zeroIndex
     };
     
     verifyTxn(nftDepositTx, {
@@ -112,15 +112,15 @@ class AsaGoldSmartcontract extends Contract {
       vaultOwnerAddress : old.vaultOwnerAddress,
       weight : old.weight,
       quoteAsset1: 0,
-      asset1: Asset.fromID(0),
+      asset1: Asset.zeroIndex,
       quoteAsset2: 0,
-      asset2: Asset.fromID(0),
+      asset2: Asset.zeroIndex,
       quoteAsset3: 0,
-      asset3: Asset.fromID(0),
+      asset3: Asset.zeroIndex,
       quoteAsset4: 0,
-      asset4: Asset.fromID(0),
+      asset4: Asset.zeroIndex,
       quoteAsset5: 0,
-      asset5: Asset.fromID(0)
+      asset5: Asset.zeroIndex
     };
     
     verifyTxn(purchaseAssetDepositTx, {
@@ -230,15 +230,15 @@ class AsaGoldSmartcontract extends Contract {
       vaultOwnerAddress : old.vaultOwnerAddress,
       weight : old.weight,
       quoteAsset1: 0,
-      asset1: Asset.fromID(0),
+      asset1: Asset.zeroIndex,
       quoteAsset2: 0,
-      asset2: Asset.fromID(0),
+      asset2: Asset.zeroIndex,
       quoteAsset3: 0,
-      asset3: Asset.fromID(0),
+      asset3: Asset.zeroIndex,
       quoteAsset4: 0,
-      asset4:Asset.fromID(0),
+      asset4:Asset.zeroIndex,
       quoteAsset5: 0,
-      asset5: Asset.fromID(0)
+      asset5: Asset.zeroIndex
     };
     assert(old.state == 2 || old.state == 3) // only sold nfts can be requested for parcel delivery
     assert(this.txn.sender == old.owner) // only owner can request parcel delivery
@@ -255,15 +255,15 @@ class AsaGoldSmartcontract extends Contract {
       vaultOwnerAddress : old.vaultOwnerAddress,
       weight : old.weight,
       quoteAsset1: 0,
-      asset1: Asset.fromID(0),
+      asset1: Asset.zeroIndex,
       quoteAsset2: 0,
-      asset2: Asset.fromID(0),
+      asset2: Asset.zeroIndex,
       quoteAsset3: 0,
-      asset3: Asset.fromID(0),
+      asset3: Asset.zeroIndex,
       quoteAsset4: 0,
-      asset4:Asset.fromID(0),
+      asset4:Asset.zeroIndex,
       quoteAsset5: 0,
-      asset5: Asset.fromID(0)
+      asset5: Asset.zeroIndex
     };
     assert(old.state == 4) // only sold nfts can be requested for parcel delivery
     assert(this.txn.sender == old.vaultOwnerAddress) // only initial owner can mark the asset as it is in parcel delivery
@@ -279,15 +279,15 @@ class AsaGoldSmartcontract extends Contract {
       vaultOwnerAddress : old.vaultOwnerAddress,
       weight : old.weight,
       quoteAsset1: 0,
-      asset1: Asset.fromID(0),
+      asset1: Asset.zeroIndex,
       quoteAsset2: 0,
-      asset2: Asset.fromID(0),
+      asset2: Asset.zeroIndex,
       quoteAsset3: 0,
-      asset3: Asset.fromID(0),
+      asset3: Asset.zeroIndex,
       quoteAsset4: 0,
-      asset4:Asset.fromID(0),
+      asset4:Asset.zeroIndex,
       quoteAsset5: 0,
-      asset5: Asset.fromID(0)
+      asset5: Asset.zeroIndex
     };
     assert(old.state == 3) // only sold nfts can be requested for parcel delivery
     assert(this.txn.sender == old.owner) // owner of NFT can set NFT not to be onsale
