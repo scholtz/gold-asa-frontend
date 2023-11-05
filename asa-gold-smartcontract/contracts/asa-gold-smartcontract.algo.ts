@@ -94,7 +94,7 @@ class AsaGoldSmartcontract extends Contract {
     assert(this.app.address.assetBalance(nftDepositTx.xferAsset) == 1)
     assert(nftDepositTx.xferAsset == nftAsset)
     // if item exists - rewrite
-    this.data(nftDepositTx.xferAsset).create(BOX_SIZE)
+    //this.data(nftDepositTx.xferAsset).create(BOX_SIZE)
     this.data(nftAsset).value = newItem
 
     // RESERVES MANAGEMENT

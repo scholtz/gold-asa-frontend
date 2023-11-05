@@ -230,14 +230,6 @@ sellAssetWithDeposit:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:97
-	// this.data(nftDepositTx.xferAsset).create(BOX_SIZE)
-	frame_dig -1 // nftDepositTx: axfer
-	gtxns XferAsset
-	itob
-	int 200
-	box_create
-
 	// contracts/asa-gold-smartcontract.algo.ts:98
 	// this.data(nftAsset).value = newItem
 	frame_dig -3 // nftAsset: asset
