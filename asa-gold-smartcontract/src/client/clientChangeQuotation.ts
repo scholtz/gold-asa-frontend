@@ -15,7 +15,7 @@ interface IClientChangePriceInput {
   asa5?: number | undefined
   asa5Price?: number | undefined
 }
-const clientChangePrice = async (input: IClientChangePriceInput) => {
+const clientChangeQuotation = async (input: IClientChangePriceInput) => {
   const appRef = await input.appClient.appClient.getAppReference()
   var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset: input.nftAsset })
   await input.appClient.changeQuotation(
@@ -43,4 +43,4 @@ const clientChangePrice = async (input: IClientChangePriceInput) => {
     }
   )
 }
-export default clientChangePrice
+export default clientChangeQuotation

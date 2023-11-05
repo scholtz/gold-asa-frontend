@@ -1,27 +1,15 @@
-# TEALScript Project
+# ASA.Gold smart contract
+
+- Vault owner can mint new NFT and put it on sale for the gold token. [State 1]
+- When user buys the NFT, he can withdraw it to his own account and sell at other marketplace, or he can select price for secondary marketplace [State 3]
+- Owner of the NFT can request parcel delivery [State 4] and when it is in the shipping the vault owner marks the delivery to be in process [State 5]
+
+https://www.asa.gold
 
 ![Overview](overview.png)
 
-## Documentation
+![Tests](tests.png)
 
-For TEALScript documentation, go to https://tealscript.algo.xyz
+For tests its recommended to run sandbox in dev mode `sandbox up dev`. (Faster block times)
 
-## Usage
-
-### Algokit
-
-This template assumes you have a local network running on your machine. The easiet way to setup a local network is with [algokit](https://github.com/algorandfoundation/algokit-cli). If you don't have Algokit or its dependencies installed locally you can open this repository in a GitHub codespace via https://codespaces.new and choosing this repo.
-
-### Build Contract
-
-`npm run build` will compile the contract to TEAL and generate an ABI and appspec JSON in [./contracts/artifacts](./contracts/artifacts/) and a algokit TypeScript client in [./contracts/clients](./contracts/clients/).
-
-`npm run compile-contract` or `npm run generate-client` can be used to compile the contract or generate the contract seperately.
-
-### Run Tests
-
-`npm run test` will execute the tests defined in [./\_\_test\_\_](./__test__) 
-
-### Lint
-
-`npm run lint` will lint the contracts and tests with ESLint.
+Run tests with `npm run test`
