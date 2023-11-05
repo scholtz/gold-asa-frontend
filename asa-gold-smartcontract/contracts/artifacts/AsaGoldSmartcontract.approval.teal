@@ -36,13 +36,13 @@ abi_route_createApplication:
 createApplication:
 	proto 1 0
 
-	// contracts/asa-gold-smartcontract.algo.ts:48
+	// contracts/asa-gold-smartcontract.algo.ts:47
 	// this.governor.value = this.txn.sender
 	byte 0x67 // "g"
 	txn Sender
 	app_global_put
 
-	// contracts/asa-gold-smartcontract.algo.ts:49
+	// contracts/asa-gold-smartcontract.algo.ts:48
 	// this.fee.value = fee
 	byte 0x66 // "f"
 	frame_dig -1 // fee: uint64
@@ -105,7 +105,7 @@ abi_route_sellAssetWithDeposit:
 sellAssetWithDeposit:
 	proto 8 0
 
-	// contracts/asa-gold-smartcontract.algo.ts:68
+	// contracts/asa-gold-smartcontract.algo.ts:67
 	// assert(!this.data(nftDepositTx.xferAsset).exists)
 	byte 0x64 // "d"
 	frame_dig -1 // nftDepositTx: axfer
@@ -118,14 +118,14 @@ sellAssetWithDeposit:
 	!
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:69
+	// contracts/asa-gold-smartcontract.algo.ts:68
 	// assert(weight > 0)
 	frame_dig -5 // weight: uint64
 	int 0
 	>
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:70
+	// contracts/asa-gold-smartcontract.algo.ts:69
 	// assert(tokenAsset.reserve.hasAsset(tokenAsset))
 	frame_dig -4 // tokenAsset: asset
 	asset_params_get AssetReserve
@@ -136,7 +136,7 @@ sellAssetWithDeposit:
 	pop
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:71
+	// contracts/asa-gold-smartcontract.algo.ts:70
 	// newItem: AsaData = {
 	//       state: 1,
 	//       seller: tokenAsset.reserve,
@@ -176,7 +176,7 @@ sellAssetWithDeposit:
 	concat
 	frame_bury -7 // newItem: AsaData
 
-	// contracts/asa-gold-smartcontract.algo.ts:88
+	// contracts/asa-gold-smartcontract.algo.ts:87
 	// verifyTxn(nftDepositTx, {
 	//       assetAmount: { greaterThan: 0 },
 	//       assetReceiver: this.app.address,
@@ -203,7 +203,7 @@ sellAssetWithDeposit:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:94
+	// contracts/asa-gold-smartcontract.algo.ts:93
 	// assert(nftDepositTx.xferAsset.total == 1)
 	frame_dig -1 // nftDepositTx: axfer
 	gtxns XferAsset
@@ -213,7 +213,7 @@ sellAssetWithDeposit:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:96
+	// contracts/asa-gold-smartcontract.algo.ts:95
 	// assert(this.app.address.assetBalance(nftDepositTx.xferAsset) == 1)
 	global CurrentApplicationAddress
 	frame_dig -1 // nftDepositTx: axfer
@@ -224,7 +224,7 @@ sellAssetWithDeposit:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:97
+	// contracts/asa-gold-smartcontract.algo.ts:96
 	// assert(nftDepositTx.xferAsset == nftAsset)
 	frame_dig -1 // nftDepositTx: axfer
 	gtxns XferAsset
@@ -232,7 +232,7 @@ sellAssetWithDeposit:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:100
+	// contracts/asa-gold-smartcontract.algo.ts:99
 	// this.data(nftAsset).value = newItem
 	byte 0x64 // "d"
 	frame_dig -3 // nftAsset: asset
@@ -241,7 +241,7 @@ sellAssetWithDeposit:
 	frame_dig -7 // newItem: AsaData
 	box_put
 
-	// contracts/asa-gold-smartcontract.algo.ts:103
+	// contracts/asa-gold-smartcontract.algo.ts:102
 	// newReserves = newItem.weight
 	frame_dig -7 // newItem: AsaData
 	extract 104 8
@@ -249,7 +249,7 @@ sellAssetWithDeposit:
 	frame_bury -8 // newReserves: uint64
 
 	// if0_condition
-	// contracts/asa-gold-smartcontract.algo.ts:104
+	// contracts/asa-gold-smartcontract.algo.ts:103
 	// this.reserves(tokenAsset).exists
 	byte 0x72 // "r"
 	frame_dig -4 // tokenAsset: asset
@@ -261,8 +261,8 @@ sellAssetWithDeposit:
 	bz if0_end
 
 	// if0_consequent
-	// contracts/asa-gold-smartcontract.algo.ts:105
-	// newReserves = newReserves+this.reserves(tokenAsset).value
+	// contracts/asa-gold-smartcontract.algo.ts:104
+	// newReserves = newReserves + this.reserves(tokenAsset).value
 	frame_dig -8 // newReserves: uint64
 	byte 0x72 // "r"
 	frame_dig -4 // tokenAsset: asset
@@ -275,7 +275,7 @@ sellAssetWithDeposit:
 	frame_bury -8 // newReserves: uint64
 
 if0_end:
-	// contracts/asa-gold-smartcontract.algo.ts:107
+	// contracts/asa-gold-smartcontract.algo.ts:106
 	// this.reserves(tokenAsset).value = newReserves
 	byte 0x72 // "r"
 	frame_dig -4 // tokenAsset: asset
@@ -318,7 +318,7 @@ abi_route_buyNFT:
 buyNFT:
 	proto 6 0
 
-	// contracts/asa-gold-smartcontract.algo.ts:117
+	// contracts/asa-gold-smartcontract.algo.ts:116
 	// old = this.data(nftAsset).value
 	byte 0x64 // "d"
 	frame_dig -2 // nftAsset: asset
@@ -326,7 +326,7 @@ buyNFT:
 	concat
 	frame_bury -3 // storage key//old
 
-	// contracts/asa-gold-smartcontract.algo.ts:119
+	// contracts/asa-gold-smartcontract.algo.ts:118
 	// newItem: AsaData = {
 	//       state: 2, // not for sale .. user can set it for sale later, request nft to be withdrawn or request parcel delivery
 	//       seller: this.txn.sender,
@@ -365,7 +365,7 @@ buyNFT:
 	concat
 	frame_bury -4 // newItem: AsaData
 
-	// contracts/asa-gold-smartcontract.algo.ts:137
+	// contracts/asa-gold-smartcontract.algo.ts:136
 	// verifyTxn(purchaseAssetDepositTx, {
 	//       assetAmount: { greaterThan: 0 },
 	//       assetReceiver: this.app.address,
@@ -392,13 +392,13 @@ buyNFT:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:143
+	// contracts/asa-gold-smartcontract.algo.ts:142
 	// verifiedQuotation = false
 	int 0
 	frame_bury -5 // verifiedQuotation: bool
 
 	// if1_condition
-	// contracts/asa-gold-smartcontract.algo.ts:144
+	// contracts/asa-gold-smartcontract.algo.ts:143
 	// old.asset1 == purchaseAssetDepositTx.xferAsset && old.quoteAsset1 > 0
 	frame_dig -3 // storage key//old
 	box_get
@@ -423,7 +423,7 @@ skip_and0:
 	bz if1_end
 
 	// if1_consequent
-	// contracts/asa-gold-smartcontract.algo.ts:145
+	// contracts/asa-gold-smartcontract.algo.ts:144
 	// assert(old.quoteAsset1 == purchaseAssetDepositTx.assetAmount)
 	frame_dig -3 // storage key//old
 	box_get
@@ -435,14 +435,14 @@ skip_and0:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:146
+	// contracts/asa-gold-smartcontract.algo.ts:145
 	// verifiedQuotation = true
 	int 1
 	frame_bury -5 // verifiedQuotation: bool
 
 if1_end:
 	// if2_condition
-	// contracts/asa-gold-smartcontract.algo.ts:148
+	// contracts/asa-gold-smartcontract.algo.ts:147
 	// old.asset2 == purchaseAssetDepositTx.xferAsset && old.quoteAsset2 > 0
 	frame_dig -3 // storage key//old
 	box_get
@@ -467,7 +467,7 @@ skip_and1:
 	bz if2_end
 
 	// if2_consequent
-	// contracts/asa-gold-smartcontract.algo.ts:149
+	// contracts/asa-gold-smartcontract.algo.ts:148
 	// assert(old.quoteAsset2 == purchaseAssetDepositTx.assetAmount)
 	frame_dig -3 // storage key//old
 	box_get
@@ -479,14 +479,14 @@ skip_and1:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:150
+	// contracts/asa-gold-smartcontract.algo.ts:149
 	// verifiedQuotation = true
 	int 1
 	frame_bury -5 // verifiedQuotation: bool
 
 if2_end:
 	// if3_condition
-	// contracts/asa-gold-smartcontract.algo.ts:152
+	// contracts/asa-gold-smartcontract.algo.ts:151
 	// old.asset3 == purchaseAssetDepositTx.xferAsset && old.quoteAsset3 > 0
 	frame_dig -3 // storage key//old
 	box_get
@@ -511,7 +511,7 @@ skip_and2:
 	bz if3_end
 
 	// if3_consequent
-	// contracts/asa-gold-smartcontract.algo.ts:153
+	// contracts/asa-gold-smartcontract.algo.ts:152
 	// assert(old.quoteAsset3 == purchaseAssetDepositTx.assetAmount)
 	frame_dig -3 // storage key//old
 	box_get
@@ -523,14 +523,14 @@ skip_and2:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:154
+	// contracts/asa-gold-smartcontract.algo.ts:153
 	// verifiedQuotation = true
 	int 1
 	frame_bury -5 // verifiedQuotation: bool
 
 if3_end:
 	// if4_condition
-	// contracts/asa-gold-smartcontract.algo.ts:156
+	// contracts/asa-gold-smartcontract.algo.ts:155
 	// old.asset4 == purchaseAssetDepositTx.xferAsset && old.quoteAsset4 > 0
 	frame_dig -3 // storage key//old
 	box_get
@@ -555,7 +555,7 @@ skip_and3:
 	bz if4_end
 
 	// if4_consequent
-	// contracts/asa-gold-smartcontract.algo.ts:157
+	// contracts/asa-gold-smartcontract.algo.ts:156
 	// assert(old.quoteAsset4 == purchaseAssetDepositTx.assetAmount)
 	frame_dig -3 // storage key//old
 	box_get
@@ -567,14 +567,14 @@ skip_and3:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:158
+	// contracts/asa-gold-smartcontract.algo.ts:157
 	// verifiedQuotation = true
 	int 1
 	frame_bury -5 // verifiedQuotation: bool
 
 if4_end:
 	// if5_condition
-	// contracts/asa-gold-smartcontract.algo.ts:160
+	// contracts/asa-gold-smartcontract.algo.ts:159
 	// old.asset5 == purchaseAssetDepositTx.xferAsset && old.quoteAsset5 > 0
 	frame_dig -3 // storage key//old
 	box_get
@@ -599,7 +599,7 @@ skip_and4:
 	bz if5_end
 
 	// if5_consequent
-	// contracts/asa-gold-smartcontract.algo.ts:161
+	// contracts/asa-gold-smartcontract.algo.ts:160
 	// assert(old.quoteAsset5 == purchaseAssetDepositTx.assetAmount)
 	frame_dig -3 // storage key//old
 	box_get
@@ -611,18 +611,18 @@ skip_and4:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:162
+	// contracts/asa-gold-smartcontract.algo.ts:161
 	// verifiedQuotation = true
 	int 1
 	frame_bury -5 // verifiedQuotation: bool
 
 if5_end:
-	// contracts/asa-gold-smartcontract.algo.ts:164
+	// contracts/asa-gold-smartcontract.algo.ts:163
 	// assert(verifiedQuotation)
 	frame_dig -5 // verifiedQuotation: bool
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:166
+	// contracts/asa-gold-smartcontract.algo.ts:165
 	// assert(old.state == 1 || old.state == 3)
 	frame_dig -3 // storage key//old
 	box_get
@@ -645,7 +645,7 @@ if5_end:
 skip_or0:
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:167
+	// contracts/asa-gold-smartcontract.algo.ts:166
 	// assert(newItem.state == 2)
 	frame_dig -4 // newItem: AsaData
 	extract 0 8
@@ -654,7 +654,7 @@ skip_or0:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:169
+	// contracts/asa-gold-smartcontract.algo.ts:168
 	// assert(this.app.address.assetBalance(nftAsset) == 1)
 	global CurrentApplicationAddress
 	frame_dig -2 // nftAsset: asset
@@ -664,7 +664,7 @@ skip_or0:
 	==
 	assert
 
-	// contracts/asa-gold-smartcontract.algo.ts:171
+	// contracts/asa-gold-smartcontract.algo.ts:170
 	// fee = (purchaseAssetDepositTx.assetAmount * this.fee.value) / SCALE
 	frame_dig -1 // purchaseAssetDepositTx: axfer
 	gtxns AssetAmount
@@ -675,54 +675,54 @@ skip_or0:
 	/
 	frame_bury -6 // fee: uint64
 
-	// contracts/asa-gold-smartcontract.algo.ts:174
+	// contracts/asa-gold-smartcontract.algo.ts:173
 	// sendAssetTransfer({
 	//       assetAmount: fee,
 	//       xferAsset: purchaseAssetDepositTx.xferAsset,
 	//       assetReceiver: this.governor.value,
-	//       fee: 2000
+	//       fee: 0
 	//     })
 	itxn_begin
 	int axfer
 	itxn_field TypeEnum
 
-	// contracts/asa-gold-smartcontract.algo.ts:175
+	// contracts/asa-gold-smartcontract.algo.ts:174
 	// assetAmount: fee
 	frame_dig -6 // fee: uint64
 	itxn_field AssetAmount
 
-	// contracts/asa-gold-smartcontract.algo.ts:176
+	// contracts/asa-gold-smartcontract.algo.ts:175
 	// xferAsset: purchaseAssetDepositTx.xferAsset
 	frame_dig -1 // purchaseAssetDepositTx: axfer
 	gtxns XferAsset
 	itxn_field XferAsset
 
-	// contracts/asa-gold-smartcontract.algo.ts:177
+	// contracts/asa-gold-smartcontract.algo.ts:176
 	// assetReceiver: this.governor.value
 	byte 0x67 // "g"
 	app_global_get
 	itxn_field AssetReceiver
 
-	// contracts/asa-gold-smartcontract.algo.ts:178
-	// fee: 2000
-	int 2000
+	// contracts/asa-gold-smartcontract.algo.ts:177
+	// fee: 0
+	int 0
 	itxn_field Fee
 
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/asa-gold-smartcontract.algo.ts:182
+	// contracts/asa-gold-smartcontract.algo.ts:181
 	// sendAssetTransfer({
 	//       assetAmount: purchaseAssetDepositTx.assetAmount - fee,
 	//       xferAsset: purchaseAssetDepositTx.xferAsset,
 	//       assetReceiver: old.seller,
-	//       fee: 3000
+	//       fee: 0
 	//     })
 	itxn_begin
 	int axfer
 	itxn_field TypeEnum
 
-	// contracts/asa-gold-smartcontract.algo.ts:183
+	// contracts/asa-gold-smartcontract.algo.ts:182
 	// assetAmount: purchaseAssetDepositTx.assetAmount - fee
 	frame_dig -1 // purchaseAssetDepositTx: axfer
 	gtxns AssetAmount
@@ -730,13 +730,13 @@ skip_or0:
 	-
 	itxn_field AssetAmount
 
-	// contracts/asa-gold-smartcontract.algo.ts:184
+	// contracts/asa-gold-smartcontract.algo.ts:183
 	// xferAsset: purchaseAssetDepositTx.xferAsset
 	frame_dig -1 // purchaseAssetDepositTx: axfer
 	gtxns XferAsset
 	itxn_field XferAsset
 
-	// contracts/asa-gold-smartcontract.algo.ts:185
+	// contracts/asa-gold-smartcontract.algo.ts:184
 	// assetReceiver: old.seller
 	frame_dig -3 // storage key//old
 	box_get
@@ -744,15 +744,15 @@ skip_or0:
 	extract 8 32
 	itxn_field AssetReceiver
 
-	// contracts/asa-gold-smartcontract.algo.ts:186
-	// fee: 3000
-	int 3000
+	// contracts/asa-gold-smartcontract.algo.ts:185
+	// fee: 0
+	int 0
 	itxn_field Fee
 
 	// Submit inner transaction
 	itxn_submit
 
-	// contracts/asa-gold-smartcontract.algo.ts:190
+	// contracts/asa-gold-smartcontract.algo.ts:189
 	// this.data(nftAsset).value = newItem
 	byte 0x64 // "d"
 	frame_dig -2 // nftAsset: asset
@@ -762,7 +762,7 @@ skip_or0:
 	box_put
 
 	// if6_condition
-	// contracts/asa-gold-smartcontract.algo.ts:193
+	// contracts/asa-gold-smartcontract.algo.ts:192
 	// old.state == 1
 	frame_dig -3 // storage key//old
 	box_get
@@ -807,7 +807,7 @@ skip_or0:
 if6_end:
 	retsub
 
-// changeQuotation(string,asset)void
+// changeQuotation(uint64[],asset)void
 //
 // Change price quotes for NFT on sale
 //
@@ -816,7 +816,7 @@ if6_end:
 abi_route_changeQuotation:
 	byte 0x; dup // push empty bytes to fill the stack frame for this subroutine's local variables
 
-	// numbers: string
+	// numbers: uint64[]
 	txna ApplicationArgs 2
 	extract 2 0
 
@@ -825,7 +825,7 @@ abi_route_changeQuotation:
 	btoi
 	txnas Assets
 
-	// execute changeQuotation(string,asset)void
+	// execute changeQuotation(uint64[],asset)void
 	callsub changeQuotation
 	int 1
 	return
@@ -848,16 +848,16 @@ changeQuotation:
 	//       owner: old.owner,
 	//       vaultOwnerAddress: old.vaultOwnerAddress,
 	//       weight: old.weight,
-	//       quoteAsset1: btoi(substring3(numbers, 0, 8)),
-	//       asset1: Asset.fromID(btoi(substring3(numbers, 8, 8))),
-	//       quoteAsset2: btoi(substring3(numbers, 16, 8)),
-	//       asset2: Asset.fromID(btoi(substring3(numbers, 24, 8))),
-	//       quoteAsset3: btoi(substring3(numbers, 32, 8)),
-	//       asset3: Asset.fromID(btoi(substring3(numbers, 40, 8))),
-	//       quoteAsset4: btoi(substring3(numbers, 48, 8)),
-	//       asset4: Asset.fromID(btoi(substring3(numbers, 56, 8))),
-	//       quoteAsset5: btoi(substring3(numbers, 64, 8)),
-	//       asset5: Asset.fromID(btoi(substring3(numbers, 72, 8)))
+	//       quoteAsset1: numbers[0],
+	//       asset1: Asset.fromID(numbers[1]),
+	//       quoteAsset2: numbers[2],
+	//       asset2: Asset.fromID(numbers[3]),
+	//       quoteAsset3: numbers[4],
+	//       asset3: Asset.fromID(numbers[5]),
+	//       quoteAsset4: numbers[6],
+	//       asset4: Asset.fromID(numbers[7]),
+	//       quoteAsset5: numbers[8],
+	//       asset5: Asset.fromID(numbers[9])
 	//     }
 	frame_dig -3 // storage key//old
 	box_get
@@ -887,73 +887,73 @@ changeQuotation:
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 0
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 0 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 8
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 8 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 16
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 16 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 24
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 24 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 32
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 32 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 40
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 40 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 48
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 48 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 56
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 56 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 64
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 64 8
 	btoi
 	itob
 	concat
-	frame_dig -2 // numbers: bytes
-	int 72
-	int 8
-	substring3
+	frame_dig -2 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 72 8
 	btoi
 	itob
 	concat
@@ -1398,7 +1398,7 @@ skip_or4:
 	//       assetAmount: 1,
 	//       xferAsset: nftAsset,
 	//       assetReceiver: old.owner,
-	//       fee: 4000
+	//       fee: 0
 	//     })
 	itxn_begin
 	int axfer
@@ -1423,8 +1423,8 @@ skip_or4:
 	itxn_field AssetReceiver
 
 	// contracts/asa-gold-smartcontract.algo.ts:318
-	// fee: 4000
-	int 4000
+	// fee: 0
+	int 0
 	itxn_field Fee
 
 	// Submit inner transaction
@@ -1481,11 +1481,11 @@ optinAsset:
 	itxn_submit
 	retsub
 
-// depositNFT(string,address,axfer)void
+// depositNFT(uint64[],address,axfer)void
 abi_route_depositNFT:
 	byte 0x; dup // push empty bytes to fill the stack frame for this subroutine's local variables
 
-	// numbers: string
+	// numbers: uint64[]
 	txna ApplicationArgs 2
 	extract 2 0
 
@@ -1507,7 +1507,7 @@ abi_route_depositNFT:
 	==
 	assert
 
-	// execute depositNFT(string,address,axfer)void
+	// execute depositNFT(uint64[],address,axfer)void
 	callsub depositNFT
 	int 1
 	return
@@ -1543,16 +1543,16 @@ depositNFT:
 	//       owner: this.txn.sender,
 	//       vaultOwnerAddress: old.vaultOwnerAddress,
 	//       weight: old.weight,
-	//       quoteAsset1: btoi(substring3(numbers, 0, 8)),
-	//       asset1: Asset.fromID(btoi(substring3(numbers, 8, 8))),
-	//       quoteAsset2: btoi(substring3(numbers, 16, 8)),
-	//       asset2: Asset.fromID(btoi(substring3(numbers, 24, 8))),
-	//       quoteAsset3: btoi(substring3(numbers, 32, 8)),
-	//       asset3: Asset.fromID(btoi(substring3(numbers, 40, 8))),
-	//       quoteAsset4: btoi(substring3(numbers, 48, 8)),
-	//       asset4: Asset.fromID(btoi(substring3(numbers, 56, 8))),
-	//       quoteAsset5: btoi(substring3(numbers, 64, 8)),
-	//       asset5: Asset.fromID(btoi(substring3(numbers, 72, 8)))
+	//       quoteAsset1: numbers[0],
+	//       asset1: Asset.fromID(numbers[1]),
+	//       quoteAsset2: numbers[2],
+	//       asset2: Asset.fromID(numbers[3]),
+	//       quoteAsset3: numbers[4],
+	//       asset3: Asset.fromID(numbers[5]),
+	//       quoteAsset4: numbers[6],
+	//       asset4: Asset.fromID(numbers[7]),
+	//       quoteAsset5: numbers[8],
+	//       asset5: Asset.fromID(numbers[9])
 	//     }
 	byte 0x0000000000000003
 	frame_dig -2 // seller: address
@@ -1571,73 +1571,73 @@ depositNFT:
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 0
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 0 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 8
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 8 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 16
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 16 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 24
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 24 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 32
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 32 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 40
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 40 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 48
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 48 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 56
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 56 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 64
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 64 8
 	btoi
 	itob
 	concat
-	frame_dig -3 // numbers: bytes
-	int 72
-	int 8
-	substring3
+	frame_dig -3 // numbers: uint64[]
+	store 0 // full array
+	load 0 // full array
+	extract 72 8
 	btoi
 	itob
 	concat
@@ -1724,13 +1724,13 @@ create_NoOp:
 call_NoOp:
 	method "sellAssetWithDeposit(axfer,address,asset,asset,uint64,uint64)void"
 	method "buyNFT(axfer,asset)void"
-	method "changeQuotation(asset,string)void"
+	method "changeQuotation(asset,uint64[])void"
 	method "requestParcelDelivery(asset)void"
 	method "setParcelDelivery(asset)void"
 	method "setNotForSale(asset)void"
 	method "withdrawNFT(asset)void"
 	method "optinAsset(asset)void"
-	method "depositNFT(axfer,address,string)void"
+	method "depositNFT(axfer,address,uint64[])void"
 	txna ApplicationArgs 0
 	match abi_route_sellAssetWithDeposit abi_route_buyNFT abi_route_changeQuotation abi_route_requestParcelDelivery abi_route_setParcelDelivery abi_route_setNotForSale abi_route_withdrawNFT abi_route_optinAsset abi_route_depositNFT
 	err

@@ -174,7 +174,7 @@ class AsaGoldSmartcontract extends Contract {
       assetAmount: fee,
       xferAsset: purchaseAssetDepositTx.xferAsset,
       assetReceiver: this.governor.value,
-      fee: 2000
+      fee: 0
     })
 
     // send purchase price minus fees to seller
@@ -182,7 +182,7 @@ class AsaGoldSmartcontract extends Contract {
       assetAmount: purchaseAssetDepositTx.assetAmount - fee,
       xferAsset: purchaseAssetDepositTx.xferAsset,
       assetReceiver: old.seller,
-      fee: 3000
+      fee: 0
     })
 
     // rewrite item
@@ -201,7 +201,7 @@ class AsaGoldSmartcontract extends Contract {
    * @param nftAsset The gold coin NFT asset
    * @param numbers The bytes containing quoteAsset1, asset1, quoteAsset2 .. asset5
    */
-  public changeQuotation(nftAsset: Asset, numbers: string): void {
+  public changeQuotation(nftAsset: Asset, numbers: uint64[]): void {
     const old = this.data(nftAsset).value
 
     const newItem: AsaData = {
@@ -210,16 +210,16 @@ class AsaGoldSmartcontract extends Contract {
       owner: old.owner,
       vaultOwnerAddress: old.vaultOwnerAddress,
       weight: old.weight,
-      quoteAsset1: btoi(substring3(numbers, 0, 8)),
-      asset1: Asset.fromID(btoi(substring3(numbers, 8, 8))),
-      quoteAsset2: btoi(substring3(numbers, 16, 8)),
-      asset2: Asset.fromID(btoi(substring3(numbers, 24, 8))),
-      quoteAsset3: btoi(substring3(numbers, 32, 8)),
-      asset3: Asset.fromID(btoi(substring3(numbers, 40, 8))),
-      quoteAsset4: btoi(substring3(numbers, 48, 8)),
-      asset4: Asset.fromID(btoi(substring3(numbers, 56, 8))),
-      quoteAsset5: btoi(substring3(numbers, 64, 8)),
-      asset5: Asset.fromID(btoi(substring3(numbers, 72, 8)))
+      quoteAsset1: numbers[0],
+      asset1: Asset.fromID(numbers[1]),
+      quoteAsset2: numbers[2],
+      asset2: Asset.fromID(numbers[3]),
+      quoteAsset3: numbers[4],
+      asset3: Asset.fromID(numbers[5]),
+      quoteAsset4: numbers[6],
+      asset4: Asset.fromID(numbers[7]),
+      quoteAsset5: numbers[8],
+      asset5: Asset.fromID(numbers[9])
     }
 
     assert(this.txn.sender == old.owner) // only owner can change quotation
@@ -315,7 +315,7 @@ class AsaGoldSmartcontract extends Contract {
       assetAmount: 1,
       xferAsset: nftAsset,
       assetReceiver: old.owner,
-      fee: 4000
+      fee: 0
     })
   }
   public optinAsset(nftAsset: Asset): void {
@@ -327,7 +327,7 @@ class AsaGoldSmartcontract extends Contract {
       fee: 0
     })
   }
-  public depositNFT(nftDepositTx: AssetTransferTxn, seller: Address, numbers: string): void {
+  public depositNFT(nftDepositTx: AssetTransferTxn, seller: Address, numbers: uint64[]): void {
     assert(this.data(nftDepositTx.xferAsset).exists) // the asset must not be defined
     const old = this.data(nftDepositTx.xferAsset).value
 
@@ -337,16 +337,16 @@ class AsaGoldSmartcontract extends Contract {
       owner: this.txn.sender,
       vaultOwnerAddress: old.vaultOwnerAddress,
       weight: old.weight,
-      quoteAsset1: btoi(substring3(numbers, 0, 8)),
-      asset1: Asset.fromID(btoi(substring3(numbers, 8, 8))),
-      quoteAsset2: btoi(substring3(numbers, 16, 8)),
-      asset2: Asset.fromID(btoi(substring3(numbers, 24, 8))),
-      quoteAsset3: btoi(substring3(numbers, 32, 8)),
-      asset3: Asset.fromID(btoi(substring3(numbers, 40, 8))),
-      quoteAsset4: btoi(substring3(numbers, 48, 8)),
-      asset4: Asset.fromID(btoi(substring3(numbers, 56, 8))),
-      quoteAsset5: btoi(substring3(numbers, 64, 8)),
-      asset5: Asset.fromID(btoi(substring3(numbers, 72, 8)))
+      quoteAsset1: numbers[0],
+      asset1: Asset.fromID(numbers[1]),
+      quoteAsset2: numbers[2],
+      asset2: Asset.fromID(numbers[3]),
+      quoteAsset3: numbers[4],
+      asset3: Asset.fromID(numbers[5]),
+      quoteAsset4: numbers[6],
+      asset4: Asset.fromID(numbers[7]),
+      quoteAsset5: numbers[8],
+      asset5: Asset.fromID(numbers[9])
     }
 
     verifyTxn(nftDepositTx, {

@@ -1,0 +1,8 @@
+No tests found, exiting with code 1
+Run with `--passWithNoTests` to exit with code 0
+In C:\Users\ludko\source\repos\scholtz\gold-asa-frontend\asa-gold-smartcontract
+  14 files checked.
+  testMatch: **/__tests__/**/*.[jt]s?(x), **/?(*.)+(spec|test).[tj]s?(x) - 1 match
+  testPathIgnorePatterns: \\node_modules\\ - 14 matches
+  testRegex:  - 0 matches
+Pattern: buyNFT|test' - 0 matches
