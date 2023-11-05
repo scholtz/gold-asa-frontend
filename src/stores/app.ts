@@ -36,7 +36,7 @@ const tokens = {
   algo: 0,
   btc: 67396528
 }
-const reloadAccount = (): Promise<void> => {
+const reloadAccount = async (): Promise<void> => {
   console.log('reload account base')
 }
 const defaultState: IState = {

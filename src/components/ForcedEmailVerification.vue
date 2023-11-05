@@ -29,7 +29,7 @@ watch(store.state.authState, async () => {
     store.state.account = null
   }
 })
-async function reloadAccount() {
+async function reloadAccount(): Promise<void> {
   console.log('reload account component')
   await getAccount()
 }
