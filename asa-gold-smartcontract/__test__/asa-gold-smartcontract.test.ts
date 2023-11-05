@@ -96,7 +96,7 @@ describe('AsaGoldSmartcontract', () => {
     const fundAppTx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       from: accountDeployNFT.addr,
       to: appRef.appAddress,
-      amount: 282500,
+      amount: 292200,
       suggestedParams: { ...params }
     })
     const fundAppTxResult = await algod
@@ -122,7 +122,11 @@ describe('AsaGoldSmartcontract', () => {
     )
     var box: algosdk.BoxReference = {
       appIndex: Number(appRef.appId),
-      name: algosdk.bigIntToBytes(nftAsset, 8)
+      name: new Uint8Array(Buffer.concat([Buffer.from('d'), algosdk.bigIntToBytes(nftAsset, 8)])) // data box
+    }
+    var box2: algosdk.BoxReference = {
+      appIndex: Number(appRef.appId),
+      name: new Uint8Array(Buffer.concat([Buffer.from('r'), algosdk.bigIntToBytes(goldToken, 8)])) // reserves box 
     }
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
     const depositTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
@@ -133,6 +137,7 @@ describe('AsaGoldSmartcontract', () => {
       suggestedParams: { ...params, fee: 1000 }
     })
     console.log('box', box, Buffer.from(box.name).toString('hex'))
+    console.log('box2', box2, Buffer.from(box2.name).toString('hex'))
     const sell = await appClient2.sellAssetWithDeposit(
       {
         nftDepositTx: depositTx,
@@ -146,7 +151,7 @@ describe('AsaGoldSmartcontract', () => {
         sendParams: {
           fee: new AlgoAmount({ microAlgos: 2000 })
         },
-        boxes: [box],
+        boxes: [box, box2],
         accounts: [goldTokenAssetReserveAccount]
       }
     )

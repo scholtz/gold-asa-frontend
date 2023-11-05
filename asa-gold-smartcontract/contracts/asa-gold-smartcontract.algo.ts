@@ -37,8 +37,9 @@ const SCALE = 10_000
 const BOX_SIZE = 200
 // eslint-disable-next-line no-unused-vars
 class AsaGoldSmartcontract extends Contract {
-  data = BoxMap<Asset, AsaData>()
-  //reserves = BoxMap<Asset, uint64>();
+  data = BoxMap<Asset, AsaData>({ prefix: 'd' })
+  reserves = BoxMap<Asset, uint64>({ prefix: 'r' })
+
   governor = GlobalStateKey<Address>({ key: 'g' }) // account which receives royalty payments
   fee = GlobalStateKey<uint64>({ key: 'f' })
 
@@ -98,11 +99,11 @@ class AsaGoldSmartcontract extends Contract {
     this.data(nftAsset).value = newItem
 
     // RESERVES MANAGEMENT
-    // var newReserves = newItem.weight
-    // if(this.reserves(goldTokenAsset).exists){
-    //   newReserves += this.reserves(goldTokenAsset).value
-    // }
-    // this.reserves(goldTokenAsset).value = newReserves;
+    var newReserves = newItem.weight
+    if (this.reserves(tokenAsset).exists) {
+      newReserves = newReserves + this.reserves(tokenAsset).value
+    }
+    this.reserves(tokenAsset).value = newReserves
   }
 
   /**
@@ -188,9 +189,10 @@ class AsaGoldSmartcontract extends Contract {
     this.data(nftAsset).value = newItem
 
     // RESERVES MANAGEMENT
-    // if(old.state == 1){ // we just sold the NFT from the reserves
-    //   this.reserves(old.asset1).value = this.reserves(old.asset1).value - old.weight
-    // }
+    if (old.state == 1) {
+      // we just sold the NFT from the reserves
+      this.reserves(old.asset1).value = this.reserves(old.asset1).value - old.weight
+    }
   }
 
   /**
