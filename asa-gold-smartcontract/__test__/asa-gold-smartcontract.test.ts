@@ -6,6 +6,17 @@ import { AsaGoldSmartcontractClient } from '../contracts/clients/AsaGoldSmartcon
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount'
 import { AppMetadata, AppReference } from '@algorandfoundation/algokit-utils/types/app'
 import { Buffer } from 'buffer'
+import getClient from '../src/getClient'
+import createGoldToken from '../src/createGoldToken'
+import optInToAsset from '../src/optInToAsset'
+import clientOptinAsset from '../src/client/clientOptinAsset'
+import createNFTToken from '../src/createNFTToken'
+import getBoxReferenceNFT from '../src/client/getBoxReferenceNFT'
+import getBoxReferenceReserves from '../src/client/getBoxReferenceReserves'
+import clientSellAssetWithDeposit from '../src/client/clientSellAssetWithDeposit'
+import clientChangePrice from '../src/client/clientChangePrice'
+import doAssetTransfer from '../src/doAssetTransfer'
+import clientBuyNft from '../src/client/clientBuyNft'
 
 const fixture = algorandFixture()
 
@@ -20,7 +31,7 @@ describe('AsaGoldSmartcontract', () => {
 
   beforeAll(async () => {
     await fixture.beforeEach()
-    const { algod, generateAccount } = fixture.context
+    const { algod, kmd, generateAccount } = fixture.context
     accountDeploy = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 10
@@ -28,15 +39,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    appClient = new AsaGoldSmartcontractClient(
-      {
-        sender: accountDeploy,
-        resolveBy: 'id',
-        id: 0
-      },
-      algod
-    )
-
+    appClient = getClient(0, accountDeploy, algod)
     const app = await appClient.create.createApplication({ fee: 10 }) // 10/10000 = 0.1%
     appRef = await appClient.appClient.getAppReference()
 
@@ -53,58 +56,25 @@ describe('AsaGoldSmartcontract', () => {
       }),
       suppressLog: false
     })
-    const params = await algod.getTransactionParams().do()
-    const goldTokenTx = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
-      from: accountDeployGoldToken.addr,
-      reserve: accountDeployGoldToken.addr,
-      decimals: 6,
-      defaultFrozen: false,
-      total: 1_000_000_000_000_000,
-      assetName: 'GOLD',
-      assetURL: 'https://asa.gold',
-      manager: accountDeployGoldToken.addr,
-      unitName: 'GOLD',
-      suggestedParams: params
-    })
 
-    const tx = await algod.sendRawTransaction(goldTokenTx.signTxn(accountDeployGoldToken.sk)).do()
-    const tx2 = await algokit.waitForConfirmation(tx.txId, 3, algod)
-    goldToken = Number(tx2.assetIndex)
+    goldToken = await createGoldToken(accountDeployGoldToken, algod)
     console.log(`goldTokenTx done ${goldToken}`)
 
     // accountDeploy - opt in to all assets where trade can be done.. as fee collector
-    await algod.sendRawTransaction(
-      algosdk
-        .makeAssetTransferTxnWithSuggestedParamsFromObject({
-          from: accountDeploy.addr,
-          to: accountDeploy.addr,
-          amount: 0,
-          assetIndex: goldToken,
-          suggestedParams: { ...params }
-        })
-        .signTxn(accountDeploy.sk)
-    )
+    await optInToAsset(accountDeploy, goldToken, algod)
     console.log(`accountDeploy optin goldToken ${goldToken} done`)
 
     // deposit minimum balance, opt in to gold token
-
-    const fundAppTx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-      from: accountDeploy.addr,
-      to: appRef.appAddress,
-      amount: 392200,
-      suggestedParams: { ...params }
-    })
-    await algod.sendRawTransaction(fundAppTx.signTxn(accountDeploy.sk)).do()
-    console.log(`fundAppTx  done`)
-
-    await appClient.optinAsset(
-      { nftAsset: goldToken },
+    await algokit.ensureFunded(
       {
-        sendParams: {
-          fee: new AlgoAmount({ microAlgos: 2000 })
-        }
-      }
+        accountToFund: appRef.appAddress,
+        minSpendingBalance: algokit.microAlgos(392200)
+      },
+      algod,
+      kmd
     )
+    console.log(`fundAppTx  done`)
+    await clientOptinAsset(appClient, goldToken)
     console.log(`optinAsset ${goldToken} done`)
   })
 
@@ -307,202 +277,71 @@ describe('AsaGoldSmartcontract', () => {
   })
   test('1->2 buyNFT test', async () => {
     const { algod, generateAccount } = fixture.context
-    const accountDeployNFT = await generateAccount({
+    const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
       }),
       suppressLog: false
     })
-    const params = await algod.getTransactionParams().do()
-    const nftTokenTx = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
-      from: accountDeployNFT.addr,
-      reserve: accountDeployNFT.addr,
-      decimals: 0,
-      defaultFrozen: false,
-      total: 1,
-      assetName: 'NFT',
-      assetURL: 'https://asa.gold',
-      manager: accountDeployNFT.addr,
-      unitName: 'NFT',
-      suggestedParams: { ...params }
-    })
-    const tx = await algod.sendRawTransaction(nftTokenTx.signTxn(accountDeployNFT.sk)).do()
-    const tx2 = await algokit.waitForConfirmation(tx.txId, 3, algod)
-    var nftAsset = Number(tx2.assetIndex)
+
+    const nftAsset = await createNFTToken(seller, algod)
+
     console.log(`nftTokenTx done ${nftAsset}`)
+    await clientOptinAsset(appClient, nftAsset)
+    console.log(`nftToken opted in to app done ${nftAsset}`)
 
-    const fundAppTx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-      from: accountDeployNFT.addr,
-      to: appRef.appAddress,
-      amount: 392200,
-      suggestedParams: { ...params }
-    })
-    const fundAppTxResult = await algod
-      .sendRawTransaction(fundAppTx.signTxn(accountDeployNFT.sk))
-      .do()
-    console.log('fundAppTx done')
+    var appClientSeller = getClient(appRef.appId, seller, algod)
 
-    await appClient.optinAsset(
-      { nftAsset: nftAsset },
-      {
-        sendParams: {
-          fee: new AlgoAmount({ microAlgos: 2000 })
-        }
-      }
-    )
-    const seller = accountDeployNFT
-    // accountDeploy - opt in to all assets where trade can be done.. as fee collector
-    await algod.sendRawTransaction(
-      algosdk
-        .makeAssetTransferTxnWithSuggestedParamsFromObject({
-          from: seller.addr,
-          to: seller.addr,
-          amount: 0,
-          assetIndex: goldToken,
-          suggestedParams: { ...params }
-        })
-        .signTxn(seller.sk)
-    )
-    console.log(`seller optin goldToken ${goldToken} done`)
-
-    var appClient2 = new AsaGoldSmartcontractClient(
-      {
-        sender: accountDeployNFT,
-        resolveBy: 'id',
-        id: appRef.appId
-      },
-      algod
-    )
-    var box: algosdk.BoxReference = {
-      appIndex: Number(appRef.appId),
-      name: new Uint8Array(Buffer.concat([Buffer.from('d'), algosdk.bigIntToBytes(nftAsset, 8)])) // data box
-    }
-    var box2: algosdk.BoxReference = {
-      appIndex: Number(appRef.appId),
-      name: new Uint8Array(Buffer.concat([Buffer.from('r'), algosdk.bigIntToBytes(goldToken, 8)])) // reserves box
-    }
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
-    const depositTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-      from: accountDeployNFT.addr,
-      amount: 1,
-      assetIndex: nftAsset,
-      to: appRef.appAddress,
-      suggestedParams: { ...params, fee: 1000 }
-    })
-    console.log('box', box, Buffer.from(box.name).toString('hex'))
-    console.log('box2', box2, Buffer.from(box2.name).toString('hex'))
-    const sell = await appClient2.sellAssetWithDeposit(
-      {
-        nftDepositTx: depositTx,
-        nftAsset: nftAsset,
-        price: 101000,
-        tokenAsset: goldToken,
-        vaultOwnerAddress: accountDeploy.addr,
-        weight: 100000
-      },
-      {
-        sendParams: {
-          fee: new AlgoAmount({ microAlgos: 2000 })
-        },
-        boxes: [box, box2],
-        accounts: [goldTokenAssetReserveAccount]
-      }
+
+    await clientSellAssetWithDeposit(
+      appClientSeller,
+      seller.addr,
+      accountDeploy.addr,
+      goldTokenAssetReserveAccount,
+      nftAsset,
+      goldToken,
+      algod
     )
     console.log('sellAssetWithDeposit done')
 
-    const changePrice = await appClient2.changeQuotation(
-      {
-        nftAsset: nftAsset,
-        numbers: [102000, goldToken, 0, 0, 0, 0, 0, 0, 0, 0]
-      },
-      {
-        sendParams: {
-          fee: new AlgoAmount({ microAlgos: 1000 })
-        },
-        boxes: [box],
-        accounts: []
-      }
-    )
+    await clientChangePrice(appClientSeller, nftAsset, goldToken, 102000)
     console.log('changePrice done')
 
-    var appClientBuyer = new AsaGoldSmartcontractClient(
-      {
-        sender: buyer,
-        resolveBy: 'id',
-        id: appRef.appId
-      },
-      algod
-    )
-
-    await algod
-      .sendRawTransaction(
-        algosdk
-          .makeAssetTransferTxnWithSuggestedParamsFromObject({
-            from: buyer.addr,
-            amount: 0,
-            assetIndex: goldToken,
-            to: buyer.addr,
-            suggestedParams: { ...params, fee: 1000 }
-          })
-          .signTxn(buyer.sk)
-      )
-      .do()
-    console.log('optinBuyerToGold done')
-    const fundBuyerWithGold = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-      from: accountDeployGoldToken.addr,
-      amount: 102000,
-      assetIndex: goldToken,
-      to: buyer.addr,
-      suggestedParams: { ...params, fee: 1000 }
-    })
-    await algod.sendRawTransaction(fundBuyerWithGold.signTxn(accountDeployGoldToken.sk)).do()
-    console.log('fundBuyerWithGold done')
-
-    await algod
-      .sendRawTransaction(
-        algosdk
-          .makeAssetTransferTxnWithSuggestedParamsFromObject({
-            from: accountDeploy.addr,
-            amount: 0,
-            assetIndex: goldToken,
-            to: accountDeploy.addr,
-            suggestedParams: { ...params, fee: 1000 }
-          })
-          .signTxn(accountDeploy.sk)
-      )
-      .do()
-    console.log('accountDeploy optin goldToken done')
-
     console.log(
-      'appRef.appAddress,accountDeploy,seller,accountDeployGoldToken',
+      'appRef.appAddress,accountDeploy,seller,accountDeployGoldToken,buyer',
       appRef.appAddress,
       accountDeploy.addr,
       seller.addr,
-      accountDeployGoldToken.addr
+      accountDeployGoldToken.addr,
+      buyer.addr
     )
     console.log('nftAsset, goldToken', nftAsset, goldToken)
 
-    const purchaseAssetDepositTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-      from: buyer.addr,
-      amount: 102000,
-      assetIndex: goldToken,
-      to: appRef.appAddress,
-      suggestedParams: { ...params, fee: 1000 }
-    })
-    const buyNFT = await appClientBuyer.buyNft(
-      {
-        purchaseAssetDepositTx: purchaseAssetDepositTx,
-        nftAsset: nftAsset
-      },
-      {
-        sendParams: {
-          fee: new AlgoAmount({ microAlgos: 3000 })
-        },
-        boxes: [box, box2],
-        assets: [nftAsset, goldToken],
-        accounts: [appRef.appAddress, accountDeploy.addr, seller.addr, accountDeployGoldToken.addr]
-      }
+    var appClientBuyer = getClient(appRef.appId, buyer, algod)
+    const optin = await optInToAsset(buyer, goldToken, algod)
+    console.log('optinBuyerToGold done', optin)
+    const buyerDepositGold = await doAssetTransfer(
+      accountDeployGoldToken,
+      buyer.addr,
+      goldToken,
+      102000,
+      algod
     )
+    console.log('fundBuyerWithGold done', buyerDepositGold)
+    await optInToAsset(accountDeploy, goldToken, algod)
+    console.log('accountDeploy optin goldToken done')
+    await clientBuyNft({
+      appClient: appClientBuyer,
+      buyerAddr: buyer.addr,
+      algod,
+      assetBuy: goldToken,
+      buyPrice: 102000,
+      feeCollectorAddress: accountDeploy.addr,
+      goldToken: goldToken,
+      nftAsset: nftAsset,
+      sellerAddress: goldTokenAssetReserveAccount
+    })
     console.log('buyNFT done')
   })
 })

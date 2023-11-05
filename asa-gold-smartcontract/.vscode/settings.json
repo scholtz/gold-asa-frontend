@@ -21,6 +21,5 @@
   "editor.tabSize": 2,
   "prettier.tabWidth": 2,
   "editor.detectIndentation": false,
-  "editor.insertSpaces": true,
-  "prettier.prettierPath": "./node_modules/prettier"
+  "editor.insertSpaces": true
 }
