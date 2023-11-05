@@ -1,22 +1,22 @@
 import algosdk, { Algodv2 } from 'algosdk'
-
-const doAssetTransfer = async (
-  from: algosdk.Account,
-  to: string,
-  assetIndex: number,
-  amount: number,
+interface IDoAssetTransferInput {
+  from: algosdk.Account
+  to: string
+  assetIndex: number
+  amount: number
   algod: Algodv2
-) => {
-  const params = await algod.getTransactionParams().do()
+}
+const doAssetTransfer = async (input: IDoAssetTransferInput) => {
+  const params = await input.algod.getTransactionParams().do()
   const signed = algosdk
     .makeAssetTransferTxnWithSuggestedParamsFromObject({
-      from: from.addr,
-      to: to,
-      amount: amount,
-      assetIndex: assetIndex,
+      from: input.from.addr,
+      to: input.to,
+      amount: input.amount,
+      assetIndex: input.assetIndex,
       suggestedParams: { ...params }
     })
-    .signTxn(from.sk)
-  return await algod.sendRawTransaction(signed).do()
+    .signTxn(input.from.sk)
+  return await input.algod.sendRawTransaction(signed).do()
 }
 export default doAssetTransfer

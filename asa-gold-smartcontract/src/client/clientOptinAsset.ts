@@ -1,10 +1,13 @@
 import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmartcontractClient'
 import * as algokit from '@algorandfoundation/algokit-utils'
-
-const clientOptinAsset = async (appClient: AsaGoldSmartcontractClient, assetIndex: number) => {
+interface IClientOptinAssetInput {
+  appClient: AsaGoldSmartcontractClient
+  assetIndex: number
+}
+const clientOptinAsset = async (input: IClientOptinAssetInput) => {
   // TODO .. fund account
-  await appClient.optinAsset(
-    { nftAsset: assetIndex },
+  return await input.appClient.optinAsset(
+    { nftAsset: input.assetIndex },
     {
       sendParams: {
         fee: algokit.microAlgos(2000)

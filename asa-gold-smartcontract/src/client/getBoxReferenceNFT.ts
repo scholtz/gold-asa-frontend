@@ -1,9 +1,15 @@
 import algosdk from 'algosdk'
 
-const getBoxReferenceNFT = (app: number | bigint, nftAsset: number) => {
+interface IGetBoxReferenceNFTInput {
+  app: number | bigint
+  nftAsset: number
+}
+const getBoxReferenceNFT = (input: IGetBoxReferenceNFTInput) => {
   var box: algosdk.BoxReference = {
-    appIndex: Number(app),
-    name: new Uint8Array(Buffer.concat([Buffer.from('d'), algosdk.bigIntToBytes(nftAsset, 8)])) // data box
+    appIndex: Number(input.app),
+    name: new Uint8Array(
+      Buffer.concat([Buffer.from('d'), algosdk.bigIntToBytes(input.nftAsset, 8)])
+    ) // data box
   }
   return box
 }

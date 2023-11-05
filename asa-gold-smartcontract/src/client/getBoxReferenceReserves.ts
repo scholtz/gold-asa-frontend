@@ -1,9 +1,14 @@
 import algosdk from 'algosdk'
-
-const getBoxReferenceReserves = (app: number | bigint, goldToken: number) => {
+interface IGetBoxReferenceReservesInput {
+  app: number | bigint
+  goldToken: number
+}
+const getBoxReferenceReserves = (input: IGetBoxReferenceReservesInput) => {
   var box: algosdk.BoxReference = {
-    appIndex: Number(app),
-    name: new Uint8Array(Buffer.concat([Buffer.from('r'), algosdk.bigIntToBytes(goldToken, 8)])) // data box
+    appIndex: Number(input.app),
+    name: new Uint8Array(
+      Buffer.concat([Buffer.from('r'), algosdk.bigIntToBytes(input.goldToken, 8)])
+    ) // data box
   }
   return box
 }

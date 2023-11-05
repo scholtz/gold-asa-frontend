@@ -14,7 +14,7 @@ interface clientBuyNftINput {
   goldToken: number
   algod: algosdk.Algodv2
 }
-const clientBuyNft = async (data: clientBuyNftINput) => {
+const clientBuyNFT = async (data: clientBuyNftINput) => {
   const {
     appClient,
     buyerAddr,
@@ -29,8 +29,8 @@ const clientBuyNft = async (data: clientBuyNftINput) => {
 
   const params = await algod.getTransactionParams().do()
   const appRef = await appClient.appClient.getAppReference()
-  var boxNFT = getBoxReferenceNFT(appRef.appId, nftAsset)
-  var boxReserves = getBoxReferenceReserves(appRef.appId, goldToken)
+  var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset })
+  var boxReserves = getBoxReferenceReserves({ app: appRef.appId, goldToken })
 
   const purchaseAssetDepositTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
     from: buyerAddr,
@@ -54,4 +54,4 @@ const clientBuyNft = async (data: clientBuyNftINput) => {
     }
   )
 }
-export default clientBuyNft
+export default clientBuyNFT

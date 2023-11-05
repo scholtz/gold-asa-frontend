@@ -2,18 +2,20 @@ import { AsaGoldSmartcontractClient } from '../contracts/clients/AsaGoldSmartcon
 import { Algodv2 } from 'algosdk'
 import { SendTransactionFrom } from '@algorandfoundation/algokit-utils/types/transaction'
 
-const getClient = (
-  appId: number | bigint,
-  sender: SendTransactionFrom | undefined,
+interface IGetClientInput {
+  appId: number | bigint
+  sender: SendTransactionFrom | undefined
   algod: Algodv2
-) => {
+}
+
+const getClient = (input: IGetClientInput) => {
   return new AsaGoldSmartcontractClient(
     {
-      sender: sender,
+      sender: input.sender,
       resolveBy: 'id',
-      id: appId
+      id: input.appId
     },
-    algod
+    input.algod
   )
 }
 export default getClient

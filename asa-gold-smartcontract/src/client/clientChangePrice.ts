@@ -1,37 +1,37 @@
 import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmartcontractClient'
 import * as algokit from '@algorandfoundation/algokit-utils'
 import getBoxReferenceNFT from './getBoxReferenceNFT'
-
-const clientChangePrice = async (
-  appClient: AsaGoldSmartcontractClient,
-  nftAsset: number,
-  goldToken: number,
-  goldTokenPrice: number,
-  asa2: number = 0,
-  asa2Price: number = 0,
-  asa3: number = 0,
-  asa3Price: number = 0,
-  asa4: number = 0,
-  asa4Price: number = 0,
-  asa5: number = 0,
-  asa5Price: number = 0
-) => {
-  const appRef = await appClient.appClient.getAppReference()
-  var boxNFT = getBoxReferenceNFT(appRef.appId, nftAsset)
-  await appClient.changeQuotation(
+interface IClientChangePriceInput {
+  appClient: AsaGoldSmartcontractClient
+  nftAsset: number
+  goldToken?: number | undefined
+  goldTokenPrice?: number | undefined
+  asa2?: number | undefined
+  asa2Price?: number | undefined
+  asa3?: number | undefined
+  asa3Price?: number | undefined
+  asa4?: number | undefined
+  asa4Price?: number | undefined
+  asa5?: number | undefined
+  asa5Price?: number | undefined
+}
+const clientChangePrice = async (input: IClientChangePriceInput) => {
+  const appRef = await input.appClient.appClient.getAppReference()
+  var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset: input.nftAsset })
+  await input.appClient.changeQuotation(
     {
-      nftAsset: nftAsset,
+      nftAsset: input.nftAsset,
       numbers: [
-        goldTokenPrice,
-        goldToken,
-        asa2Price,
-        asa2,
-        asa3Price,
-        asa3,
-        asa4Price,
-        asa4,
-        asa5Price,
-        asa5
+        input.goldTokenPrice ?? 0,
+        input.goldToken ?? 0,
+        input.asa2Price ?? 0,
+        input.asa2 ?? 0,
+        input.asa3Price ?? 0,
+        input.asa3 ?? 0,
+        input.asa4Price ?? 0,
+        input.asa4 ?? 0,
+        input.asa5Price ?? 0,
+        input.asa5 ?? 0
       ]
     },
     {

@@ -3,34 +3,34 @@ import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmart
 import * as algokit from '@algorandfoundation/algokit-utils'
 import getBoxReferenceNFT from './getBoxReferenceNFT'
 import getBoxReferenceReserves from './getBoxReferenceReserves'
-
-const clientSellAssetWithDeposit = async (
-  appClient: AsaGoldSmartcontractClient,
-  nftOwnerAddress: string,
-  vaultOwnerAddress: string,
-  goldTokenAssetReserveAccount: string,
-  nftAsset: number,
-  goldToken: number,
+interface IClientSellAssetWithDepositInput {
+  appClient: AsaGoldSmartcontractClient
+  nftOwnerAddress: string
+  vaultOwnerAddress: string
+  goldTokenAssetReserveAccount: string
+  nftAsset: number
+  goldToken: number
   algod: algosdk.Algodv2
-) => {
-  const params = await algod.getTransactionParams().do()
-  const appRef = await appClient.appClient.getAppReference()
-  var boxNFT = getBoxReferenceNFT(appRef.appId, nftAsset)
-  var boxReserves = getBoxReferenceReserves(appRef.appId, goldToken)
+}
+const clientSellAssetWithDeposit = async (input: IClientSellAssetWithDepositInput) => {
+  const params = await input.algod.getTransactionParams().do()
+  const appRef = await input.appClient.appClient.getAppReference()
+  var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset: input.nftAsset })
+  var boxReserves = getBoxReferenceReserves({ app: appRef.appId, goldToken: input.goldToken })
   const depositTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-    from: nftOwnerAddress,
+    from: input.nftOwnerAddress,
     amount: 1,
-    assetIndex: nftAsset,
+    assetIndex: input.nftAsset,
     to: appRef.appAddress,
     suggestedParams: { ...params, fee: 1000 }
   })
-  await appClient.sellAssetWithDeposit(
+  await input.appClient.sellAssetWithDeposit(
     {
       nftDepositTx: depositTx,
-      nftAsset: nftAsset,
+      nftAsset: input.nftAsset,
       price: 101000,
-      tokenAsset: goldToken,
-      vaultOwnerAddress: vaultOwnerAddress,
+      tokenAsset: input.goldToken,
+      vaultOwnerAddress: input.vaultOwnerAddress,
       weight: 100000
     },
     {
@@ -38,7 +38,7 @@ const clientSellAssetWithDeposit = async (
         fee: algokit.microAlgos(2000)
       },
       boxes: [boxNFT, boxReserves],
-      accounts: [goldTokenAssetReserveAccount]
+      accounts: [input.goldTokenAssetReserveAccount]
     }
   )
 }
