@@ -203,9 +203,12 @@ class AsaGoldSmartcontract extends Contract {
    */
   public changeQuotation(nftAsset: Asset, numbers: uint64[]): void {
     const old = this.data(nftAsset).value
-
+    var newState = old.state
+    if (newState == 2) {
+      newState = 3 // if we move from not for sale to secondary trading
+    }
     const newItem: AsaData = {
-      state: old.state,
+      state: newState,
       seller: old.seller,
       owner: old.owner,
       vaultOwnerAddress: old.vaultOwnerAddress,
