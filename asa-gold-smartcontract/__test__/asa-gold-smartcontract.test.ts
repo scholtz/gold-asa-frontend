@@ -87,7 +87,7 @@ describe('AsaGoldSmartcontract', () => {
       kmd
     )
     console.log(`fundAppTx  done`)
-    await clientOptinAsset({ appClient, assetIndex: goldToken })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: goldToken })
     console.log(`optinAsset ${goldToken} done`)
 
     usdcToken = await createToken({ account: accountDeployGoldToken, name: 'USDC', algod })
@@ -107,7 +107,7 @@ describe('AsaGoldSmartcontract', () => {
     })
     console.log(`buyer2 fund usdc done`)
 
-    await clientOptinAsset({ appClient, assetIndex: usdcToken })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: usdcToken })
     console.log(`app optin usdc done`)
   })
 
@@ -127,7 +127,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -135,13 +135,14 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
   })
@@ -157,7 +158,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -165,17 +166,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -195,7 +199,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -203,17 +207,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -245,6 +252,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -270,7 +278,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -278,17 +286,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -320,6 +331,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -332,7 +344,13 @@ describe('AsaGoldSmartcontract', () => {
     })
     console.log('buyNFT done')
     await optInToAsset({ account: buyer, assetIndex: nftAsset, algod })
-    await clientWithdrawNFT({ appClient: appClientBuyer, nftAsset, ownerAddress: buyer.addr })
+    await clientWithdrawNFT({
+      algod,
+      account: buyer,
+      appClient: appClientBuyer,
+      nftAsset,
+      ownerAddress: buyer.addr
+    })
     console.log('clientWithdrawNFT done')
   })
 
@@ -348,7 +366,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -356,17 +374,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -398,6 +419,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -411,6 +433,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('buyNFT done')
 
     await clientChangePrice({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset,
       goldToken,
@@ -432,7 +456,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -440,17 +464,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -482,6 +509,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -495,6 +523,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('buyNFT done')
 
     await clientChangePrice({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset,
       goldToken,
@@ -505,6 +535,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('changePrice done')
 
     await clientChangePrice({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset,
       goldToken,
@@ -526,7 +558,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -534,17 +566,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -576,6 +611,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -589,6 +625,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('buyNFT done')
 
     await clientChangePrice({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset,
       goldToken,
@@ -599,6 +637,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('changePrice done')
 
     await clientChangePrice({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset,
       goldToken,
@@ -610,6 +650,7 @@ describe('AsaGoldSmartcontract', () => {
 
     var appClientBuyer2 = getClient({ appId: appRef.appId, sender: buyer2, algod })
     await clientBuyNft({
+      account: buyer2,
       appClient: appClientBuyer2,
       buyerAddr: buyer2.addr,
       algod,
@@ -635,7 +676,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -643,17 +684,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -685,6 +729,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -698,6 +743,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('buyNFT done')
 
     await clientChangePrice({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset,
       goldToken,
@@ -708,6 +755,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('changePrice done')
 
     await clientChangePrice({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset,
       goldToken,
@@ -717,10 +766,7 @@ describe('AsaGoldSmartcontract', () => {
     })
     console.log('changePrice done')
 
-    await clientNotForSale({
-      appClient: appClientBuyer,
-      nftAsset
-    })
+    await clientNotForSale({ algod, account: buyer, appClient: appClientBuyer, nftAsset })
     console.log('clientNotForSale done')
   })
   test('2->4 requestParcelDelivery test', async () => {
@@ -735,7 +781,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -743,17 +789,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -785,6 +834,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -796,7 +846,12 @@ describe('AsaGoldSmartcontract', () => {
       sellerAddress: goldTokenAssetReserveAccount
     })
     console.log('buyNFT done')
-    await clientRequestParcelDelivery({ appClient: appClientBuyer, nftAsset })
+    await clientRequestParcelDelivery({
+      algod,
+      account: buyer,
+      appClient: appClientBuyer,
+      nftAsset
+    })
     console.log('clientRequestParcelDelivery done')
   })
   test('3->4 requestParcelDelivery test', async () => {
@@ -811,7 +866,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -819,17 +874,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -861,6 +919,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -874,6 +933,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('buyNFT done')
 
     await clientChangePrice({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset,
       goldToken,
@@ -884,6 +945,8 @@ describe('AsaGoldSmartcontract', () => {
     console.log('changePrice done')
 
     await clientRequestParcelDelivery({
+      algod,
+      account: buyer,
       appClient: appClientBuyer,
       nftAsset
     })
@@ -901,7 +964,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -909,17 +972,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -951,6 +1017,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -962,9 +1029,14 @@ describe('AsaGoldSmartcontract', () => {
       sellerAddress: goldTokenAssetReserveAccount
     })
     console.log('buyNFT done')
-    await clientRequestParcelDelivery({ appClient: appClientBuyer, nftAsset })
+    await clientRequestParcelDelivery({
+      algod,
+      account: buyer,
+      appClient: appClientBuyer,
+      nftAsset
+    })
     console.log('clientRequestParcelDelivery done')
-    await clientSetParcelDelivery({ appClient: appClient, nftAsset })
+    await clientSetParcelDelivery({ algod, account: accountDeploy, appClient: appClient, nftAsset })
     console.log('clientSetParcelDelivery done')
   })
   test('2->3 depositNFT test', async () => {
@@ -979,7 +1051,7 @@ describe('AsaGoldSmartcontract', () => {
     const nftAsset = await createNFTToken({ account: seller, algod })
 
     console.log(`nftTokenTx done ${nftAsset}`)
-    await clientOptinAsset({ appClient, assetIndex: nftAsset })
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
 
     var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
@@ -987,17 +1059,20 @@ describe('AsaGoldSmartcontract', () => {
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
     await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftOwnerAddress: seller.addr,
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken,
-      algod
+      goldToken
     })
     console.log('sellAssetWithDeposit done')
 
     await clientChangePrice({
+      algod,
+      account: seller,
       appClient: appClientSeller,
       nftAsset,
       goldToken,
@@ -1029,6 +1104,7 @@ describe('AsaGoldSmartcontract', () => {
     await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
     console.log('accountDeploy optin goldToken done')
     await clientBuyNft({
+      account: buyer,
       appClient: appClientBuyer,
       buyerAddr: buyer.addr,
       algod,
@@ -1041,7 +1117,13 @@ describe('AsaGoldSmartcontract', () => {
     })
     console.log('buyNFT done')
     await optInToAsset({ account: buyer, assetIndex: nftAsset, algod })
-    await clientWithdrawNFT({ appClient: appClientBuyer, nftAsset, ownerAddress: buyer.addr })
+    await clientWithdrawNFT({
+      algod,
+      account: buyer,
+      appClient: appClientBuyer,
+      nftAsset,
+      ownerAddress: buyer.addr
+    })
     console.log('clientWithdrawNFT done')
 
     await optInToAsset({ account: buyer2, assetIndex: nftAsset, algod })
@@ -1050,6 +1132,7 @@ describe('AsaGoldSmartcontract', () => {
     var appClientBuyer2 = getClient({ appId: appRef.appId, sender: buyer2, algod })
     await clientDepositNFT({
       algod,
+      account: buyer2,
       appClient: appClientBuyer2,
       nftAsset,
       ownerAddress: buyer2.addr,
@@ -1059,11 +1142,13 @@ describe('AsaGoldSmartcontract', () => {
     })
     console.log('clientDepositNFT done')
     await clientRequestParcelDelivery({
+      algod,
+      account: buyer2,
       appClient: appClientBuyer2,
       nftAsset
     })
     console.log('clientRequestParcelDelivery done')
-    await clientSetParcelDelivery({ appClient: appClient, nftAsset })
+    await clientSetParcelDelivery({ algod, account: accountDeploy, appClient: appClient, nftAsset })
     console.log('clientSetParcelDelivery done')
   })
 })

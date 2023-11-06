@@ -1,24 +1,14 @@
+import algosdk from 'algosdk'
 import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmartcontractClient'
-import * as algokit from '@algorandfoundation/algokit-utils'
-import getBoxReferenceNFT from './getBoxReferenceNFT'
+import clientNotForSaleTxs from '../txs/clientNotForSaleTxs'
 interface IClientChangePriceInput {
+  algod: algosdk.Algodv2
+  account: algosdk.Account
   appClient: AsaGoldSmartcontractClient
   nftAsset: number
 }
 const clientNotForSale = async (input: IClientChangePriceInput) => {
-  const appRef = await input.appClient.appClient.getAppReference()
-  var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset: input.nftAsset })
-  await input.appClient.setNotForSale(
-    {
-      nftAsset: input.nftAsset
-    },
-    {
-      sendParams: {
-        fee: algokit.microAlgos(1000)
-      },
-      boxes: [boxNFT],
-      accounts: []
-    }
-  )
+  const txs = await clientNotForSaleTxs(input)
+  return await input.algod.sendRawTransaction(txs.map((tx) => tx.signTxn(input.account.sk))).do()
 }
 export default clientNotForSale

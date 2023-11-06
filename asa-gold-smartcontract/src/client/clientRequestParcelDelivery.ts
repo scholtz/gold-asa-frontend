@@ -1,24 +1,14 @@
 import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmartcontractClient'
-import * as algokit from '@algorandfoundation/algokit-utils'
-import getBoxReferenceNFT from './getBoxReferenceNFT'
+import algosdk from 'algosdk'
+import clientRequestParcelDeliveryTxs from '../txs/clientRequestParcelDeliveryTxs'
 interface IClientChangePriceInput {
+  algod: algosdk.Algodv2
+  account: algosdk.Account
   appClient: AsaGoldSmartcontractClient
   nftAsset: number
 }
 const clientRequestParcelDelivery = async (input: IClientChangePriceInput) => {
-  const appRef = await input.appClient.appClient.getAppReference()
-  var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset: input.nftAsset })
-  await input.appClient.requestParcelDelivery(
-    {
-      nftAsset: input.nftAsset
-    },
-    {
-      sendParams: {
-        fee: algokit.microAlgos(1000)
-      },
-      boxes: [boxNFT],
-      accounts: []
-    }
-  )
+  const txs = await clientRequestParcelDeliveryTxs(input)
+  return await input.algod.sendRawTransaction(txs.map((tx) => tx.signTxn(input.account.sk))).do()
 }
 export default clientRequestParcelDelivery

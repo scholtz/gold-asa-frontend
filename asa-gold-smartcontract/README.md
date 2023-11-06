@@ -6,10 +6,16 @@
 
 https://www.asa.gold
 
-![Overview](overview.png)
+![Overview](https://raw.githubusercontent.com/scholtz/gold-asa-frontend/main/asa-gold-smartcontract/overview.png)
 
-![Tests](tests.png)
+![Tests](https://raw.githubusercontent.com/scholtz/gold-asa-frontend/main/asa-gold-smartcontract/tests.png)
 
 For tests its recommended to run sandbox in dev mode `sandbox up dev`. (Faster block times)
 
 Run tests with `npm run test`
+
+## NPM package repository
+
+[GitHub](https://github.com/scholtz/gold-asa-frontend/blob/main/asa-gold-smartcontract/README.md)
+
+[NPM](https://www.npmjs.com/package/algorand-asa-gold)

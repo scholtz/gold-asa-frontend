@@ -1,28 +1,15 @@
 import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmartcontractClient'
-import * as algokit from '@algorandfoundation/algokit-utils'
-import getBoxReferenceNFT from './getBoxReferenceNFT'
+import algosdk from 'algosdk'
+import clientWithdrawNFTTxs from '../txs/clientWithdrawNFTTxs'
 interface clientBuyNftINput {
+  algod: algosdk.Algodv2
+  account: algosdk.Account
   appClient: AsaGoldSmartcontractClient
   ownerAddress: string
   nftAsset: number
 }
-const clientWithdrawNFT = async (data: clientBuyNftINput) => {
-  const { appClient, ownerAddress, nftAsset } = data
-  const appRef = await appClient.appClient.getAppReference()
-  var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset })
-
-  return await appClient.withdrawNft(
-    {
-      nftAsset: nftAsset
-    },
-    {
-      sendParams: {
-        fee: algokit.microAlgos(2000)
-      },
-      assets: [nftAsset],
-      accounts: [ownerAddress],
-      boxes: [boxNFT]
-    }
-  )
+const clientWithdrawNFT = async (input: clientBuyNftINput) => {
+  const txs = await clientWithdrawNFTTxs(input)
+  return await input.algod.sendRawTransaction(txs.map((tx) => tx.signTxn(input.account.sk))).do()
 }
 export default clientWithdrawNFT

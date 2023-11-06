@@ -1,9 +1,10 @@
 import algosdk from 'algosdk'
 import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmartcontractClient'
-import * as algokit from '@algorandfoundation/algokit-utils'
-import getBoxReferenceNFT from './getBoxReferenceNFT'
-import getBoxReferenceReserves from './getBoxReferenceReserves'
+import clientBuyNFTTxs from '../txs/clientBuyNFTTxs'
+
 interface clientBuyNftINput {
+  algod: algosdk.Algodv2
+  account: algosdk.Account
   appClient: AsaGoldSmartcontractClient
   buyerAddr: string
   assetBuy: number
@@ -12,46 +13,9 @@ interface clientBuyNftINput {
   feeCollectorAddress: string
   nftAsset: number
   goldToken: number
-  algod: algosdk.Algodv2
 }
-const clientBuyNFT = async (data: clientBuyNftINput) => {
-  const {
-    appClient,
-    buyerAddr,
-    assetBuy,
-    buyPrice,
-    sellerAddress,
-    feeCollectorAddress,
-    nftAsset,
-    goldToken,
-    algod
-  } = data
-
-  const params = await algod.getTransactionParams().do()
-  const appRef = await appClient.appClient.getAppReference()
-  var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset })
-  var boxReserves = getBoxReferenceReserves({ app: appRef.appId, goldToken })
-
-  const purchaseAssetDepositTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-    from: buyerAddr,
-    amount: buyPrice,
-    assetIndex: assetBuy,
-    to: appRef.appAddress,
-    suggestedParams: { ...params, fee: 1000 }
-  })
-  const buyNFT = await appClient.buyNft(
-    {
-      purchaseAssetDepositTx: purchaseAssetDepositTx,
-      nftAsset: nftAsset
-    },
-    {
-      sendParams: {
-        fee: algokit.microAlgos(3000)
-      },
-      boxes: [boxNFT, boxReserves],
-      assets: [nftAsset, assetBuy],
-      accounts: [appRef.appAddress, feeCollectorAddress, sellerAddress]
-    }
-  )
+const clientBuyNFT = async (input: clientBuyNftINput) => {
+  const txs = await clientBuyNFTTxs(input)
+  return await input.algod.sendRawTransaction(txs.map((tx) => tx.signTxn(input.account.sk))).do()
 }
 export default clientBuyNFT

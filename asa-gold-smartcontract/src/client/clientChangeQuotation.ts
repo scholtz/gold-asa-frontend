@@ -1,7 +1,9 @@
 import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmartcontractClient'
-import * as algokit from '@algorandfoundation/algokit-utils'
-import getBoxReferenceNFT from './getBoxReferenceNFT'
+import clientChangeQuotationTxs from '../txs/clientChangeQuotationTxs'
+import algosdk from 'algosdk'
 interface IClientChangePriceInput {
+  algod: algosdk.Algodv2
+  account: algosdk.Account
   appClient: AsaGoldSmartcontractClient
   nftAsset: number
   goldToken?: number | undefined
@@ -16,31 +18,7 @@ interface IClientChangePriceInput {
   asa5Price?: number | undefined
 }
 const clientChangeQuotation = async (input: IClientChangePriceInput) => {
-  const appRef = await input.appClient.appClient.getAppReference()
-  var boxNFT = getBoxReferenceNFT({ app: appRef.appId, nftAsset: input.nftAsset })
-  await input.appClient.changeQuotation(
-    {
-      nftAsset: input.nftAsset,
-      numbers: [
-        input.goldTokenPrice ?? 0,
-        input.goldToken ?? 0,
-        input.asa2Price ?? 0,
-        input.asa2 ?? 0,
-        input.asa3Price ?? 0,
-        input.asa3 ?? 0,
-        input.asa4Price ?? 0,
-        input.asa4 ?? 0,
-        input.asa5Price ?? 0,
-        input.asa5 ?? 0
-      ]
-    },
-    {
-      sendParams: {
-        fee: algokit.microAlgos(1000)
-      },
-      boxes: [boxNFT],
-      accounts: []
-    }
-  )
+  const txs = await clientChangeQuotationTxs(input)
+  return await input.algod.sendRawTransaction(txs.map((tx) => tx.signTxn(input.account.sk))).do()
 }
 export default clientChangeQuotation

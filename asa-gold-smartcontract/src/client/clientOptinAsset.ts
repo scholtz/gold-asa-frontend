@@ -1,18 +1,14 @@
+import algosdk from 'algosdk'
 import { AsaGoldSmartcontractClient } from '../../contracts/clients/AsaGoldSmartcontractClient'
-import * as algokit from '@algorandfoundation/algokit-utils'
+import clientOptinAssetTxs from '../txs/clientOptinAssetTxs'
 interface IClientOptinAssetInput {
+  algod: algosdk.Algodv2
+  account: algosdk.Account
   appClient: AsaGoldSmartcontractClient
   assetIndex: number
 }
 const clientOptinAsset = async (input: IClientOptinAssetInput) => {
-  // TODO .. fund account
-  return await input.appClient.optinAsset(
-    { nftAsset: input.assetIndex },
-    {
-      sendParams: {
-        fee: algokit.microAlgos(2000)
-      }
-    }
-  )
+  const txs = await clientOptinAssetTxs(input)
+  return await input.algod.sendRawTransaction(txs.map((tx) => tx.signTxn(input.account.sk))).do()
 }
 export default clientOptinAsset
