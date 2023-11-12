@@ -3,7 +3,7 @@ import Layout from '@/layouts/AuthLayout.vue'
 import Panel from 'primevue/panel'
 import Button from 'primevue/button'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
-import { useAppStore, resetConfiguration, useMainnet, useTestnet } from '@/stores/app'
+import { useAppStore, resetConfiguration, useMainnet, useTestnet, useSandnet } from '@/stores/app'
 
 const store = useAppStore()
 </script>
@@ -38,6 +38,7 @@ const store = useAppStore()
           <div class="col-12 md:col-10">
             <Button @click="useMainnet" class="my-2 mr-2">Algorand Mainnet</Button>
             <Button @click="useTestnet" class="m-2">Algorand Testnet</Button>
+            <Button @click="useSandnet" class="m-2">Algorand Sandbox</Button>
           </div>
         </div>
         <div class="field grid">

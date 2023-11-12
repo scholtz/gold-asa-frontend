@@ -21,7 +21,7 @@ export interface IState {
   currentTheme: string
   authState: AuthenticationStore
   authComponent: any
-  env: 'mainnet-v1.0' | 'testnet-v1.0'
+  env: 'mainnet-v1.0' | 'testnet-v1.0' | 'sandnet-v1'
   tokens: {
     gold: number
     usdc: number
@@ -61,6 +61,7 @@ const defaultState: IState = {
 interface IConfig {
   bff: string
   appId: number
+  env: 'mainnet-v1.0' | 'testnet-v1.0' | 'sandnet-v1'
   algodHost: string
   algodPort: number
   algodToken: string
@@ -78,6 +79,7 @@ try {
     configData = config.data as IConfig
     initState.bff = configData.bff
     initState.appId = configData.appId
+    initState.env = configData.env
     initState.algodHost = configData.algodHost
     initState.algodPort = configData.algodPort
     initState.tokens.gold = configData.goldToken
@@ -91,6 +93,7 @@ try {
 console.log('configData', configData)
 export const useAppStore = defineStore('app', () => {
   const PrimeVue = usePrimeVue()
+  let storageState: IState | null = null
   try {
     const stateFromStorage = localStorage.getItem('state')
     if (stateFromStorage) {
@@ -102,6 +105,7 @@ export const useAppStore = defineStore('app', () => {
       if (istate.tokens) initState.tokens = istate.tokens
       if (istate.env) initState.env = istate.env
       if (istate.customToken) initState.customToken = istate.customToken
+      storageState = istate
     }
   } catch (e: any) {
     console.error(e)
@@ -117,6 +121,7 @@ export const useAppStore = defineStore('app', () => {
   if (configData) {
     initState.appId = configData.appId
     initState.bff = configData.bff
+    initState.env = configData.env
     initState.algodHost = configData.algodHost
     initState.algodPort = configData.algodPort
     initState.algodToken = configData.algodToken
@@ -124,6 +129,13 @@ export const useAppStore = defineStore('app', () => {
     initState.tokens.algo = configData.algoToken
     initState.tokens.usdc = configData.usdcToken
     initState.tokens.btc = configData.btcToken
+    if (storageState?.env) {
+      // allow overide by the storage
+      initState.env = storageState?.env
+      initState.algodHost = storageState.algodHost
+      initState.algodPort = storageState.algodPort
+      initState.algodToken = storageState.algodToken
+    }
   }
   const state = reactive(initState)
   watch(
@@ -140,9 +152,6 @@ export const useAppStore = defineStore('app', () => {
       if (configData) {
         state.bff = configData.bff
         state.appId = configData.appId
-        state.algodHost = configData.algodHost
-        state.algodPort = configData.algodPort
-        state.algodToken = configData.algodToken
         state.tokens.gold = configData.goldToken
         state.tokens.algo = configData.algoToken
         state.tokens.usdc = configData.usdcToken
@@ -173,5 +182,14 @@ export const useTestnet = () => {
   app.state.algodPort = 443
   app.state.algodToken = ''
   app.state.env = 'testnet-v1.0'
+  //app.state.tokens = tokens
+}
+
+export const useSandnet = () => {
+  const app = useAppStore()
+  app.state.algodHost = 'http://localhost'
+  app.state.algodPort = 4001
+  app.state.algodToken = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+  app.state.env = 'sandnet-v1'
   //app.state.tokens = tokens
 }

@@ -1,7 +1,8 @@
 {
-  "bffServer": "https://sandbox-bff.asa.gold",
-  "bff": "https://localhost:44394",
+  "bff": "https://sandbox-bff.asa.gold",
+  "bffLocal": "https://localhost:44394",
   "appId": 4096,
+  "env": "sandnet-v1",
   "algodHost": "http://localhost",
   "algodPort": 4001,
   "algodToken": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

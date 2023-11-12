@@ -73,6 +73,12 @@ function logout() {
           class="align-self-center m-1"
         ></Badge>
         <Badge
+          v-else-if="store.state.env == 'sandnet-v1'"
+          value="Sandbox"
+          severity="warn"
+          class="align-self-center m-1"
+        ></Badge>
+        <Badge
           v-else
           :value="store.state.algodHost"
           severity="warn"
@@ -80,14 +86,6 @@ function logout() {
         ></Badge>
         <Badge value="IN DEVELOPMENT" severity="danger" class="align-self-center m-1"></Badge>
       </div>
-      <Button
-        severity="link"
-        class="flex flex-column align-content-center align-items-center align-self-center my-4 p-2 w-4rem"
-        @click="$router.push('/settings')"
-      >
-        <span class="pi pi-cog"></span>
-        <div class="m-1">Settings</div>
-      </Button>
       <Button
         severity="link"
         class="flex flex-column align-content-center align-items-center align-self-center m-4 p-2 w-4rem"

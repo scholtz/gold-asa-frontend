@@ -15,8 +15,8 @@ const toast = useToast()
 const store = useAppStore()
 const status = reactive({
   email: '',
-  terms: '2023-10-31',
-  gdpr: '2023-10-31',
+  terms: '2023-11-12',
+  gdpr: '2023-11-12',
   hasMarketing: false,
   sendingEmail: false,
   emailSent: false,
