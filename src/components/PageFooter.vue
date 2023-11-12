@@ -1,5 +1,5 @@
-<script setup type="ts">
-import Divider from "primevue/divider"
+<script setup lang="ts">
+import Divider from 'primevue/divider'
 </script>
 <template>
   <div class="footer">

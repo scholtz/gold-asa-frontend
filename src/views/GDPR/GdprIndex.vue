@@ -1,5 +1,5 @@
-<script setup type="ts">
-import Penel from "primevue/panel"
+<script setup lang="ts">
+import Penel from 'primevue/panel'
 </script>
 <template>
   <Penel header="Privacy Policy" class="m-4">
