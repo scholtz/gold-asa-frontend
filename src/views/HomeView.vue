@@ -25,7 +25,14 @@ import Panel from 'primevue/panel'
           Nov 1st 2023 : We have integrated email templates, and on email verification we airdop
           some algos so that web2 users have even better xp
         </li>
-        <li>We are working now on smart contract</li>
+        <li>Nov 5th 2023 : Smart contract has been finished with full test coverage</li>
+        <li>
+          Nov 6th 2023 : ASA.Gold
+          <a href="https://www.npmjs.com/package/algorand-asa-gold">NPM package</a> has been
+          published
+        </li>
+        <li>Nov 12th 2023 : Eshop is working</li>
+        <li>We are working now on bank itegration now</li>
       </ul>
       <p>Check our open source progress:</p>
       <ul>
@@ -46,9 +53,21 @@ import Panel from 'primevue/panel'
           >
         </li>
         <li>
+          EShop smart contract:
+          <a href="https://github.com/scholtz/gold-asa-frontend/tree/main/asa-gold-smartcontract"
+            >https://github.com/scholtz/gold-asa-frontend/tree/main/asa-gold-smartcontract</a
+          >
+        </li>
+        <li>
           AuthComponent:
           <a href="https://github.com/scholtz/algorand-authentication-component-vue"
             >https://github.com/scholtz/algorand-authentication-component-vue</a
+          >
+        </li>
+        <li>
+          NPM package:
+          <a href="https://www.npmjs.com/package/algorand-asa-gold"
+            >https://www.npmjs.com/package/algorand-asa-gold</a
           >
         </li>
       </ul>

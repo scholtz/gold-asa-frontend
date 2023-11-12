@@ -35,12 +35,12 @@ import Penel from "primevue/panel"
     <ul>
       <li>Name</li>
       <li>Lastname</li>
-      <li>Address</li>
-      <li>Phone number</li>
-      <li>Email address</li>
-      <li>IP address</li>
+      <li>Addresses</li>
+      <li>Phone numbers</li>
+      <li>Email addresses</li>
+      <li>IP addresses</li>
       <li>Blockchain accounts</li>
-      <li>List of purchases</li>
+      <li>Bank accounts</li>
     </ul>
 
     <p>If you register as legal entity, these GDPR does not apply.</p>
@@ -97,7 +97,7 @@ import Penel from "primevue/panel"
       your data for 10 years.
     </p>
 
-    <h2>8. supervisory authority</h2>
+    <h2>8. Supervisory authority</h2>
     <p>
       The supervisory authority in the Slovak Republic is the Office for the Protection of Personal
       Data of the Slovak Republic, with headquarters at Hraničná 12, 820 07 Bratislava 27,
@@ -112,6 +112,22 @@ import Penel from "primevue/panel"
     </p>
 
     <h2>10. Validity</h2>
+    <p>
+      This Privacy Policy has effect on you with the date when you validate your first email. With
+      validating the email you optin or optout to receive marketing communication. To stop receiving
+      marketing communication, please do new email validation without optin to the marketing
+      communication option and confirm with code received to your email address.
+    </p>
+    <p>
+      This Privacy Policy may be updated. If you do not agree with the updated version, you must
+      file objection within 7 days from the time of the update to support@asa.gold. If you do not
+      object you comply with new Privacy Policy.
+    </p>
+    <p>
+      If any of the points in this Privacy Policy is not valid accoring to current legislation, the
+      point is replaced with valid legislation. This does not have effect on the document as a
+      whole.
+    </p>
     <p>This Privacy Policy is valid from 12.11.2023.</p>
     <p>This Privacy Policy is effective from 12.11.2023.</p>
   </Penel>

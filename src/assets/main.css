@@ -34,6 +34,9 @@ body {
 h1 {
   color: #d4aa00ff;
 }
+h2 {
+  color: #d4aa00ff;
+}
 
 .p-toggleable-content {
   display: flex;

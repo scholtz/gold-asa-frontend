@@ -26,6 +26,7 @@ import Divider from "primevue/divider"
           <RouterLink to="/terms/latest">Terms and agreement, MiCA regulatory documents</RouterLink>
         </div>
         <div><RouterLink to="/settings">Settings</RouterLink></div>
+        <div><RouterLink to="/price-list">Price list</RouterLink></div>
       </div>
       <div class="col-12 text-center">&copy; Scholtz &amp; Company, jsa 2023</div>
     </div>
