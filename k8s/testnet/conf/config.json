@@ -1,0 +1,11 @@
+{
+  "bff": "https://bff.asa.gold",
+  "appId": 4096,
+  "algodHost": "https://testnet-api.algonode.cloud",
+  "algodPort": 443,
+  "algodToken": "",
+  "goldToken": 4100,
+  "usdcToken": 31566704,
+  "algoToken": 0,
+  "btcToken": 386192725
+}
