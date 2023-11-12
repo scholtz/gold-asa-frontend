@@ -46,7 +46,7 @@ async function buy(asset: number) {
       buyerAddr: store.state.authState.account,
       assetBuy: props.assetId,
       buyPrice: getPrice(),
-      sellerAddress: props.item.state.seller,
+      sellerAddress: props.item.state.sellerAddr,
       feeCollectorAddress: 'H27RABAZCD4AK2AFQQDO2JJYVACGVODA4ITJWBMCI3AGYGHO46JAAXO6LU',
       nftAsset: props.item.asa,
       goldToken: store.state.tokens.gold,

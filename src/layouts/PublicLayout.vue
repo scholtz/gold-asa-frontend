@@ -4,7 +4,7 @@ import TopHeader from '@/components/TopHeader.vue'
 <template>
   <div class="flex flex-column justify-content-center min-h-full p-0 m-0">
     <Toast />
-    <TopHeader />
+    <TopHeader :hideTopMenu="false" />
     <div class="flex-grow-1 flex flex-column">
       <slot />
     </div>

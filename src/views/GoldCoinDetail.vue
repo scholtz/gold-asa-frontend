@@ -86,12 +86,13 @@ const closeFullScreen = () => {
 
   if (document.exitFullscreen) {
     document.exitFullscreen()
-  } else if (document.mozCancelFullScreen) {
-    document.mozCancelFullScreen()
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen()
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen()
+    // } else if (document.mozCancelFullScreen) {
+    //   document.mozCancelFullScreen()
+    // } else if (document.webkitExitFullscreen) {
+    //   document.webkitExitFullscreen()
+    // } else if (document.msExitFullscreen) {
+    //   document.msExitFullscreen()
+    // }
   }
 }
 const bindDocumentListeners = () => {
@@ -132,7 +133,7 @@ async function resetView() {
 </script>
 
 <template>
-  <Layout>
+  <Layout :hideTopMenu="false">
     <div class="grid" v-if="product">
       <div class="md:col-4">
         <Galleria

@@ -4,7 +4,7 @@ import Panel from 'primevue/panel'
 </script>
 
 <template>
-  <Layout>
+  <Layout :hideTopMenu="false">
     <Panel header="We will go to mainnet soon" class="m-4">
       <p>This web is still under construction, but we plan to finish at most on November 15th.</p>
       <p>Progress we have made so far:</p>

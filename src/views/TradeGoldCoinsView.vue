@@ -4,7 +4,7 @@ import ProductsCarousel from '@/components/ProductsCarousel.vue'
 </script>
 
 <template>
-  <Layout>
+  <Layout :hideTopMenu="false">
     <ProductsCarousel />
   </Layout>
 </template>
