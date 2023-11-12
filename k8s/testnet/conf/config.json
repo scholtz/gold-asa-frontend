@@ -1,5 +1,5 @@
 {
-  "bff": "https://bff.asa.gold",
+  "bff": "https://testnet-bff.asa.gold",
   "appId": 4096,
   "algodHost": "https://testnet-api.algonode.cloud",
   "algodPort": 443,

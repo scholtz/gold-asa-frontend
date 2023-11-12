@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: asagold
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asagold-web-sandbox-deployment
+  namespace: asagold
+spec:
+  selector:
+    matchLabels:
+      app: asagold-web-sandbox
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: asagold-web-sandbox
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: asagold-web-sandbox
+          image: scholtz2/asa-gold-fe:1.2023.11.12-main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 2
+            terminationGracePeriodSeconds: 1
+          volumeMounts:
+            - name: asagold-sandbox-conf
+              mountPath: /app/config.json
+              subPath: config.json
+      volumes:
+        - name: asagold-sandbox-conf
+          configMap:
+            name: asagold-sandbox-conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: asagold-sandbox-service
+  namespace: asagold
+spec:
+  type: ClusterIP
+  selector:
+    app: asagold-web-sandbox
+  ports:
+    - name: http
+      protocol: TCP
+      appProtocol: http
+      port: 8080
+      targetPort: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: asagold-web-sandbox
+  namespace: asagold
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  tls:
+    - hosts:
+        - sandbox.asa.gold
+        - www.sandbox.asa.gold
+      secretName: tls-sandbox.asa.gold
+  rules:
+    - host: sandbox.asa.gold
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: asagold-sandbox-service
+                port:
+                  number: 8080
+    - host: www.sandbox.asa.gold
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: asagold-sandbox-service
+                port:
+                  number: 8080
