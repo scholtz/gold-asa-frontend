@@ -33,24 +33,24 @@ export {
   clientWithdrawNFT
 }
 
-import clientBuyNFTtxs from './txs/clientBuyNFTTxs'
-import clientChangeQuotationtxs from './txs/clientChangeQuotationTxs'
-import clientDepositNFTtxs from './txs/clientDepositNFTTxs'
-import clientNotForSaletxs from './txs/clientNotForSaleTxs'
-import clientOptinAssettxs from './txs/clientOptinAssetTxs'
-import clientRequestParcelDeliverytxs from './txs/clientRequestParcelDeliveryTxs'
-import clientSellAssetWithDeposittxs from './txs/clientSellAssetWithDepositTxs'
-import clientSetParcelDeliverytxs from './txs/clientSetParcelDeliveryTxs'
-import clientWithdrawNFTtxs from './txs/clientWithdrawNFTTxs'
+import clientBuyNFTTxs from './txs/clientBuyNFTTxs'
+import clientChangeQuotationTxs from './txs/clientChangeQuotationTxs'
+import clientDepositNFTTxs from './txs/clientDepositNFTTxs'
+import clientNotForSaleTxs from './txs/clientNotForSaleTxs'
+import clientOptinAssetTxs from './txs/clientOptinAssetTxs'
+import clientRequestParcelDeliveryTxs from './txs/clientRequestParcelDeliveryTxs'
+import clientSellAssetWithDepositTxs from './txs/clientSellAssetWithDepositTxs'
+import clientSetParcelDeliveryTxs from './txs/clientSetParcelDeliveryTxs'
+import clientWithdrawNFTTxs from './txs/clientWithdrawNFTTxs'
 
 export {
-  clientBuyNFTtxs,
-  clientChangeQuotationtxs,
-  clientDepositNFTtxs,
-  clientNotForSaletxs,
-  clientOptinAssettxs,
-  clientRequestParcelDeliverytxs,
-  clientSellAssetWithDeposittxs,
-  clientSetParcelDeliverytxs,
-  clientWithdrawNFTtxs
+  clientBuyNFTTxs,
+  clientChangeQuotationTxs,
+  clientDepositNFTTxs,
+  clientNotForSaleTxs,
+  clientOptinAssetTxs,
+  clientRequestParcelDeliveryTxs,
+  clientSellAssetWithDepositTxs,
+  clientSetParcelDeliveryTxs,
+  clientWithdrawNFTTxs
 }

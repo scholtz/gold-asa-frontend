@@ -3,6 +3,7 @@ interface IGetBoxReferenceReservesInput {
   app: number | bigint
   goldToken: number
 }
+import { Buffer } from 'buffer'
 const getBoxReferenceReserves = (input: IGetBoxReferenceReservesInput) => {
   var box: algosdk.BoxReference = {
     appIndex: Number(input.app),

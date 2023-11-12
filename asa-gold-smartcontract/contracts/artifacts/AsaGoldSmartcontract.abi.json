@@ -9,9 +9,23 @@
           "name": "fee",
           "type": "uint64",
           "desc": ""
+        },
+        {
+          "name": "governor",
+          "type": "address",
+          "desc": ""
         }
       ],
       "desc": "",
+      "returns": {
+        "type": "void",
+        "desc": ""
+      }
+    },
+    {
+      "name": "updateApplication",
+      "args": [],
+      "desc": "Creator is allowed to update application",
       "returns": {
         "type": "void",
         "desc": ""

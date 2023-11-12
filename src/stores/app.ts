@@ -1,6 +1,7 @@
 import { reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { usePrimeVue } from 'primevue/config'
+import axios from 'axios'
 
 import { AuthenticationStore } from 'algorand-authentication-component-vue'
 export interface IAccount {
@@ -12,6 +13,7 @@ export interface IAccount {
   funded: number
 }
 export interface IState {
+  bff: string
   algodHost: string
   algodPort: number
   algodToken: string
@@ -28,6 +30,7 @@ export interface IState {
   }
   customToken: number | null
   account: IAccount | null
+  appId: number
   reloadAccount(): Promise<void>
 }
 const tokens = {
@@ -40,6 +43,7 @@ const reloadAccount = async (): Promise<void> => {
   console.log('reload account base')
 }
 const defaultState: IState = {
+  bff: 'https://bff.asa.gold',
   algodHost: 'https://testnet-api.algonode.cloud',
   algodPort: 443,
   algodToken: '',
@@ -51,11 +55,42 @@ const defaultState: IState = {
   authComponent: null,
   env: 'testnet-v1.0',
   account: null,
+  appId: 0,
   reloadAccount: reloadAccount
 }
+interface IConfig {
+  bff: string
+  appId: number
+  algodHost: string
+  algodPort: number
+  algodToken: string
+  goldToken: number
+  usdcToken: number
+  algoToken: number
+  btcToken: number
+}
+
+const initState = defaultState
+let configData: IConfig | null = null
+try {
+  const config = await axios.get('/config.json')
+  if (config && config.data) {
+    configData = config.data as IConfig
+    initState.bff = configData.bff
+    initState.appId = configData.appId
+    initState.algodHost = configData.algodHost
+    initState.algodPort = configData.algodPort
+    initState.tokens.gold = configData.goldToken
+    initState.tokens.algo = configData.algoToken
+    initState.tokens.usdc = configData.usdcToken
+    initState.tokens.btc = configData.btcToken
+  }
+} catch (e: any) {
+  console.error(e.message)
+}
+console.log('configData', configData)
 export const useAppStore = defineStore('app', () => {
   const PrimeVue = usePrimeVue()
-  const initState = defaultState
   try {
     const stateFromStorage = localStorage.getItem('state')
     if (stateFromStorage) {
@@ -78,6 +113,18 @@ export const useAppStore = defineStore('app', () => {
     PrimeVue.changeTheme(initState.currentTheme, initState.theme, 'theme-link')
     initState.currentTheme = initState.theme
   }
+
+  if (configData) {
+    initState.appId = configData.appId
+    initState.bff = configData.bff
+    initState.algodHost = configData.algodHost
+    initState.algodPort = configData.algodPort
+    initState.algodToken = configData.algodToken
+    initState.tokens.gold = configData.goldToken
+    initState.tokens.algo = configData.algoToken
+    initState.tokens.usdc = configData.usdcToken
+    initState.tokens.btc = configData.btcToken
+  }
   const state = reactive(initState)
   watch(
     state,
@@ -89,6 +136,17 @@ export const useAppStore = defineStore('app', () => {
         console.log(`setting theme from ${state.currentTheme} to ${state.theme}`)
         PrimeVue.changeTheme(state.currentTheme, state.theme, 'theme-link')
         state.currentTheme = state.theme
+      }
+      if (configData) {
+        state.bff = configData.bff
+        state.appId = configData.appId
+        state.algodHost = configData.algodHost
+        state.algodPort = configData.algodPort
+        state.algodToken = configData.algodToken
+        state.tokens.gold = configData.goldToken
+        state.tokens.algo = configData.algoToken
+        state.tokens.usdc = configData.usdcToken
+        state.tokens.btc = configData.btcToken
       }
     },
     { deep: true }
@@ -107,7 +165,7 @@ export const useMainnet = () => {
   app.state.algodPort = 443
   app.state.algodToken = ''
   app.state.env = 'mainnet-v1.0'
-  app.state.tokens = tokens
+  //app.state.tokens = tokens
 }
 export const useTestnet = () => {
   const app = useAppStore()
@@ -115,5 +173,5 @@ export const useTestnet = () => {
   app.state.algodPort = 443
   app.state.algodToken = ''
   app.state.env = 'testnet-v1.0'
-  app.state.tokens = tokens
+  //app.state.tokens = tokens
 }

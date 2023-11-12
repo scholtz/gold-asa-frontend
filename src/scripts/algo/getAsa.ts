@@ -1,12 +1,14 @@
 import type algosdk from 'algosdk'
 interface ICache {
-  time: Date
+  time: string
   asset: Record<string, any>
 }
-const getAsa = async (
-  client: algosdk.Algodv2,
+interface IInput {
+  client: algosdk.Algodv2
   assetId: number
-): Promise<Record<string, any> | undefined> => {
+}
+const getAsa = async (input: IInput): Promise<Record<string, any> | undefined> => {
+  const { client, assetId } = input
   console.log('client', client)
   if (!client) return undefined
   if (assetId == 0) {
@@ -28,8 +30,9 @@ const getAsa = async (
     try {
       const cacheObj = JSON.parse(cache) as ICache
       const compareTime = new Date()
-      compareTime.setDate(new Date().getDate() + 1)
-      if (cacheObj.time > compareTime) {
+      const cacheTime = new Date(cacheObj.time)
+      compareTime.setDate(new Date().getDate() - 1)
+      if (cacheTime > compareTime) {
         //console.log('cacheObj.asset', cacheObj.asset)
         return cacheObj.asset
       }
@@ -40,7 +43,7 @@ const getAsa = async (
   const asset = await client.getAssetByID(assetId).do()
   //console.log('asset', asset)
   if (asset.params) {
-    const cacheValue: ICache = { time: new Date(), asset: asset }
+    const cacheValue: ICache = { time: new Date().toISOString(), asset: asset }
     localStorage.setItem(cacheKey, JSON.stringify(cacheValue))
     return asset
   }

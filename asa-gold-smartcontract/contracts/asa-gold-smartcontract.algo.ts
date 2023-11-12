@@ -43,9 +43,15 @@ class AsaGoldSmartcontract extends Contract {
   governor = GlobalStateKey<Address>({ key: 'g' }) // account which receives royalty payments
   fee = GlobalStateKey<uint64>({ key: 'f' })
 
-  createApplication(fee: uint64): void {
-    this.governor.value = this.txn.sender
+  createApplication(fee: uint64, governor: Address): void {
+    this.governor.value = governor
     this.fee.value = fee
+  }
+  /**
+   * Creator is allowed to update application
+   */
+  updateApplication(): void {
+    assert(this.txn.sender === this.app.creator)
   }
   /**
    * Deposit Gold coin NFT, set seller owner and price for sale
@@ -66,6 +72,7 @@ class AsaGoldSmartcontract extends Contract {
   ): void {
     assert(!this.data(nftDepositTx.xferAsset).exists) // the asset must not be defined
     assert(weight > 0)
+    assert(price > 0)
     assert(tokenAsset.reserve.hasAsset(tokenAsset)) // check if the reserve address is active
     const newItem: AsaData = {
       state: 1,
@@ -225,6 +232,13 @@ class AsaGoldSmartcontract extends Contract {
       asset5: Asset.fromID(numbers[9])
     }
 
+    assert(
+      (numbers[0] > 0 && numbers[1] > 0) ||
+        (numbers[2] > 0 && numbers[3] > 0) ||
+        (numbers[4] > 0 && numbers[5] > 0) ||
+        (numbers[6] > 0 && numbers[7] > 0) ||
+        (numbers[8] > 0 && numbers[9] > 0)
+    )
     assert(this.txn.sender == old.owner) // only owner can change quotation
     // check if nft is present when put on sale
     assert(this.app.address.assetBalance(nftAsset) == 1)
@@ -333,7 +347,16 @@ class AsaGoldSmartcontract extends Contract {
   public depositNFT(nftDepositTx: AssetTransferTxn, seller: Address, numbers: uint64[]): void {
     assert(this.data(nftDepositTx.xferAsset).exists) // the asset must not be defined
     const old = this.data(nftDepositTx.xferAsset).value
-
+    let newState = 3 // alow deposit to sale state
+    if (
+      numbers[0] == 0 &&
+      numbers[2] == 0 &&
+      numbers[4] == 0 &&
+      numbers[6] == 0 &&
+      numbers[8] == 0
+    ) {
+      newState = 2 // alow deposit to not for sale state
+    }
     const newItem: AsaData = {
       state: 3,
       seller: seller,
@@ -360,7 +383,7 @@ class AsaGoldSmartcontract extends Contract {
 
     // check if nft is present when put on sale
     assert(this.app.address.assetBalance(nftDepositTx.xferAsset) == 1)
-    assert(old.state == 2 || old.state == 3) // allow withdraw NFT only if in secondary market. if parcel requested do not allow
+    assert(old.state == 2 || old.state == 3) // allow deposit NFT only if in secondary market. if parcel requested do not allow
 
     // rewrite
     this.data(nftDepositTx.xferAsset).value = newItem

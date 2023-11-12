@@ -4,6 +4,7 @@ interface IGetBoxReferenceNFTInput {
   app: number | bigint
   nftAsset: number
 }
+import { Buffer } from 'buffer'
 const getBoxReferenceNFT = (input: IGetBoxReferenceNFTInput) => {
   var box: algosdk.BoxReference = {
     appIndex: Number(input.app),

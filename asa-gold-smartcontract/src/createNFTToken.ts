@@ -1,6 +1,6 @@
 import algosdk, { Algodv2 } from 'algosdk'
 import * as algokit from '@algorandfoundation/algokit-utils'
-
+import { Buffer } from 'buffer'
 interface ICreateNFTTokenInput {
   account: algosdk.Account
   algod: Algodv2
@@ -15,7 +15,10 @@ const createNFTToken = async (input: ICreateNFTTokenInput) => {
     defaultFrozen: false,
     total: 1,
     assetName: 'GoldCoin',
-    assetURL: 'https://asa.gold',
+    assetURL: 'ipfs://QmXFHvaPaQ6wguXqS6aTWNYs7d9aTqQSsF6vP7zebmUpye#arc3',
+    assetMetadataHash: new Uint8Array(
+      Buffer.from('d/cSwHxoGvdmtlbYPJ+iIlblzotRcixQ/iX0jxZ3Vgs=', 'base64')
+    ),
     manager: input.account.addr,
     unitName: 'GoldCoin',
     suggestedParams: params

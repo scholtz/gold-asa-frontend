@@ -137,6 +137,16 @@ onMounted(async () => {
         >MiCA legal framework</a
       >, we need you to accept our terms and conditions and GDRP policy.
     </p>
+    <p v-if="store.state.account?.email">
+      Your verified email is {{ store.state.account.email }}.
+      <span v-if="store.state.account?.marketingConsent">
+        You have opted in to receive special offers and other marketing communication. You can opt
+        out by filling the form below and uncheck special offers checkbox.</span
+      ><span v-else>
+        You have not opted in to receive special offers and other marketing communication. You can
+        opt in by filling the form below and uncheck special offers checkbox.</span
+      >
+    </p>
     <div v-if="!route.params.code">
       <div class="field grid">
         <label for="email" class="col-12 mb-2 md:col-2 md:mb-0">Email</label>

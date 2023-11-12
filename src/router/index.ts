@@ -20,6 +20,11 @@ const router = createRouter({
       component: () => import('../views/TradeGoldCoinsView.vue')
     },
     {
+      path: '/coin/:slugName',
+      name: 'auth-trade-gold-coin',
+      component: () => import('../views/GoldCoinDetail.vue')
+    },
+    {
       path: '/proof-of-reserve',
       name: 'auth-proof-of-reserve',
       component: () => import('../views/ProofOfReserveView.vue')
@@ -68,6 +73,11 @@ const router = createRouter({
       path: '/gdpr/:id',
       name: 'gdpr',
       component: () => import('../views/GDPR/GdprIndex.vue')
+    },
+    {
+      path: '/user-profile',
+      name: 'user-profile',
+      component: () => import('../views/Settings/UserProfile.vue')
     }
   ]
 })

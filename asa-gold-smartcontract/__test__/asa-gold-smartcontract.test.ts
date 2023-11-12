@@ -21,7 +21,10 @@ import clientNotForSale from '../src/client/clientNotForSale'
 import clientRequestParcelDelivery from '../src/client/clientRequestParcelDelivery'
 import clientSetParcelDelivery from '../src/client/clientSetParcelDelivery'
 import clientDepositNFT from '../src/client/clientDepositNFT'
+import { exit } from 'process'
 
+const appId = process.env.appId ? parseInt(process.env.appId) : 0
+console.log('APPID', appId)
 const fixture = algorandFixture()
 
 let appClient: AsaGoldSmartcontractClient
@@ -29,6 +32,7 @@ let goldToken: number
 let usdcToken: number
 let appRef: AppMetadata | AppReference
 let accountDeploy: algosdk.Account
+
 let accountDeployGoldToken: algosdk.Account
 let buyer: algosdk.Account
 let buyer2: algosdk.Account
@@ -38,39 +42,93 @@ describe('AsaGoldSmartcontract', () => {
   beforeAll(async () => {
     await fixture.beforeEach()
     const { algod, kmd, generateAccount } = fixture.context
-    accountDeploy = await generateAccount({
-      initialFunds: new AlgoAmount({
-        algos: 10
-      }),
-      suppressLog: false
-    })
+    accountDeploy = process.env.accountDeploy
+      ? algosdk.mnemonicToSecretKey(process.env.accountDeploy)
+      : await generateAccount({
+          initialFunds: new AlgoAmount({
+            algos: 100
+          }),
+          suppressLog: false
+        })
 
-    appClient = getClient({ appId: 0, sender: accountDeploy, algod })
-    const app = await appClient.create.createApplication({ fee: 10 }) // 10/10000 = 0.1%
+    await algokit.ensureFunded(
+      {
+        accountToFund: accountDeploy.addr,
+        minSpendingBalance: algokit.algos(100) // algokit.microAlgos(392200)
+      },
+      algod,
+      kmd
+    )
+    console.log(`accountDeploy:${algosdk.secretKeyToMnemonic(accountDeploy.sk)}`)
+    if (appId) {
+      appClient = getClient({ appId: appId, sender: accountDeploy, algod })
+      const app = await appClient.update.updateApplication({})
+    } else {
+      appClient = getClient({ appId: 0, sender: accountDeploy, algod })
+      const app = await appClient.create.createApplication({
+        fee: 10,
+        governor: accountDeploy.addr
+      }) // 10/10000 = 0.1%
+    }
+
     appRef = await appClient.appClient.getAppReference()
+    console.log('appRef.appId', appRef.appId)
+    accountDeployGoldToken = process.env.accountDeployGoldToken
+      ? algosdk.mnemonicToSecretKey(process.env.accountDeployGoldToken)
+      : await generateAccount({
+          initialFunds: new AlgoAmount({
+            algos: 100
+          }),
+          suppressLog: false
+        })
 
-    accountDeployGoldToken = await generateAccount({
-      initialFunds: new AlgoAmount({
-        algos: 10
-      }),
-      suppressLog: false
-    })
+    await algokit.ensureFunded(
+      {
+        accountToFund: accountDeployGoldToken.addr,
+        minSpendingBalance: algokit.algos(100) // algokit.microAlgos(392200)
+      },
+      algod,
+      kmd
+    )
+    console.log(`accountDeployGoldToken:${algosdk.secretKeyToMnemonic(accountDeployGoldToken.sk)}`)
+    buyer = process.env.buyer
+      ? algosdk.mnemonicToSecretKey(process.env.buyer)
+      : await generateAccount({
+          initialFunds: new AlgoAmount({
+            algos: 100
+          }),
+          suppressLog: false
+        })
+    await algokit.ensureFunded(
+      {
+        accountToFund: buyer.addr,
+        minSpendingBalance: algokit.algos(100) // algokit.microAlgos(392200)
+      },
+      algod,
+      kmd
+    )
+    console.log(`buyer:${algosdk.secretKeyToMnemonic(buyer.sk)}`)
+    buyer2 = process.env.buyer2
+      ? algosdk.mnemonicToSecretKey(process.env.buyer2)
+      : await generateAccount({
+          initialFunds: new AlgoAmount({
+            algos: 100
+          }),
+          suppressLog: false
+        })
+    await algokit.ensureFunded(
+      {
+        accountToFund: buyer2.addr,
+        minSpendingBalance: algokit.algos(100) // algokit.microAlgos(392200)
+      },
+      algod,
+      kmd
+    )
+    console.log(`buyer2:${algosdk.secretKeyToMnemonic(buyer2.sk)}`)
 
-    buyer = await generateAccount({
-      initialFunds: new AlgoAmount({
-        algos: 10
-      }),
-      suppressLog: false
-    })
-
-    buyer2 = await generateAccount({
-      initialFunds: new AlgoAmount({
-        algos: 10
-      }),
-      suppressLog: false
-    })
-
-    goldToken = await createGoldToken({ accountDeployGoldToken, algod })
+    goldToken = process.env.goldToken
+      ? parseInt(process.env.goldToken)
+      : await createGoldToken({ accountDeployGoldToken, algod })
     console.log(`goldTokenTx done ${goldToken}`)
 
     // accountDeploy - opt in to all assets where trade can be done.. as fee collector
@@ -129,11 +187,21 @@ describe('AsaGoldSmartcontract', () => {
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
     console.log(`nftToken opted in to app done ${nftAsset}`)
-
-    var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
+    console.log('appId', appId, appRef)
+    var appClientSeller = getClient({ appId: appId ? appId : appRef.appId, sender: seller, algod })
 
     var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
 
+    console.log('clientSellAssetWithDeposit', {
+      algod,
+      account: seller,
+      appClient: appClientSeller,
+      nftOwnerAddress: seller.addr,
+      vaultOwnerAddress: accountDeploy.addr,
+      goldTokenAssetReserveAccount,
+      nftAsset,
+      goldToken
+    })
     await clientSellAssetWithDeposit({
       algod,
       account: seller,
@@ -1139,6 +1207,117 @@ describe('AsaGoldSmartcontract', () => {
       sellerAddress: buyer2.addr,
       asa2: usdcToken,
       asa2Price: 100_000_000
+    })
+    console.log('clientDepositNFT done')
+    await clientRequestParcelDelivery({
+      algod,
+      account: buyer2,
+      appClient: appClientBuyer2,
+      nftAsset
+    })
+    console.log('clientRequestParcelDelivery done')
+    await clientSetParcelDelivery({ algod, account: accountDeploy, appClient: appClient, nftAsset })
+    console.log('clientSetParcelDelivery done')
+  })
+
+  test('2->2 depositNFT test', async () => {
+    const { algod, generateAccount } = fixture.context
+    const seller = await generateAccount({
+      initialFunds: new AlgoAmount({
+        algos: 1
+      }),
+      suppressLog: false
+    })
+
+    const nftAsset = await createNFTToken({ account: seller, algod })
+
+    console.log(`nftTokenTx done ${nftAsset}`)
+    await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
+    console.log(`nftToken opted in to app done ${nftAsset}`)
+
+    var appClientSeller = getClient({ appId: appRef.appId, sender: seller, algod })
+
+    var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
+
+    await clientSellAssetWithDeposit({
+      algod,
+      account: seller,
+      appClient: appClientSeller,
+      nftOwnerAddress: seller.addr,
+      vaultOwnerAddress: accountDeploy.addr,
+      goldTokenAssetReserveAccount,
+      nftAsset,
+      goldToken
+    })
+    console.log('sellAssetWithDeposit done')
+
+    await clientChangePrice({
+      algod,
+      account: seller,
+      appClient: appClientSeller,
+      nftAsset,
+      goldToken,
+      goldTokenPrice: 102000
+    })
+    console.log('changePrice done')
+
+    console.log(
+      'appRef.appAddress,accountDeploy,seller,accountDeployGoldToken,buyer',
+      appRef.appAddress,
+      accountDeploy.addr,
+      seller.addr,
+      accountDeployGoldToken.addr,
+      buyer.addr
+    )
+    console.log('nftAsset, goldToken', nftAsset, goldToken)
+
+    var appClientBuyer = getClient({ appId: appRef.appId, sender: buyer, algod })
+    const optin = await optInToAsset({ account: buyer, assetIndex: goldToken, algod })
+    console.log('optinBuyerToGold done', optin)
+    const buyerDepositGold = await doAssetTransfer({
+      from: accountDeployGoldToken,
+      to: buyer.addr,
+      assetIndex: goldToken,
+      amount: 102000,
+      algod
+    })
+    console.log('fundBuyerWithGold done', buyerDepositGold)
+    await optInToAsset({ account: accountDeploy, assetIndex: goldToken, algod })
+    console.log('accountDeploy optin goldToken done')
+    await clientBuyNft({
+      account: buyer,
+      appClient: appClientBuyer,
+      buyerAddr: buyer.addr,
+      algod,
+      assetBuy: goldToken,
+      buyPrice: 102000,
+      feeCollectorAddress: accountDeploy.addr,
+      goldToken: goldToken,
+      nftAsset: nftAsset,
+      sellerAddress: goldTokenAssetReserveAccount
+    })
+    console.log('buyNFT done')
+    await optInToAsset({ account: buyer, assetIndex: nftAsset, algod })
+    await clientWithdrawNFT({
+      algod,
+      account: buyer,
+      appClient: appClientBuyer,
+      nftAsset,
+      ownerAddress: buyer.addr
+    })
+    console.log('clientWithdrawNFT done')
+
+    await optInToAsset({ account: buyer2, assetIndex: nftAsset, algod })
+    await doAssetTransfer({ algod, amount: 1, assetIndex: nftAsset, from: buyer, to: buyer2.addr })
+
+    var appClientBuyer2 = getClient({ appId: appRef.appId, sender: buyer2, algod })
+    await clientDepositNFT({
+      algod,
+      account: buyer2,
+      appClient: appClientBuyer2,
+      nftAsset,
+      ownerAddress: buyer2.addr,
+      sellerAddress: buyer2.addr
     })
     console.log('clientDepositNFT done')
     await clientRequestParcelDelivery({

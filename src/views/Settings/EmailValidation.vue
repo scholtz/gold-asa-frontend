@@ -5,7 +5,7 @@ import EmailValidationComponent from '@/components/EmailValidationComponent.vue'
 </script>
 
 <template>
-  <Layout>
+  <Layout :hideTopMenu="true">
     <MenuLevel2Settings />
     <EmailValidationComponent />
   </Layout>

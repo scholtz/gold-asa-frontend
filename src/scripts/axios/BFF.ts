@@ -1,9 +1,10 @@
 import axios from 'axios'
+import { useAppStore } from '@/stores/app'
+import type IProfile from '@/types/IProfile'
 
-const server = 'https://bff.asa.gold'
-//const server = 'https://localhost:44394'
 const bffAccount = async (arc14header: string) => {
-  const ret = await axios.get(`${server}/api/v1/account`, {
+  const store = useAppStore()
+  const ret = await axios.get(`${store.state.bff}/api/v1/account`, {
     headers: {
       Authorization: arc14header
     }
@@ -18,12 +19,13 @@ const bffSendVerificationEmail = async (
   gdpr: string,
   hasMarketing: boolean
 ) => {
+  const store = useAppStore()
   const form = new FormData()
   form.append('email', email)
   form.append('terms', terms)
   form.append('gdpr', gdpr)
   form.append('marketingConsent', String(hasMarketing))
-  const ret = await axios.postForm(`${server}/api/v1/send-verification-email`, form, {
+  const ret = await axios.postForm(`${store.state.bff}/api/v1/send-verification-email`, form, {
     headers: {
       Authorization: arc14header
     }
@@ -31,9 +33,10 @@ const bffSendVerificationEmail = async (
   return ret.data
 }
 const bffSendVerifyEmailCode = async (arc14header: string, code: string) => {
+  const store = useAppStore()
   const form = new FormData()
   form.append('code', code)
-  const ret = await axios.postForm(`${server}/api/v1/verify-code-from-email`, form, {
+  const ret = await axios.postForm(`${store.state.bff}/api/v1/verify-code-from-email`, form, {
     headers: {
       Authorization: arc14header
     }
@@ -41,4 +44,30 @@ const bffSendVerifyEmailCode = async (arc14header: string, code: string) => {
   return ret.data
 }
 
-export { bffAccount, bffSendVerificationEmail, bffSendVerifyEmailCode }
+const bffGetProfile = async (arc14header: string) => {
+  const store = useAppStore()
+  const ret = await axios.get(`${store.state.bff}/api/v1/profile`, {
+    headers: {
+      Authorization: arc14header
+    }
+  })
+  return ret.data
+}
+const bffUpdateProfile = async (profile: IProfile, arc14header: string) => {
+  const store = useAppStore()
+  const ret = await axios.post(`${store.state.bff}/api/v1/update-profile`, profile, {
+    headers: {
+      Authorization: arc14header,
+      contentType: 'application/json'
+    }
+  })
+  return ret.data
+}
+
+export {
+  bffAccount,
+  bffSendVerificationEmail,
+  bffSendVerifyEmailCode,
+  bffGetProfile,
+  bffUpdateProfile
+}

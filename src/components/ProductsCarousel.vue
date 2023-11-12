@@ -1,60 +1,75 @@
 <template>
-  <div class="card">
+  <div class="card" v-if="products">
     <Carousel
       :value="products"
       :numVisible="3"
       :numScroll="1"
       :responsiveOptions="responsiveOptions"
       circular
-      :autoplayInterval="3000"
+      :autoplayInterval="20000"
     >
       <template #item="slotProps">
-        <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
-          <div class="mb-3">
-            <img
-              :src="'https://primefaces.org/cdn/primevue/images/product/' + slotProps.data.image"
-              :alt="slotProps.data.name"
-              class="w-6 shadow-2"
-            />
-          </div>
-          <div>
-            <h4 class="mb-1">{{ slotProps.data.name }}</h4>
-            <h6 class="mt-0 mb-3">${{ slotProps.data.price }}</h6>
-            <Tag
-              :value="slotProps.data.inventoryStatus"
-              :severity="getSeverity(slotProps.data.inventoryStatus)"
-            />
-            <div class="mt-5">
-              <Button icon="pi pi-search" rounded class="mr-2" />
-              <Button icon="pi pi-star-fill" rounded severity="success" class="mr-2" />
-              <Button icon="pi pi-cog" rounded severity="help" />
-            </div>
-          </div>
-        </div>
+        <ProductBox :item="slotProps.data"></ProductBox>
       </template>
     </Carousel>
+  </div>
+  <div v-else>
+    <div class="m-2 text-center">Loading..</div>
+    <Skeleton class="mb-2" borderRadius="16px"></Skeleton>
+    <Skeleton width="10rem" class="mb-2" borderRadius="16px"></Skeleton>
+    <Skeleton width="5rem" borderRadius="16px" class="mb-2"></Skeleton>
+    <Skeleton height="2rem" class="mb-2" borderRadius="16px"></Skeleton>
+    <Skeleton width="10rem" height="4rem" borderRadius="16px"></Skeleton>
   </div>
 </template>
 
 <script setup lang="ts">
+import Skeleton from 'primevue/skeleton'
+
 import Carousel from 'primevue/carousel'
-import Button from 'primevue/button'
+import ProductBox from './ProductBox.vue'
 import { ref, onMounted } from 'vue'
 import { ProductService } from '@/service/ProductService'
-import Tag from 'primevue/tag'
-onMounted(() => {
-  ProductService.getProductsSmall().then((data) => (products.value = data.slice(0, 9)))
+import type IEshopItem from '@/types/IEshopItem'
+onMounted(async () => {
+  products.value = (await ProductService.getProductsSmall()).slice(0, 9)
+  if (products.value) {
+    for (const item in responsiveOptions.value) {
+      if (responsiveOptions.value[item].numVisible > products.value.length) {
+        responsiveOptions.value[item].numVisible = products.value.length - 1
+      }
+    }
+  }
 })
-
-const products = ref()
+const products = ref<IEshopItem[]>()
 const responsiveOptions = ref([
   {
-    breakpoint: '1199px',
-    numVisible: 1,
+    breakpoint: '2899px',
+    numVisible: 7,
     numScroll: 1
   },
   {
-    breakpoint: '991px',
+    breakpoint: '2599px',
+    numVisible: 6,
+    numScroll: 1
+  },
+  {
+    breakpoint: '1899px',
+    numVisible: 5,
+    numScroll: 1
+  },
+  {
+    breakpoint: '1599px',
+    numVisible: 4,
+    numScroll: 1
+  },
+  {
+    breakpoint: '1399px',
+    numVisible: 3,
+    numScroll: 1
+  },
+  {
+    breakpoint: '1199px',
     numVisible: 2,
     numScroll: 1
   },

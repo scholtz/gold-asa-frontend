@@ -1,6 +1,6 @@
 {
   "name": "algorand-asa-gold",
-  "version": "1.0.3",
+  "version": "1.0.7",
   "license": "MIT",
   "scripts": {
     "generate-client": "algokitgen generate -a contracts/artifacts/AsaGoldSmartcontract.json -o contracts/clients/AsaGoldSmartcontractClient.ts",
@@ -8,27 +8,36 @@
     "generate-components": "algokit-generate-component contracts/artifacts/AsaGoldSmartcontract.json contracts/artifacts/components",
     "build": "npm run compile-contract && npm run generate-client",
     "test": "npm run build && jest",
-    "test1": "npm run build && jest -t \"2->2 withdrawNFT test\"",
+    "test1": "npm run build && jest -t \"2->2 depositNFT test\"",
     "lint": "eslint . --ext .ts",
     "fix": "eslint . --ext .ts --fix",
-    "build-package": "tsup src/index.ts --format cjs,esm --clean --sourcemap index",
+    "build-package": "tsup src/index.ts --format cjs,esm --clean --sourcemap index --dts src/index.ts --dts-resolve",
+    "tsup": "tsup --help",
     "publish": "npm publish"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "dependencies": {
     "@algorandfoundation/algokit-utils": "^2.3.2",
     "algosdk": "^2.7.0",
-    "buffer": "^6.0.3"
+    "buffer": "^6.0.3",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.3.1",
+    "ipfs-http-client": "^56.0.2",
+    "sharp": "^0.32.6",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@algorandfoundation/algokit-client-generator": "^2.2.5",
     "@algorandfoundation/tealscript": "^0.60.1",
     "@jest/globals": "^29.7.0",
     "@joe-p/algokit-generate-component": "^0.2.0",
+    "@types/crypto-js": "^4.2.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^8.53.0",
@@ -38,6 +47,7 @@
     "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
     "tsup": "^7.2.0",
     "typescript": "5.0.2"
   }

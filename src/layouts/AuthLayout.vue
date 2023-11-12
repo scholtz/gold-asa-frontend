@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import TopHeader from '@/components/TopHeader.vue'
+import PageFooter from '@/components/PageFooter.vue'
 import ForcedEmailVerification from '@/components/ForcedEmailVerification.vue'
 
 import { onMounted, ref } from 'vue'
-import algosdk from 'algosdk'
 
 import { useToast } from 'primevue/usetoast'
 import { useAppStore } from '@/stores/app'
+
+const props = defineProps<{
+  hideTopMenu: boolean
+}>()
 
 const store = useAppStore()
 const toast = useToast()
@@ -68,7 +72,7 @@ onMounted(() => {
         :algodToken="store.state.algodToken"
         :store="store.state.authState"
       >
-        <TopHeader />
+        <TopHeader :hideTopMenu="props.hideTopMenu" />
         <ForcedEmailVerification>
           <div class="flex-grow-1">
             <slot />
@@ -76,5 +80,6 @@ onMounted(() => {
         </ForcedEmailVerification>
       </AlgorandAuthentication>
     </Suspense>
+    <PageFooter />
   </div>
 </template>

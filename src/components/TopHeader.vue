@@ -10,6 +10,11 @@ const router = useRouter()
 const store = useAppStore()
 console.log('store', store)
 console.log('router', router)
+
+const props = defineProps<{
+  hideTopMenu: boolean
+}>()
+
 const items = ref([
   {
     label: 'Home',
@@ -30,16 +35,6 @@ const items = ref([
     label: 'Proof of reserves',
     icon: 'pi pi-fw pi-verified',
     route: '/proof-of-reserve'
-  },
-  {
-    label: 'About ASA.Gold',
-    icon: 'pi pi-fw pi-users',
-    route: '/about-asa-gold'
-  },
-  {
-    label: 'Contact us',
-    icon: 'pi pi-fw pi-send',
-    route: '/contact-us'
   }
 ])
 
@@ -112,7 +107,7 @@ function logout() {
         <div class="m-1">Logout</div>
       </Button>
     </div>
-    <Menubar :model="items">
+    <Menubar v-if="!props.hideTopMenu" :model="items">
       <template #item="{ label, item, props }">
         <RouterLink v-if="item.route" v-slot="routerProps" :to="item.route">
           <a :href="routerProps.href" v-bind="props.action">
@@ -120,9 +115,6 @@ function logout() {
             <span v-bind="props.label">{{ label }}</span>
           </a>
         </RouterLink>
-      </template>
-      <template #end>
-        <InputText placeholder="Search" type="text" />
       </template>
     </Menubar>
   </header>

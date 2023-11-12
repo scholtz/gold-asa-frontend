@@ -5,7 +5,6 @@ import ProductsCarousel from '@/components/ProductsCarousel.vue'
 
 <template>
   <Layout>
-    <h1>Trade gold coins</h1>
     <ProductsCarousel />
   </Layout>
 </template>

@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import TabMenu from 'primevue/tabmenu'
+import Menubar from 'primevue/menubar'
 import { useRouter, RouterLink } from 'vue-router'
 
 const router = useRouter()
 
 const tabMenuItems = ref([
+  {
+    label: 'Home',
+    icon: 'pi pi-fw pi-home',
+    route: '/'
+  },
   {
     label: 'Settings',
     icon: 'pi pi-fw pi-cog',
@@ -16,6 +21,11 @@ const tabMenuItems = ref([
     label: 'Email verification',
     icon: 'pi pi-fw pi-envelope',
     route: '/email-validation'
+  },
+  {
+    label: 'User profile',
+    icon: 'pi pi-fw pi-user',
+    route: '/user-profile'
   }
 ])
 const active = ref(-1)
@@ -24,7 +34,7 @@ active.value = tabMenuItems.value.findIndex((e) => e.route == router.currentRout
 </script>
 
 <template>
-  <TabMenu v-model:activeIndex="active" :model="tabMenuItems">
+  <Menubar v-model:activeIndex="active" :model="tabMenuItems">
     <template #item="{ label, item, props }">
       <RouterLink v-if="item.route" v-slot="routerProps" :to="item.route" custom>
         <a
@@ -37,5 +47,5 @@ active.value = tabMenuItems.value.findIndex((e) => e.route == router.currentRout
         </a>
       </RouterLink>
     </template>
-  </TabMenu>
+  </Menubar>
 </template>

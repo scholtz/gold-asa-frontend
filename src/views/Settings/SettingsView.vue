@@ -9,7 +9,7 @@ const store = useAppStore()
 </script>
 
 <template>
-  <Layout>
+  <Layout :hideTopMenu="true">
     <MenuLevel2Settings />
     <Panel header="Settings" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
       <p class="m-0"></p>

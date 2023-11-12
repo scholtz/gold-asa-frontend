@@ -14,6 +14,7 @@ import Message from 'primevue/message'
 import getAsa from '@/scripts/algo/getAsa'
 import algosdk from 'algosdk'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
+import * as algokit from '@algorandfoundation/algokit-utils'
 const toast = useToast()
 
 interface IState {
@@ -74,7 +75,7 @@ async function fetchQuote(swapMode: SwapMode, fromAssetId: number, toAssetId: nu
   try {
     const client = getFolksClient()
     const algodClient = getAlgodClient(store.state)
-    const goldAsa = await getAsa(algodClient, store.state.tokens.gold)
+    const goldAsa = await getAsa({ client: algodClient, assetId: store.state.tokens.gold })
     state.quantityQuote = state.quantity
     const amount: number | bigint = BigInt(
       state.quantityQuote * 10 ** goldAsa?.params?.decimals ?? 6
@@ -173,13 +174,22 @@ const tokensDefault: ITokens = { data: {} }
 const tokens = reactive(tokensDefault)
 async function loadTokens() {
   const algodClient = getAlgodClient(store.state)
-  const gold = await getAsa(algodClient, store.state.tokens.gold)
+  const gold = await getAsa({ client: algodClient, assetId: store.state.tokens.gold })
   console.log('gold', gold)
   tokens.data[store.state.tokens.gold] = gold
   console.log('tokens.data[store.state.tokens.gold]', tokens)
-  tokens.data[store.state.tokens.algo] = await getAsa(algodClient, store.state.tokens.algo)
-  tokens.data[store.state.tokens.usdc] = await getAsa(algodClient, store.state.tokens.usdc)
-  tokens.data[store.state.tokens.btc] = await getAsa(algodClient, store.state.tokens.btc)
+  tokens.data[store.state.tokens.algo] = await getAsa({
+    client: algodClient,
+    assetId: store.state.tokens.algo
+  })
+  tokens.data[store.state.tokens.usdc] = await getAsa({
+    client: algodClient,
+    assetId: store.state.tokens.usdc
+  })
+  tokens.data[store.state.tokens.btc] = await getAsa({
+    client: algodClient,
+    assetId: store.state.tokens.btc
+  })
   refreshCount.value++
 }
 onMounted(async () => {
@@ -346,7 +356,7 @@ async function optIn(assetId: number) {
 }
 </script>
 <template>
-  <Layout>
+  <Layout :hideTopMenu="true">
     <TabMenuTradeToken />
     <Panel header="xx" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
       <template #header>
@@ -395,7 +405,11 @@ async function optIn(assetId: number) {
           "
         >
           <td colspan="10" class="text-center">
-            <Button @click="optIn(store.state.tokens.gold)">Open Gold account</Button>
+            <Button
+              @click="optIn(store.state.tokens.gold)"
+              :title="`Opt in to asset ${store.state.tokens.gold}`"
+              >Open Gold account</Button
+            >
           </td>
         </tr>
         <tr

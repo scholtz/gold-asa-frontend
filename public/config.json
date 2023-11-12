@@ -1,0 +1,12 @@
+{
+  "bffServer": "https://sandbox-bff.asa.gold",
+  "bff": "https://localhost:44394",
+  "appId": 4096,
+  "algodHost": "http://localhost",
+  "algodPort": 4001,
+  "algodToken": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "goldToken": 4100,
+  "usdcToken": 37074699,
+  "algoToken": 0,
+  "btcToken": 67396528
+}
