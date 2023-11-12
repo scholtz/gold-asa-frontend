@@ -2,6 +2,7 @@
 import type IEshopItem from '@/types/IEshopItem'
 import IPFSImage from './IPFSImage.vue'
 import CoinState from './CoinState.vue'
+import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 const props = defineProps<{
   item: IEshopItem
 }>()
@@ -20,7 +21,14 @@ const props = defineProps<{
         <h4 class="mb-1">
           {{ props.item.nft.name }}
         </h4>
-        <h6 class="mt-0 mb-3">${{ props.item.state.quoteAsset1 }}</h6>
+        <h6 class="mt-0 mb-3" v-if="props.item.state.quoteAsset1">
+          {{
+            formatAssetPrice({
+              value: props.item.state.quoteAsset1,
+              assetId: props.item.state.asset1
+            })
+          }}
+        </h6>
         <div><CoinState :item="props.item"></CoinState></div>
       </div></div
   ></RouterLink>

@@ -32,7 +32,7 @@ import Panel from 'primevue/panel'
           published
         </li>
         <li>Nov 12th 2023 : Eshop is working</li>
-        <li>We are working now on bank itegration now</li>
+        <li>We are working on bank itegration now</li>
       </ul>
       <p>Check our open source progress:</p>
       <ul>

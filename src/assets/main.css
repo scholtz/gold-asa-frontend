@@ -27,6 +27,13 @@ body {
   margin: 1em;
   display: inline-block;
 }
+.logo-small {
+  font-family: 'Squada One';
+  font-size: 1.5em;
+  color: #d4aa00ff;
+  margin: 0.5em;
+  display: inline-block;
+}
 .p-menuitem-content a {
   text-decoration: none;
 }

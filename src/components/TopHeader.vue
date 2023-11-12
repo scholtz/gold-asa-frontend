@@ -22,8 +22,13 @@ const items = ref([
     route: '/'
   },
   {
-    label: 'Trade gold token',
+    label: 'Fiat payment',
     icon: 'pi pi-fw pi-money-bill',
+    route: '/buy-gold-with-eur'
+  },
+  {
+    label: 'DEX trading',
+    icon: 'pi pi-fw pi-bitcoin',
     route: '/trade-gold'
   },
   {
@@ -56,56 +61,62 @@ function logout() {
 
 <template>
   <header>
-    <div class="flex flex-row">
-      <Button class="logo m-4" severity="link" @click="$router.push('/')">ASA - Real gold</Button>
-      <div class="flex-grow-1"></div>
-      <div class="flex flex-column m-4">
-        <Badge
-          v-if="store.state.env == 'testnet-v1.0'"
-          value="Testnet"
-          severity="warn"
-          class="align-self-center m-1"
-        ></Badge>
-        <Badge
-          v-else-if="store.state.env == 'mainnet-v1.0'"
-          value="Mainnet"
-          severity="success"
-          class="align-self-center m-1"
-        ></Badge>
-        <Badge
-          v-else-if="store.state.env == 'sandnet-v1'"
-          value="Sandbox"
-          severity="warn"
-          class="align-self-center m-1"
-        ></Badge>
-        <Badge
-          v-else
-          :value="store.state.algodHost"
-          severity="warn"
-          class="align-self-center m-1"
-        ></Badge>
-        <Badge value="IN DEVELOPMENT" severity="danger" class="align-self-center m-1"></Badge>
-      </div>
-      <Button
-        severity="link"
-        class="flex flex-column align-content-center align-items-center align-self-center m-4 p-2 w-4rem"
-        @click="store.state.authComponent?.auth()"
-        v-if="!store.state.authState.isAuthenticated"
-      >
-        <span class="pi pi-user"></span>
-        <div class="m-1">Login</div>
-      </Button>
-      <Button
-        severity="link"
-        class="flex flex-column align-content-center align-items-center align-self-center m-4 p-2 w-4rem"
-        @click="logout"
-        v-if="store.state.authState.isAuthenticated"
-      >
-        <span class="pi pi-user"></span>
-        <div class="m-1">Logout</div>
-      </Button>
+    <div class="block md:hidden">
+      <Button class="logo-small m-2" severity="link" @click="$router.push('/')">ASA - gold</Button>
     </div>
-    <Menubar v-if="!props.hideTopMenu" :model="items">
+    <div class="hidden md:block">
+      <div class="flex flex-row">
+        <Button class="logo m-4" severity="link" @click="$router.push('/')">ASA - Real gold</Button>
+
+        <div class="flex-grow-1"></div>
+        <div class="flex flex-column m-4">
+          <Badge
+            v-if="store.state.env == 'testnet-v1.0'"
+            value="Testnet"
+            severity="warn"
+            class="align-self-center m-1"
+          ></Badge>
+          <Badge
+            v-else-if="store.state.env == 'mainnet-v1.0'"
+            value="Mainnet"
+            severity="success"
+            class="align-self-center m-1"
+          ></Badge>
+          <Badge
+            v-else-if="store.state.env == 'sandnet-v1'"
+            value="Sandbox"
+            severity="warn"
+            class="align-self-center m-1"
+          ></Badge>
+          <Badge
+            v-else
+            :value="store.state.algodHost"
+            severity="warn"
+            class="align-self-center m-1"
+          ></Badge>
+          <Badge value="IN DEVELOPMENT" severity="danger" class="align-self-center m-1"></Badge>
+        </div>
+        <Button
+          severity="link"
+          class="flex flex-column align-content-center align-items-center align-self-center m-4 p-2 w-4rem hidden md:block"
+          @click="store.state.authComponent?.auth()"
+          v-if="!store.state.authState.isAuthenticated"
+        >
+          <span class="pi pi-user"></span>
+          <div class="m-1">Login</div>
+        </Button>
+        <Button
+          severity="link"
+          class="flex flex-column align-content-center align-items-center align-self-center m-4 p-2 w-4rem hidden md:block"
+          @click="logout"
+          v-if="store.state.authState.isAuthenticated"
+        >
+          <span class="pi pi-user"></span>
+          <div class="m-1">Logout</div>
+        </Button>
+      </div>
+    </div>
+    <Menubar v-if="!props.hideTopMenu" :model="items" class="mx-4">
       <template #item="{ label, item, props }">
         <RouterLink v-if="item.route" v-slot="routerProps" :to="item.route">
           <a :href="routerProps.href" v-bind="props.action">

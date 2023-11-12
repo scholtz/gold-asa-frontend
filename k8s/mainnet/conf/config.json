@@ -1,6 +1,7 @@
 {
   "bff": "https://bff.asa.gold",
   "appId": 4096,
+  "env": "mainnet-v1.0",
   "algodHost": "https://mainnet-api.algonode.cloud",
   "algodPort": 443,
   "algodToken": "",

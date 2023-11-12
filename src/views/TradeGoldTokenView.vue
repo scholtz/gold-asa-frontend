@@ -9,7 +9,6 @@ import InputNumber from 'primevue/inputnumber'
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { Buffer } from 'buffer'
-import TabMenuTradeToken from '@/components/TabMenuTradeToken.vue'
 import Message from 'primevue/message'
 import getAsa from '@/scripts/algo/getAsa'
 import algosdk from 'algosdk'
@@ -356,9 +355,8 @@ async function optIn(assetId: number) {
 }
 </script>
 <template>
-  <Layout :hideTopMenu="true">
-    <TabMenuTradeToken />
-    <Panel header="xx" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
+  <Layout :hideTopMenu="false">
+    <Panel class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
       <template #header>
         <h4>
           Blockchain trade - using DEX aggregator

@@ -309,6 +309,9 @@ onMounted(async () => {
             </div>
           </Panel>
         </div>
+        <div class="col-12" v-if="store.state.authState.account">
+          You are authenticated using address {{ store.state.authState.account }}
+        </div>
         <div class="col-12 text-right">
           <Button
             :disabled="state.saving"

@@ -7,6 +7,7 @@
       :responsiveOptions="responsiveOptions"
       circular
       :autoplayInterval="20000"
+      class="my-4"
     >
       <template #item="slotProps">
         <ProductBox :item="slotProps.data"></ProductBox>

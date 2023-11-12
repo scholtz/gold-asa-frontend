@@ -135,7 +135,7 @@ async function resetView() {
 <template>
   <Layout :hideTopMenu="false">
     <div class="grid" v-if="product">
-      <div class="md:col-4">
+      <div class="col-12 md:col-4 py-6">
         <Galleria
           ref="galleria"
           v-model:activeIndex="activeIndex"
