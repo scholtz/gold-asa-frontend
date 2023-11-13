@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeAll, beforeEach } from '@jest/globals'
 import * as algokit from '@algorandfoundation/algokit-utils'
-import algosdk from 'algosdk'
+import algosdk, { Algodv2 } from 'algosdk'
 import { algorandFixture } from '@algorandfoundation/algokit-utils/testing'
 import { AsaGoldSmartcontractClient } from '../contracts/clients/AsaGoldSmartcontractClient'
 import { AlgoAmount } from '@algorandfoundation/algokit-utils/types/amount'
@@ -22,6 +22,7 @@ import clientRequestParcelDelivery from '../src/client/clientRequestParcelDelive
 import clientSetParcelDelivery from '../src/client/clientSetParcelDelivery'
 import clientDepositNFT from '../src/client/clientDepositNFT'
 import { exit } from 'process'
+import { readFileSync } from 'fs'
 
 const appId = process.env.appId ? parseInt(process.env.appId) : 0
 console.log('APPID', appId)
@@ -36,12 +37,19 @@ let accountDeploy: algosdk.Account
 let accountDeployGoldToken: algosdk.Account
 let buyer: algosdk.Account
 let buyer2: algosdk.Account
+
+var algod = new algosdk.Algodv2(
+  process.env.algodToken ?? 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  process.env.algodHost ?? 'http://localhost',
+  process.env.algodPort ?? '4001'
+)
+
 describe('AsaGoldSmartcontract', () => {
   beforeEach(fixture.beforeEach)
 
   beforeAll(async () => {
     await fixture.beforeEach()
-    const { algod, kmd, generateAccount } = fixture.context
+    const { kmd, generateAccount } = fixture.context
     accountDeploy = process.env.accountDeploy
       ? algosdk.mnemonicToSecretKey(process.env.accountDeploy)
       : await generateAccount({
@@ -173,16 +181,98 @@ describe('AsaGoldSmartcontract', () => {
     expect(goldToken).toBeGreaterThan(0)
   })
 
+  test('0->1 issue initial nfts test', async () => {
+    const { kmd, generateAccount } = fixture.context
+    const seller = process.env.seller
+      ? algosdk.mnemonicToSecretKey(process.env.seller)
+      : await generateAccount({
+          initialFunds: new AlgoAmount({
+            algos: 1
+          }),
+          suppressLog: false
+        })
+    await algokit.ensureFunded(
+      {
+        accountToFund: seller.addr,
+        minSpendingBalance: algokit.algos(10) // algokit.microAlgos(392200)
+      },
+      algod,
+      kmd
+    )
+    console.log('seller account: ' + seller.addr)
+    const network = 'testnet'
+    for (let sn = 1; sn <= 12; sn++) {
+      console.log('sn', sn)
+      let file = `gold-coin-1-oz-sn-${sn}`
+      let price = 500000000
+      let weight = 31096890
+      if (sn == 2) {
+        price = 34759154
+        weight = 31096890
+      }
+      if (sn >= 3) {
+        file = `gold-coin-1-10-oz-sn-${sn}`
+        price = 4083399
+        weight = 3109689
+      }
+      const integrity = readFileSync(`arc0003/${network}/${file}.integrity`).toString('utf-8')
+
+      const ipfs = readFileSync(`arc0003/${network}/${file}.ipfs`)
+      const nftAsset = await createNFTToken({
+        account: seller,
+        algod,
+        integrity: Buffer.from(integrity, 'base64'),
+        ipfs: ipfs.toString('utf8')
+      })
+
+      console.log(`nftTokenTx done ${nftAsset}`)
+      await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
+      console.log(`nftToken opted in to app done ${nftAsset}`)
+      console.log('appId', appId, appRef)
+      var appClientSeller = getClient({
+        appId: appId ? appId : appRef.appId,
+        sender: seller,
+        algod
+      })
+
+      var goldTokenAssetReserveAccount = accountDeployGoldToken.addr
+
+      console.log('clientSellAssetWithDeposit', {
+        algod,
+        account: seller,
+        appClient: appClientSeller,
+        nftOwnerAddress: seller.addr,
+        vaultOwnerAddress: accountDeploy.addr,
+        goldTokenAssetReserveAccount,
+        nftAsset,
+        goldToken
+      })
+      await clientSellAssetWithDeposit({
+        algod,
+        account: seller,
+        appClient: appClientSeller,
+        nftOwnerAddress: seller.addr,
+        vaultOwnerAddress: accountDeploy.addr,
+        goldTokenAssetReserveAccount,
+        nftAsset,
+        goldToken,
+        price,
+        weight
+      })
+      console.log('sellAssetWithDeposit done')
+    }
+  })
   test('0->1 sellAssetWithDeposit test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
       }),
       suppressLog: false
     })
-
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -210,12 +300,16 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
   })
   test('1->1 changeQuotation test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -223,7 +317,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -241,7 +335,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -256,7 +352,9 @@ describe('AsaGoldSmartcontract', () => {
     console.log('changePrice done')
   })
   test('1->2 buyNFT test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -264,7 +362,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -282,7 +380,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -335,7 +435,9 @@ describe('AsaGoldSmartcontract', () => {
   })
 
   test('2->2 withdrawNFT test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -343,7 +445,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -361,7 +463,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -423,7 +527,9 @@ describe('AsaGoldSmartcontract', () => {
   })
 
   test('2->3 changeQuotation test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -431,7 +537,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, ipfs, integrity })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -449,7 +555,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -513,7 +621,9 @@ describe('AsaGoldSmartcontract', () => {
     console.log('changePrice done')
   })
   test('3->3 changeQuotation test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -521,7 +631,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -539,7 +649,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -615,7 +727,9 @@ describe('AsaGoldSmartcontract', () => {
     console.log('changePrice done')
   })
   test('3->2 buyNFT test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -623,7 +737,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -641,7 +755,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -733,7 +849,9 @@ describe('AsaGoldSmartcontract', () => {
   })
 
   test('3->2 setNotForSale test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -741,7 +859,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -759,7 +877,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -838,7 +958,9 @@ describe('AsaGoldSmartcontract', () => {
     console.log('clientNotForSale done')
   })
   test('2->4 requestParcelDelivery test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -846,7 +968,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -864,7 +986,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -923,7 +1047,9 @@ describe('AsaGoldSmartcontract', () => {
     console.log('clientRequestParcelDelivery done')
   })
   test('3->4 requestParcelDelivery test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -931,7 +1057,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -949,7 +1075,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -1021,7 +1149,9 @@ describe('AsaGoldSmartcontract', () => {
     console.log('changePrice done')
   })
   test('4->5 setParcelDelivery test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -1029,7 +1159,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -1047,7 +1177,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -1108,7 +1240,9 @@ describe('AsaGoldSmartcontract', () => {
     console.log('clientSetParcelDelivery done')
   })
   test('2->3 depositNFT test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -1116,7 +1250,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -1134,7 +1268,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4083399,
+      weight: 3109689
     })
     console.log('sellAssetWithDeposit done')
 
@@ -1221,7 +1357,9 @@ describe('AsaGoldSmartcontract', () => {
   })
 
   test('2->2 depositNFT test', async () => {
-    const { algod, generateAccount } = fixture.context
+    const integrity = Buffer.from('qDx7WOE8M6iJETwWOfVcHSCcGbLygjZn6+RtnvwLatM=', 'base64')
+    const ipfs = 'Qmave4H2Mnx4TB4TygbrjPJgUHvE5q8jZ999pcwXBQtEA2'
+    const { generateAccount } = fixture.context
     const seller = await generateAccount({
       initialFunds: new AlgoAmount({
         algos: 1
@@ -1229,7 +1367,7 @@ describe('AsaGoldSmartcontract', () => {
       suppressLog: false
     })
 
-    const nftAsset = await createNFTToken({ account: seller, algod })
+    const nftAsset = await createNFTToken({ account: seller, algod, integrity, ipfs })
 
     console.log(`nftTokenTx done ${nftAsset}`)
     await clientOptinAsset({ algod, account: accountDeploy, appClient, assetIndex: nftAsset })
@@ -1247,7 +1385,9 @@ describe('AsaGoldSmartcontract', () => {
       vaultOwnerAddress: accountDeploy.addr,
       goldTokenAssetReserveAccount,
       nftAsset,
-      goldToken
+      goldToken,
+      price: 4000000,
+      weight: 3110000
     })
     console.log('sellAssetWithDeposit done')
 

@@ -86,6 +86,7 @@ async function getRFQ() {
             guarantee you the RFQ price 30 minutes from the request. Any time later the amount might
             differ according to current market conditions at the time of receiving your money.
           </p>
+          <p>For recurring payments make sure you reference your client id.</p>
           <p>
             Minimum RFQ amount is 10 EUR or 200 CZK, maximum depends on current availability of
             unused gold tokens.

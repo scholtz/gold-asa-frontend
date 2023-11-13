@@ -356,14 +356,7 @@ async function optIn(assetId: number) {
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <Panel class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
-      <template #header>
-        <h4>
-          Blockchain trade - using DEX aggregator
-          <a href="https://www.folksrouter.io" target="_blank">Folks router</a>
-        </h4>
-      </template>
-
+    <Panel header="DEX trading" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
       <div class="flex flex-row my-2">
         <InputNumber
           class="flex-grow-1 mr-2"
@@ -623,6 +616,10 @@ async function optIn(assetId: number) {
           </td>
         </tr>
       </table>
+      <p>
+        Blockchain DEX trading is using DEX aggregator
+        <a href="https://www.folksrouter.io" target="_blank">Folks router</a>.
+      </p>
     </Panel>
   </Layout>
 </template>

@@ -11,6 +11,8 @@ interface IClientSellAssetWithDepositInput {
   nftAsset: number
   goldToken: number
   algod: algosdk.Algodv2
+  price: number
+  weight: number
 }
 const clientSellAssetWithDepositTxs = async (input: IClientSellAssetWithDepositInput) => {
   const params = await input.algod.getTransactionParams().do()
@@ -28,10 +30,10 @@ const clientSellAssetWithDepositTxs = async (input: IClientSellAssetWithDepositI
     {
       nftDepositTx: depositTx,
       nftAsset: input.nftAsset,
-      price: 101000,
+      price: input.price,
       tokenAsset: input.goldToken,
       vaultOwnerAddress: input.vaultOwnerAddress,
-      weight: 100000
+      weight: input.weight
     },
     {
       sendParams: {

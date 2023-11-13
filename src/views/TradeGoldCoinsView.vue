@@ -23,12 +23,12 @@ const products = ref<IEshopItem[]>()
         class="m-4 flex flex-grow-1 flex-column"
         toggleableContent="text"
       >
-        <div class="flex flex-row flex-wrap">
+        <div class="flex justify-content-between flex-row flex-wrap">
           <ProductBox
             v-for="item in products"
             :item="item"
             :key="item.asa"
-            class="m-2"
+            class="m-1"
           ></ProductBox>
         </div>
       </Panel>

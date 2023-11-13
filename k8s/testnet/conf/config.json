@@ -1,6 +1,6 @@
 {
   "bff": "https://testnet-bff.asa.gold",
-  "appId": 4096,
+  "appId": 479307959,
   "env": "testnet-v1.0",
   "algodHost": "https://testnet-api.algonode.cloud",
   "algodPort": 443,

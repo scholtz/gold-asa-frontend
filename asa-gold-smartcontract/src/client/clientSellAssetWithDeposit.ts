@@ -10,6 +10,8 @@ interface IClientSellAssetWithDepositInput {
   goldTokenAssetReserveAccount: string
   nftAsset: number
   goldToken: number
+  price: number
+  weight: number
 }
 const clientSellAssetWithDeposit = async (input: IClientSellAssetWithDepositInput) => {
   const txs = await clientSellAssetWithDepositTxs(input)

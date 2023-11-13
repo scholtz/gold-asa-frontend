@@ -14,7 +14,6 @@ const props = defineProps<{
         <IPFSImage
           :src="props.item.nft.properties.pictures[0].thumbnail"
           :alt="props.item.nft.name"
-          class="shadow-2"
         />
       </div>
       <div>

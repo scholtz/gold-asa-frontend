@@ -1,6 +1,6 @@
 {
   "name": "algorand-asa-gold",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "license": "MIT",
   "scripts": {
     "generate-client": "algokitgen generate -a contracts/artifacts/AsaGoldSmartcontract.json -o contracts/clients/AsaGoldSmartcontractClient.ts",
@@ -8,12 +8,12 @@
     "generate-components": "algokit-generate-component contracts/artifacts/AsaGoldSmartcontract.json contracts/artifacts/components",
     "build": "npm run compile-contract && npm run generate-client",
     "test": "npm run build && jest",
-    "test1": "npm run build && jest -t \"2->2 depositNFT test\"",
+    "test1": "npm run build && jest -t \"deploy init nfts\"",
     "lint": "eslint . --ext .ts",
     "fix": "eslint . --ext .ts --fix",
     "build-package": "tsup src/index.ts --format cjs,esm --clean --sourcemap index --dts src/index.ts --dts-resolve",
     "tsup": "tsup --help",
-    "publish": "npm publish"
+    "publishCmd": "npm publish"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

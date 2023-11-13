@@ -4,6 +4,8 @@ import { Buffer } from 'buffer'
 interface ICreateNFTTokenInput {
   account: algosdk.Account
   algod: Algodv2
+  integrity: Buffer
+  ipfs: string
 }
 
 const createNFTToken = async (input: ICreateNFTTokenInput) => {
@@ -15,10 +17,8 @@ const createNFTToken = async (input: ICreateNFTTokenInput) => {
     defaultFrozen: false,
     total: 1,
     assetName: 'GoldCoin',
-    assetURL: 'ipfs://QmXFHvaPaQ6wguXqS6aTWNYs7d9aTqQSsF6vP7zebmUpye#arc3',
-    assetMetadataHash: new Uint8Array(
-      Buffer.from('d/cSwHxoGvdmtlbYPJ+iIlblzotRcixQ/iX0jxZ3Vgs=', 'base64')
-    ),
+    assetURL: `ipfs://${input.ipfs}#arc3`,
+    assetMetadataHash: new Uint8Array(input.integrity),
     manager: input.account.addr,
     unitName: 'GoldCoin',
     suggestedParams: params

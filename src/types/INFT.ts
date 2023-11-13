@@ -18,8 +18,10 @@ export default interface INFT {
     goldWeight: number
     weightUnit: string
     issueDate?: Date
+    inReservesSince?: Date
+    reservesNumismaticValue?: number
     mintage?: number
-    story: string
+    story?: string
     pictures: [
       {
         thumbnail: string

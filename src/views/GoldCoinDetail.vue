@@ -18,6 +18,7 @@ import Skeleton from 'primevue/skeleton'
 import { useAppStore } from '@/stores/app'
 import getARC0003Details from '@/scripts/algo/getARC0003Details'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
+import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 const state = reactive({
   formEditPrice: false,
   formStopSale: false,
@@ -329,6 +330,32 @@ async function resetView() {
           <tr v-if="product.nft.properties.network">
             <th>Blockchain network</th>
             <td>{{ product.nft.properties.network }}</td>
+          </tr>
+          <tr v-if="product.nft.properties.inReservesSince">
+            <th>In reserves since</th>
+            <td>{{ new Date(product.nft.properties.inReservesSince).toLocaleDateString() }}</td>
+          </tr>
+          <tr
+            v-if="
+              product.nft.properties.reservesNumismaticValue &&
+              product.nft.properties.inReservesSince
+            "
+          >
+            <th
+              :title="`Numismatic value on ${new Date(
+                product.nft.properties.inReservesSince
+              ).toLocaleDateString()}`"
+            >
+              Initial numismatic value
+            </th>
+            <td>
+              {{
+                formatAssetPrice({
+                  assetId: store.state.tokens.gold,
+                  value: product.nft.properties.reservesNumismaticValue * 10 ** 6
+                })
+              }}
+            </td>
           </tr>
         </table>
       </div>
