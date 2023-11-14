@@ -15,6 +15,7 @@ import Divider from 'primevue/divider'
           </div>
           <div><a href="https://discord.gg/8m4KTcVSH9">Discord</a></div>
           <div><a href="https://t.me/+mWQObAvGe_5lNDNk">t.me/AsaRealGold</a></div>
+          <div><a href="https://twitter.com/eAlgonaut/">Twitter</a></div>
         </div>
       </div>
       <div class="col-12 md:col-6">
