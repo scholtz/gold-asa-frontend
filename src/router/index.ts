@@ -83,6 +83,16 @@ const router = createRouter({
       path: '/price-list',
       name: 'price-list',
       component: () => import('../views/PriceList.vue')
+    },
+    {
+      path: '/token/gold',
+      name: 'token-gold',
+      component: () => import('../views/Tokens/Gold.vue')
+    },
+    {
+      path: '/token/dao',
+      name: 'token-dao',
+      component: () => import('../views/Tokens/Dao.vue')
     }
   ]
 })
