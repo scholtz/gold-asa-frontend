@@ -1,1 +1,41 @@
-{"name":"Gold coin 1/10 oz, sn 1","description":"This is NFT representation of the real world gold coin. Owner of this NFT has right to request the delivery if it was not requested before. Serial number of this coin is 1.","image":"ipfs://QmcSK9WxbPPFMujnn4e9TfnXLdDkHj3QGaW7tPoDLsY3sE","image_integrity":"sha256-eGWt6yXU//xE2mCZ8Zb2/z6EJp5UXsAwy6mU+L/aVcE=","image_mimetype":"image/jpeg","external_url":"https://testnet.asa.gold/coin/gold-coin-1-10-oz-sn-1","properties":{"name":"Gold coin 1/10 oz, sn 1","slugName":"gold-coin-1-10-oz-sn-1","network":"testnet","form":"coin","serialNumber":1,"issueDate":"2023-04-01","mintage":200,"diameter":16,"diameterUnit":"mm","weight":3.11,"fitness":999.9,"goldWeight":3.109689,"weightUnit":"g","author":"Asamat Baltaev, DiS.","story":"The best-known story of how the exotic lion became the symbol of the Czech country is the tale of Bruncvík - a mythical prince who travelled to Africa where he helped the king of beasts in his battle with the dragon. However, the old chroniclers offer more plausible explanation. According to them, Emperor Frederick I Barbarossa rewarded Prince Vladislaus II with a royal crown and a new heraldic animal, which replaced the current eagle in 1158. The lion represented the virtues of chivalry, strength and courage that Vladislaus had shown during the conquest of the city of Milan in the Emperor's service. And how did the heraldic beast get its second tail? Again, heroism played a role. King Ottokar I of Bohemia helped Emperor Otto IV in his fight against the Saxon in 1204, and in return the Bohemian lion was given a second tail, which distinguished it from the beasts of other nations and gave it a unique prestige. Medieval writers, however, liked to colour their narratives, therefore, they are not a reliable source of information. However, one thing is certain - the first truly documented Bohemian lion was a symbol of the Přemyslid dynasty and appears on the equestrian seal of Vladislaus Henry from 1203. The lion was elevated to the emblem of the whole country by Ottokar II of Bohemia, the Iron and Gold King.","pictures":[{"url":"ipfs://QmcSK9WxbPPFMujnn4e9TfnXLdDkHj3QGaW7tPoDLsY3sE","integrity":"sha256-eGWt6yXU//xE2mCZ8Zb2/z6EJp5UXsAwy6mU+L/aVcE=","thumbnail":"ipfs://QmSoF4uD1nHEpaJYs1Qdiz29gN7mzdiafGNHWg5zNf1nKn","thumbnailIntegrity":"sha256-EwZ1iIjWQu8/JQ8fqjrScDigMegEuXjJGM7NhuXz7Kk=","mimetype":"image/jpeg"},{"url":"ipfs://QmPpwTeGS4jZdypDBjFuoMQjbgBfgBs3r7aRK1MAdGYKy7","integrity":"sha256-OMWh5+/5Wn++yMJk/kW+CwQqFjCwFt8ywyIecZxUPoo=","thumbnail":"ipfs://Qma7GHoewqe12Ua1qGM1Sb4sbx1AeA5P6aGhbEo2g8UTqw","thumbnailIntegrity":"sha256-4DfOaNPzW0+Ie1VOLmvPh+a/NC0zkvhbo7spQHB9lDY=","mimetype":"image/jpeg"}]}}
+{
+  "name": "Gold coin 1/10 oz, sn 1",
+  "description": "This is NFT representation of the real world gold coin. Owner of this NFT has right to request the delivery if it was not requested before. Serial number of this coin is 1.",
+  "image": "ipfs://QmcSK9WxbPPFMujnn4e9TfnXLdDkHj3QGaW7tPoDLsY3sE",
+  "image_integrity": "sha256-eGWt6yXU//xE2mCZ8Zb2/z6EJp5UXsAwy6mU+L/aVcE=",
+  "image_mimetype": "image/jpeg",
+  "external_url": "https://testnet.asa.gold/coin/gold-coin-1-10-oz-sn-1",
+  "properties": {
+    "name": "Gold coin 1/10 oz, sn 1",
+    "slugName": "gold-coin-1-10-oz-sn-1",
+    "network": "testnet",
+    "form": "coin",
+    "serialNumber": 1,
+    "issueDate": "2023-04-01",
+    "mintage": 200,
+    "diameter": 16,
+    "diameterUnit": "mm",
+    "weight": 3.11,
+    "fitness": 999.9,
+    "goldWeight": 3.109689,
+    "weightUnit": "g",
+    "author": "Asamat Baltaev, DiS.",
+    "story": "The best-known story of how the exotic lion became the symbol of the Czech country is the tale of Bruncvík - a mythical prince who travelled to Africa where he helped the king of beasts in his battle with the dragon. However, the old chroniclers offer more plausible explanation. According to them, Emperor Frederick I Barbarossa rewarded Prince Vladislaus II with a royal crown and a new heraldic animal, which replaced the current eagle in 1158. The lion represented the virtues of chivalry, strength and courage that Vladislaus had shown during the conquest of the city of Milan in the Emperor's service. And how did the heraldic beast get its second tail? Again, heroism played a role. King Ottokar I of Bohemia helped Emperor Otto IV in his fight against the Saxon in 1204, and in return the Bohemian lion was given a second tail, which distinguished it from the beasts of other nations and gave it a unique prestige. Medieval writers, however, liked to colour their narratives, therefore, they are not a reliable source of information. However, one thing is certain - the first truly documented Bohemian lion was a symbol of the Přemyslid dynasty and appears on the equestrian seal of Vladislaus Henry from 1203. The lion was elevated to the emblem of the whole country by Ottokar II of Bohemia, the Iron and Gold King.",
+    "pictures": [
+      {
+        "url": "ipfs://QmcSK9WxbPPFMujnn4e9TfnXLdDkHj3QGaW7tPoDLsY3sE",
+        "integrity": "sha256-eGWt6yXU//xE2mCZ8Zb2/z6EJp5UXsAwy6mU+L/aVcE=",
+        "thumbnail": "ipfs://QmSoF4uD1nHEpaJYs1Qdiz29gN7mzdiafGNHWg5zNf1nKn",
+        "thumbnailIntegrity": "sha256-EwZ1iIjWQu8/JQ8fqjrScDigMegEuXjJGM7NhuXz7Kk=",
+        "mimetype": "image/jpeg"
+      },
+      {
+        "url": "ipfs://QmPpwTeGS4jZdypDBjFuoMQjbgBfgBs3r7aRK1MAdGYKy7",
+        "integrity": "sha256-OMWh5+/5Wn++yMJk/kW+CwQqFjCwFt8ywyIecZxUPoo=",
+        "thumbnail": "ipfs://Qma7GHoewqe12Ua1qGM1Sb4sbx1AeA5P6aGhbEo2g8UTqw",
+        "thumbnailIntegrity": "sha256-4DfOaNPzW0+Ie1VOLmvPh+a/NC0zkvhbo7spQHB9lDY=",
+        "mimetype": "image/jpeg"
+      }
+    ]
+  }
+}

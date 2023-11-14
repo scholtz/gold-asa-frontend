@@ -32,6 +32,10 @@ import Panel from 'primevue/panel'
           published
         </li>
         <li>Nov 12th 2023 : Eshop is working</li>
+        <li>
+          Nov 13th 2023 : Testnet launched at
+          <a href="https://testnet.asa.gold/">https://testnet.asa.gold/</a>
+        </li>
         <li>We are working on bank itegration now</li>
       </ul>
       <p>Check our open source progress:</p>

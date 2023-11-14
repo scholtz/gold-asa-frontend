@@ -59,7 +59,7 @@ describe('deploy', () => {
   test('appId is created', async () => {
     expect(appId).toBeGreaterThan(0)
   })
-  test('deploy app', async () => {
+  test('01 deploy app', async () => {
     if (!process.env.accountDeploy) throw Error('accountDeploy not defined')
     accountDeploy = algosdk.mnemonicToSecretKey(process.env.accountDeploy)
 
@@ -78,7 +78,7 @@ describe('deploy', () => {
     appRef = await appClient.appClient.getAppReference()
     console.log('appRef.appId', appRef.appId)
   })
-  test('optin contract to gold', async () => {
+  test('02 optin contract to gold', async () => {
     if (!process.env.accountDeploy) throw Error('accountDeploy not defined')
     accountDeploy = algosdk.mnemonicToSecretKey(process.env.accountDeploy)
     appClient = getClient({ appId: appId, sender: accountDeploy, algod })
@@ -90,11 +90,11 @@ describe('deploy', () => {
       assetIndex: goldToken
     })
   })
-  test('deploy init nfts', async () => {
+  test('03 deploy init nfts', async () => {
     if (!process.env.seller) throw Error('Seller not defined')
     if (!process.env.accountDeploy) throw Error('accountDeploy not defined')
     if (!process.env.accountDeployGoldToken) throw Error('accountDeployGoldToken not defined')
-    const network = 'testnet'
+    const network = 'mainnet'
     accountDeploy = algosdk.mnemonicToSecretKey(process.env.accountDeploy)
     accountDeployGoldToken = algosdk.mnemonicToSecretKey(process.env.accountDeployGoldToken)
     const seller = algosdk.mnemonicToSecretKey(process.env.seller)

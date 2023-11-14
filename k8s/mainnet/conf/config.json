@@ -1,11 +1,11 @@
 {
   "bff": "https://bff.asa.gold",
-  "appId": 4096,
+  "appId": 1241948099,
   "env": "mainnet-v1.0",
   "algodHost": "https://mainnet-api.algonode.cloud",
   "algodPort": 443,
   "algodToken": "",
-  "goldToken": 4100,
+  "goldToken": 1241944285,
   "usdcToken": 31566704,
   "algoToken": 0,
   "btcToken": 386192725
