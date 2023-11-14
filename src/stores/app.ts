@@ -98,14 +98,17 @@ export const useAppStore = defineStore('app', () => {
     const stateFromStorage = localStorage.getItem('state')
     if (stateFromStorage) {
       const istate = JSON.parse(stateFromStorage) as IState
-      if (istate.algodHost) initState.algodHost = istate.algodHost
-      if (istate.algodPort) initState.algodPort = istate.algodPort
-      if (istate.algodToken) initState.algodToken = istate.algodToken
-      if (istate.theme) initState.theme = istate.theme
-      if (istate.tokens) initState.tokens = istate.tokens
-      if (istate.env) initState.env = istate.env
-      if (istate.customToken) initState.customToken = istate.customToken
-      storageState = istate
+      if (istate.env == initState.env) {
+        // if network has been changed make sure we do not load bad data from localstorage
+        if (istate.algodHost) initState.algodHost = istate.algodHost
+        if (istate.algodPort) initState.algodPort = istate.algodPort
+        if (istate.algodToken) initState.algodToken = istate.algodToken
+        if (istate.theme) initState.theme = istate.theme
+        if (istate.tokens) initState.tokens = istate.tokens
+        if (istate.env) initState.env = istate.env
+        if (istate.customToken) initState.customToken = istate.customToken
+        storageState = istate
+      }
     }
   } catch (e: any) {
     console.error(e)
