@@ -7,5 +7,6 @@
   "goldToken": 4100,
   "usdcToken": 37074699,
   "algoToken": 0,
-  "btcToken": 67396528
+  "btcToken": 67396528,
+  "feeCollector": "H27RABAZCD4AK2AFQQDO2JJYVACGVODA4ITJWBMCI3AGYGHO46JAAXO6LU"
 }

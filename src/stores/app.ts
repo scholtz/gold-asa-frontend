@@ -31,6 +31,7 @@ export interface IState {
   customToken: number | null
   account: IAccount | null
   appId: number
+  feeCollector: string
   reloadAccount(): Promise<void>
 }
 const tokens = {
@@ -56,6 +57,7 @@ const defaultState: IState = {
   env: 'testnet-v1.0',
   account: null,
   appId: 0,
+  feeCollector: 'H27RABAZCD4AK2AFQQDO2JJYVACGVODA4ITJWBMCI3AGYGHO46JAAXO6LU',
   reloadAccount: reloadAccount
 }
 interface IConfig {
@@ -69,6 +71,7 @@ interface IConfig {
   usdcToken: number
   algoToken: number
   btcToken: number
+  feeCollector: string
 }
 
 const initState = defaultState
@@ -86,6 +89,7 @@ try {
     initState.tokens.algo = configData.algoToken
     initState.tokens.usdc = configData.usdcToken
     initState.tokens.btc = configData.btcToken
+    initState.feeCollector = configData.feeCollector
   }
 } catch (e: any) {
   console.error(e.message)
@@ -107,6 +111,7 @@ export const useAppStore = defineStore('app', () => {
         if (istate.tokens) initState.tokens = istate.tokens
         if (istate.env) initState.env = istate.env
         if (istate.customToken) initState.customToken = istate.customToken
+        if (istate.feeCollector) initState.feeCollector = istate.feeCollector
         storageState = istate
       }
     }
@@ -132,6 +137,7 @@ export const useAppStore = defineStore('app', () => {
     initState.tokens.algo = configData.algoToken
     initState.tokens.usdc = configData.usdcToken
     initState.tokens.btc = configData.btcToken
+    initState.feeCollector = configData.feeCollector
     if (storageState?.env) {
       // allow overide by the storage
       initState.env = storageState?.env
