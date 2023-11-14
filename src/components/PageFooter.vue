@@ -24,7 +24,11 @@ import Divider from 'primevue/divider'
         <div><RouterLink to="/contact-us">Contact us</RouterLink></div>
         <div><RouterLink to="/gdpr/latest">GDPR policy</RouterLink></div>
         <div>
-          <RouterLink to="/terms/latest">Terms and agreement, MiCA regulatory documents</RouterLink>
+          <RouterLink to="/terms/latest">Terms and agreement</RouterLink>
+        </div>
+        <div>
+          Tokens: <RouterLink to="/token/gold">Gold</RouterLink>,
+          <RouterLink to="/token/dao">DAO</RouterLink>
         </div>
         <div><RouterLink to="/settings">Settings</RouterLink></div>
         <div><RouterLink to="/price-list">Price list</RouterLink></div>
