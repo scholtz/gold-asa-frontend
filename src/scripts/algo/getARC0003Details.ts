@@ -24,6 +24,8 @@ const getARC0003Details = async (input: IInput): Promise<INFTDetail | null> => {
   console.log('url', url)
   const data: INFT = await loadIPFSFile(url)
   if (!data) return null
+  if (!data.properties) return null
+  if (!data.properties.pictures) return null
   if (!data.properties.pictures.length) return null
   if (!data.properties.pictures[0].thumbnail) return null
 

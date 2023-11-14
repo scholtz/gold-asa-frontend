@@ -8,7 +8,10 @@ const props = defineProps<{
 }>()
 </script>
 <template>
-  <RouterLink :to="`/coin/${props.item.nft.properties.slugName}`">
+  <RouterLink
+    v-if="props.item && props.item.nft"
+    :to="`/coin/${props.item.nft.properties.slugName}`"
+  >
     <div class="border-1 surface-border border-round m-1 text-center py-2 px-2">
       <div class="mb-2">
         <IPFSImage

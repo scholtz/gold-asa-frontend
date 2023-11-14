@@ -97,9 +97,8 @@ const loadMintedTokens = async () => {
               </li>
             </ul>
             <p>
-              We have <i><b>destroyed</b></i
-              >+ this disadvantages. Now you can enjoy combination of algorand's features with gold
-              market.
+              With tokenized gold this disadavtages <i><b>does not apply</b></i
+              >. Now you can enjoy combination of algorand's features with gold market.
             </p>
             <ul>
               <li>Transaction finality <b>faster then using credit card</b></li>
