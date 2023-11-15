@@ -12,6 +12,10 @@ import Layout from '@/layouts/AuthLayout.vue'
             <a href="https://algoexplorer.io/asset/1241944285" target="_blank">1241944285</a>
           </p>
           <p>
+            Gold token white paper:
+            <a href="/gold.pdf" target="_blank">gold.pdf</a>
+          </p>
+          <p>
             ASA.Gold is the groundbreaking publicly auditable gold token. Backed by physical gold
             reserves, our onchain eshop ensures real-time audits accessible to all, guaranteeing the
             authenticity and value of each token. Invest with confidence in a new era of gold-backed

@@ -12,6 +12,10 @@ import Layout from '@/layouts/AuthLayout.vue'
             <a href="https://algoexplorer.io/asset/1241945177" target="_blank">1241945177</a>
           </p>
           <p>
+            GoldDAO token white paper:
+            <a href="/dao.pdf" target="_blank">dao.pdf</a>
+          </p>
+          <p>
             DAO governance token for gold-backed project - ASA.Gold. Empower community members to
             influence project decisions through a transparent, onchain, publicly auditable process.
             Shape the future of gold-backed digital assets collaboratively, ensuring trust,

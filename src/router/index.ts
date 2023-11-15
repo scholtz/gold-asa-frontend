@@ -3,6 +3,14 @@ import PublicHomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta?.env?.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve({ left: 0, top: 0 })
+      }, 1)
+    })
+  },
+
   routes: [
     {
       path: '/',
