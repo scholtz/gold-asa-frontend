@@ -63,9 +63,6 @@ const toggleFullScreen = () => {
     openFullScreen()
   }
 }
-const onFullScreenChange = () => {
-  fullScreen.value = !fullScreen.value
-}
 const openFullScreen = () => {
   let elem = galleria.value.$el
   fullScreen.value = true
@@ -95,18 +92,6 @@ const closeFullScreen = () => {
     //   document.msExitFullscreen()
     // }
   }
-}
-const bindDocumentListeners = () => {
-  document.addEventListener('fullscreenchange', onFullScreenChange)
-  document.addEventListener('mozfullscreenchange', onFullScreenChange)
-  document.addEventListener('webkitfullscreenchange', onFullScreenChange)
-  document.addEventListener('msfullscreenchange', onFullScreenChange)
-}
-const unbindDocumentListeners = () => {
-  document.removeEventListener('fullscreenchange', onFullScreenChange)
-  document.removeEventListener('mozfullscreenchange', onFullScreenChange)
-  document.removeEventListener('webkitfullscreenchange', onFullScreenChange)
-  document.removeEventListener('msfullscreenchange', onFullScreenChange)
 }
 
 const fullScreenIcon = computed(() => {

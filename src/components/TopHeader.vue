@@ -94,7 +94,7 @@ function logout() {
             severity="warn"
             class="align-self-center m-1"
           ></Badge>
-          <Badge value="IN DEVELOPMENT" severity="danger" class="align-self-center m-1"></Badge>
+          <Badge value="Stable Beta" severity="danger" class="align-self-center m-1"></Badge>
         </div>
         <Button
           severity="link"

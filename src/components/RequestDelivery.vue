@@ -80,14 +80,11 @@ const executeStopSale = async () => {
     <Button @click="store.state.authComponent?.auth()" class="m-3">Login or Register</Button>
   </div>
   <div v-else>
-    <Button
-      :disabled="state.sending || state.sent"
-      :severity="state.sent ? 'success' : 'primary'"
-      @click="executeStopSale"
-      class="m-3"
-      >Set not for sale</Button
-    >
-
+    <p>
+      Please write us your request by email to
+      <a href="mailto:support@asa.gold">support@asa.gold</a>. We will send you estimated costs and
+      after the payment we will ship you the gold coin.
+    </p>
     <Button severity="secondary" @click="handleOnCancel" class="m-3">Go back</Button>
   </div>
 </template>
