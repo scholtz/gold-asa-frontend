@@ -16,8 +16,15 @@ import ProductsCarousel from '@/components/ProductsCarousel.vue'
           </ol>
         </div>
         <div class="col-12 md:col-6 text-center">
-          <iframe width="420" height="315" src="https://www.youtube.com/watch?v=kURiQrN0lrk">
-          </iframe>
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/kURiQrN0lrk?si=Q9FK_WyIjFTVpc2A"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
         </div>
         <div class="col-12">
           <ProductsCarousel />
