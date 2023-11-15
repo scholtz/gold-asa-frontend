@@ -35,7 +35,38 @@ Project has been initiated by and submitted to Algorand's Build a Bull hackathon
 ![Team](team.png)
 
 - Team leader: Ludovit Scholtz, Based in Prague
+
+Relay node runner, founder of the vote coin project, AWallet, and big algorand maximalist.
+
 - COO: Olga Scholtz, Based in Prague
+
+Olga have experience in management and business operation.
+
 - CFO: Michal Fečko, Based in Switzerland
+
+Mike is commodities trader with interest in energy markets and gold.
+
 - CMO: Samuel Zubo, Based in Prague
+
+Samo is owner of multiple eshops and knows the best marketing strategies to sell the products online.
+
 - CTO: Daniel Dohne, Based in Switzerland
+
+Daniel is expert in multiple blockchain technologies and is CEO of Aramid.Finace - bridge between algorand, near, polygon, aurora, and ETH.
+
+## Product Market Fit
+
+Even though we launch the project under MiCA regulation within EU boundaries, the holders of gold token may be any algorand user worldwide.
+
+Target audience of the gold token are:
+
+- Small investors who want to invest into gold on periodic basis
+- Large investors who want to hedge their portfolios
+- Projects which wants to have their token to be backed by real gold, for example https://stabilitas.finance
+- Eshop owners who want to utilize algorand's efficient blockchain, but do not want to use volatile asset
+- Restaurants who want to allow their customers to pay with gold
+- Undeveloped countries with high inflation
+
+Our revenue stream is from the Onramp solution which combines bank world with crypto world, and real gold coins eshop sale to public, and market inetrventions.
+
+We have launched a DAO governance token with stable price peg to USD, which may allow further financing.
