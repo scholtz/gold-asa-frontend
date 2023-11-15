@@ -1,80 +1,40 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
 import Panel from 'primevue/panel'
+import ProductsCarousel from '@/components/ProductsCarousel.vue'
 </script>
 
 <template>
   <Layout :hideTopMenu="false">
-    <Panel header="We will go to mainnet soon" class="m-4">
-      <p>This web is still under construction, but we plan to finish at most on November 15th.</p>
-      <p>Progress we have made so far:</p>
-      <ul>
-        <li>
-          Oct 19th 2023 : Web2 Authentication Experience - We created
-          <a href="https://github.com/scholtz/algorand-authentication-component-vue"
-            >algorand-authentication-component-vue</a
-          >
-          component free for use for anybody.
-        </li>
-        <li>Oct 21st 2023 : Domain has been registered</li>
-        <li>
-          Oct 26th 2023 : We have integrated Folks Router for swapping Gold to Algorand, USDC and
-          BTC and vice versa
-        </li>
-        <li>
-          Nov 1st 2023 : We have integrated email templates, and on email verification we airdop
-          some algos so that web2 users have even better xp
-        </li>
-        <li>Nov 5th 2023 : Smart contract has been finished with full test coverage</li>
-        <li>
-          Nov 6th 2023 : ASA.Gold
-          <a href="https://www.npmjs.com/package/algorand-asa-gold">NPM package</a> has been
-          published
-        </li>
-        <li>Nov 12th 2023 : Eshop is working</li>
-        <li>
-          Nov 13th 2023 : Testnet launched at
-          <a href="https://testnet.asa.gold/">https://testnet.asa.gold/</a>
-        </li>
-        <li>We are working on bank itegration now</li>
-      </ul>
-      <p>Check our open source progress:</p>
-      <ul>
-        <li>
-          FE:
-          <a href="https://github.com/scholtz/gold-asa-frontend"
-            >https://github.com/scholtz/gold-asa-frontend</a
-          >
-        </li>
-        <li>
-          BFF:
-          <a href="https://github.com/scholtz/AsaGoldBff">https://github.com/scholtz/AsaGoldBff</a>
-        </li>
-        <li>
-          RepoApi:
-          <a href="https://github.com/scholtz/AsaGoldRepository"
-            >https://github.com/scholtz/AsaGoldRepository</a
-          >
-        </li>
-        <li>
-          EShop smart contract:
-          <a href="https://github.com/scholtz/gold-asa-frontend/tree/main/asa-gold-smartcontract"
-            >https://github.com/scholtz/gold-asa-frontend/tree/main/asa-gold-smartcontract</a
-          >
-        </li>
-        <li>
-          AuthComponent:
-          <a href="https://github.com/scholtz/algorand-authentication-component-vue"
-            >https://github.com/scholtz/algorand-authentication-component-vue</a
-          >
-        </li>
-        <li>
-          NPM package:
-          <a href="https://www.npmjs.com/package/algorand-asa-gold"
-            >https://www.npmjs.com/package/algorand-asa-gold</a
-          >
-        </li>
-      </ul>
+    <Panel header="ASA.Gold - gold token backed by real gold" class="m-4">
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <ol id="mainlist">
+            <li>Buy, use, or sell gold token backed by real gold</li>
+            <li>Everybody can audit our reserves - its what we sell in the eshop</li>
+            <li>Gold eshop including secondary marketplace is powered by Algorand blockchain</li>
+          </ol>
+        </div>
+        <div class="col-12 md:col-6 text-center">
+          <iframe width="420" height="315" src="https://www.youtube.com/watch?v=kURiQrN0lrk">
+          </iframe>
+        </div>
+        <div class="col-12">
+          <ProductsCarousel />
+        </div>
+      </div>
     </Panel>
   </Layout>
 </template>
+<style>
+#mainlist li {
+  position: relative;
+  counter-increment: list;
+  max-width: 45rem;
+  margin: 1rem auto;
+  padding: 1rem 1rem 1rem;
+  box-shadow: 0.1rem 0.1rem 1.5rem rgba(0, 0, 0, 0.3);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+</style>
