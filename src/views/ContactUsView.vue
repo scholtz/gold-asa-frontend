@@ -18,7 +18,7 @@ const data = ref({
       key: '0_0',
       type: 'person',
       data: {
-        image: '/images/OS.jpg',
+        image: '/images/OS.png',
         name: 'Olga Scholtz',
         title: 'COO'
       },
