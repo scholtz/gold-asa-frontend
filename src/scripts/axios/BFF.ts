@@ -64,8 +64,34 @@ const bffUpdateProfile = async (profile: IProfile, arc14header: string) => {
   return ret.data
 }
 
+const bffRFQ = async (amount: number, currency: string, arc14header: string) => {
+  const store = useAppStore()
+  const ret = await axios.get(
+    `${store.state.bff}/api/v1/rfq?currency=${currency}&amount=${amount}`,
+    {
+      headers: {
+        Authorization: arc14header,
+        contentType: 'application/json'
+      }
+    }
+  )
+  return ret.data
+}
+const bffConfirmRFQ = async (id: string, arc14header: string) => {
+  const store = useAppStore()
+  const ret = await axios.put(`${store.state.bff}/api/v1/rfq/${id}`, {
+    headers: {
+      Authorization: arc14header,
+      contentType: 'application/json'
+    }
+  })
+  return ret.data
+}
+
 export {
   bffAccount,
+  bffRFQ,
+  bffConfirmRFQ,
   bffSendVerificationEmail,
   bffSendVerifyEmailCode,
   bffGetProfile,

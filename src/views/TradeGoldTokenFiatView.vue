@@ -9,29 +9,134 @@ import { useToast } from 'primevue/usetoast'
 
 const toast = useToast()
 const store = useAppStore()
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import delay from '@/scripts/common/delay'
+import { bffConfirmRFQ, bffRFQ } from '@/scripts/axios/BFF'
+
+interface IRFQ {
+  rfqId: string
+  quote: number
+  iban: string
+  bic: string
+  clientId: string
+}
 
 const state = reactive({
   amount: 10,
   currencies: ['EUR', 'CZK'],
-  currency: 'EUR'
+  currency: 'EUR',
+  waitingPayment: false,
+  waitingPayment2: false
 })
+
+const rfq = ref<IRFQ>()
 
 const min = computed(() => {
   return state.currency == 'EUR' ? 10 : 200
 })
 
 async function getRFQ() {
-  if (!store.state.authState.isAuthenticated) {
-    toast.add({
-      severity: 'info',
-      detail: 'Please authenticate first',
-      life: 5000
-    })
-    await delay(1000)
-    store.state.authComponent?.auth()
-    return
+  try {
+    if (!store.state.authState.isAuthenticated) {
+      toast.add({
+        severity: 'info',
+        detail: 'Please authenticate first',
+        life: 5000
+      })
+      await delay(1000)
+      store.state.authComponent?.auth()
+      return
+    }
+    const val = await bffRFQ(state.amount, state.currency, store.state.authState.arc14Header)
+    if (!val || val.quote == 0) {
+      toast.add({
+        severity: 'error',
+        detail: 'No quote available at the moment, please try again later',
+        life: 5000
+      })
+    } else {
+      rfq.value = val
+    }
+  } catch (err: any) {
+    console.error('err.storeProfile', err)
+    if (err?.response?.data?.title) {
+      toast.add({
+        severity: 'error',
+        detail: err.response.data.title,
+        life: 5000
+      })
+    } else {
+      toast.add({
+        severity: 'error',
+        detail: 'Error occured:' + err.message,
+        life: 5000
+      })
+    }
+  }
+}
+
+async function confirmRFQ() {
+  try {
+    if (!store.state.authState.isAuthenticated) {
+      toast.add({
+        severity: 'info',
+        detail: 'Please authenticate first',
+        life: 5000
+      })
+      await delay(1000)
+      store.state.authComponent?.auth()
+      return
+    }
+    if (!rfq.value) return
+    await bffConfirmRFQ(rfq.value.rfqId, store.state.authState.arc14Header)
+    state.waitingPayment = true
+  } catch (err: any) {
+    console.error('err.storeProfile', err)
+    if (err?.response?.data?.title) {
+      toast.add({
+        severity: 'error',
+        detail: err.response.data.title,
+        life: 5000
+      })
+    } else {
+      toast.add({
+        severity: 'error',
+        detail: 'Error occured:' + err.message,
+        life: 5000
+      })
+    }
+  }
+}
+async function transferIncomming() {
+  try {
+    if (!store.state.authState.isAuthenticated) {
+      toast.add({
+        severity: 'info',
+        detail: 'Please authenticate first',
+        life: 5000
+      })
+      await delay(1000)
+      store.state.authComponent?.auth()
+      return
+    }
+    if (!rfq.value) return
+
+    state.waitingPayment2 = true
+  } catch (err: any) {
+    console.error('err.storeProfile', err)
+    if (err?.response?.data?.title) {
+      toast.add({
+        severity: 'error',
+        detail: err.response.data.title,
+        life: 5000
+      })
+    } else {
+      toast.add({
+        severity: 'error',
+        detail: 'Error occured:' + err.message,
+        life: 5000
+      })
+    }
   }
 }
 </script>
@@ -43,7 +148,7 @@ async function getRFQ() {
       toggleableContent="text"
     >
       <div class="grid">
-        <div class="col-12 md:col-6">
+        <div class="col-12 md:col-6" v-if="!rfq">
           <div class="field grid">
             <label for="currency" class="col-12 mb-2 md:col-4 md:mb-0">Currency</label>
             <div class="col-12 md:col-8">
@@ -75,6 +180,24 @@ async function getRFQ() {
               <Button @click="getRFQ">Get RFQ</Button>
             </div>
           </div>
+        </div>
+        <div class="col-12 md:col-6" v-else-if="state.waitingPayment">
+          <p>Please do bank transfer to account {{ rfq.iban }}/{{ rfq.bic }}</p>
+          <p>As reference use {{ rfq.rfqId }}/{{ rfq.clientId }}</p>
+          <Button @click="transferIncomming" v-if="state.waitingPayment2"
+            >I have made a transfer</Button
+          >
+          <ProgressSpinner
+            v-else
+            style="width: 1em; height: 1em"
+            strokeWidth="8"
+            animationDuration=".5s"
+            class="mx-1"
+          />
+        </div>
+        <div class="col-12 md:col-6" v-else>
+          <p>Quote is {{ rfq.quote }}</p>
+          <Button @click="confirmRFQ">I Confirm I want to buy Gold coin for specified quote</Button>
         </div>
         <div class="col-12 md:col-6">
           <p>
