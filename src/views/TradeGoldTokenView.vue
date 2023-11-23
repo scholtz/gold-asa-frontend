@@ -13,7 +13,7 @@ import Message from 'primevue/message'
 import getAsa from '@/scripts/algo/getAsa'
 import algosdk from 'algosdk'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
-import * as algokit from '@algorandfoundation/algokit-utils'
+import AlgorandAddress from '@/components/AlgorandAddress.vue'
 const toast = useToast()
 
 interface IState {
@@ -369,23 +369,27 @@ async function optIn(assetId: number) {
           :minFractionDigits="6"
           suffix=" g"
         />
-        <Button @click="fetchQuotes">Refresh quotes</Button>
+        <Button class="hidden md:revert" @click="fetchQuotes">Refresh quotes</Button>
+      </div>
+      <div>
+        <Button class="md:hidden w-full" @click="fetchQuotes">Refresh quotes</Button>
       </div>
       <div v-if="state.lastError">
         <Message severity="error" @close="state.lastError = ''">{{ state.lastError }}</Message>
       </div>
+
       <table :class="refreshCount" id="tradingtable">
         <tr>
-          <th class="text-right">Your balance</th>
-          <th class="text-right">Action button</th>
-          <th class="text-right">Token</th>
-          <th></th>
-          <th class="text-left">Price</th>
-          <th class="text-right">Price</th>
-          <th></th>
-          <th class="text-left">Token</th>
-          <th class="text-left">Action button</th>
-          <th class="text-left">Your balance</th>
+          <th class="text-right hidden md:revert">Your balance</th>
+          <th class="text-center hidden md:revert">Action button</th>
+          <th class="text-right hidden xl:revert">Token</th>
+          <th class="hidden xl:revert"></th>
+          <th class="text-left hidden lg:revert">Price</th>
+          <th class="text-right hidden lg:revert">Price</th>
+          <th class="hidden xl:revert"></th>
+          <th class="text-left hidden xl:revert">Token</th>
+          <th class="text-center hidden md:revert">Action button</th>
+          <th class="text-left hidden md:revert">Your balance</th>
         </tr>
         <tr
           v-if="
@@ -416,7 +420,7 @@ async function optIn(assetId: number) {
           </td>
         </tr>
         <tr v-else>
-          <td class="text-right">
+          <td class="text-right hidden md:revert">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -429,36 +433,37 @@ async function optIn(assetId: number) {
           <td class="text-right">
             <Button
               v-if="state.quoteUsdcGold"
-              class="m-1"
+              class="m-1 bid"
               @click="executeQuote(state.quoteUsdcGold)"
-              >Buy gold</Button
+              >Buy {{ state.quantityQuote }} grams of gold <br />for
+              {{ Number(state.quoteUsdcGold?.quoteAmount) / 10 ** 6 }} USDC</Button
             >
           </td>
-          <td class="text-right">
+          <td class="text-right hidden xl:revert">
             <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
               :title="store.state.tokens.usdc.toString()"
               >USDC</span
             >
           </td>
-          <td class="text-right">@</td>
-          <td v-if="state.quoteUsdcGold?.quoteAmount">
+          <td class="text-right hidden xl:revert">@</td>
+          <td v-if="state.quoteUsdcGold?.quoteAmount" class="hidden lg:revert">
             {{
               (Number(state.quoteUsdcGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(
                 4
               )
             }}
           </td>
-          <td v-else>No quote</td>
-          <td class="text-right" v-if="state.quoteGoldUsdc?.quoteAmount">
+          <td v-else class="hidden lg:revert">No quote</td>
+          <td class="text-right hidden lg:revert" v-if="state.quoteGoldUsdc?.quoteAmount">
             {{
               (Number(state.quoteGoldUsdc?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(
                 4
               )
             }}
           </td>
-          <td class="text-right" v-else>No quote</td>
-          <td>@</td>
-          <td>
+          <td class="text-right hidden lg:revert" v-else>No quote</td>
+          <td class="hidden xl:revert">@</td>
+          <td class="hidden xl:revert">
             <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
               :title="store.state.tokens.usdc.toString()"
               >USDC</span
@@ -467,12 +472,13 @@ async function optIn(assetId: number) {
           <td>
             <Button
               v-if="state.quoteGoldUsdc"
-              class="m-1"
+              class="m-1 offer"
               @click="executeQuote(state.quoteGoldUsdc)"
-              >Sell gold</Button
+              >Sell {{ state.quantityQuote }} grams of gold <br />for
+              {{ Number(state.quoteGoldUsdc?.quoteAmount) / 10 ** 6 }} USDC</Button
             >
           </td>
-          <td>
+          <td class="hidden md:revert">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -485,42 +491,43 @@ async function optIn(assetId: number) {
         </tr>
 
         <tr>
-          <td class="text-right">
+          <td class="text-right hidden md:revert">
             {{ format(state.accountInformation?.amount, store.state.tokens.algo) }}
           </td>
           <td class="text-right">
             <Button
               v-if="state.quoteAlgoGold"
-              class="m-1"
+              class="m-1 bid"
               @click="executeQuote(state.quoteAlgoGold)"
-              >Buy gold</Button
+              >Buy {{ state.quantityQuote }} grams of gold <br />for
+              {{ Number(state.quoteAlgoGold?.quoteAmount) / 10 ** 6 }} Algo</Button
             >
           </td>
-          <td class="text-right">
+          <td class="text-right hidden xl:revert">
             <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
               :title="store.state.tokens.algo.toString()"
               >Algo</span
             >
           </td>
-          <td class="text-right">@</td>
-          <td v-if="state.quoteAlgoGold?.quoteAmount">
+          <td class="text-right hidden xl:revert">@</td>
+          <td v-if="state.quoteAlgoGold?.quoteAmount" class="hidden lg:revert">
             {{
               (Number(state.quoteAlgoGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(
                 4
               )
             }}
           </td>
-          <td v-else>No quote</td>
-          <td class="text-right" v-if="state.quoteGoldAlgo?.quoteAmount">
+          <td class="hidden lg:revert" v-else>No quote</td>
+          <td class="text-right hidden lg:revert" v-if="state.quoteGoldAlgo?.quoteAmount">
             {{
               (Number(state.quoteGoldAlgo?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(
                 4
               )
             }}
           </td>
-          <td class="text-right" v-else>No quote</td>
-          <td>@</td>
-          <td>
+          <td class="text-right hidden lg:revert" v-else>No quote</td>
+          <td class="hidden xl:revert">@</td>
+          <td class="hidden xl:revert">
             <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
               :title="store.state.tokens.algo.toString()"
               >Algo</span
@@ -529,12 +536,13 @@ async function optIn(assetId: number) {
           <td>
             <Button
               v-if="state.quoteGoldAlgo"
-              class="m-1"
+              class="m-1 offer"
               @click="executeQuote(state.quoteGoldAlgo)"
-              >Sell gold</Button
+              >Sell {{ state.quantityQuote }} grams of gold <br />for
+              {{ Number(state.quoteGoldAlgo?.quoteAmount) / 10 ** 6 }} Algo</Button
             >
           </td>
-          <td>
+          <td class="hidden md:revert">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -558,7 +566,7 @@ async function optIn(assetId: number) {
           </td>
         </tr>
         <tr v-else>
-          <td class="text-right">
+          <td class="text-right hidden md:revert">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -569,42 +577,50 @@ async function optIn(assetId: number) {
             }}
           </td>
           <td class="text-right">
-            <Button v-if="state.quoteBtcGold" class="m-1" @click="executeQuote(state.quoteBtcGold)"
-              >Buy gold</Button
+            <Button
+              v-if="state.quoteBtcGold"
+              class="m-1 bid"
+              @click="executeQuote(state.quoteBtcGold)"
+              >Buy {{ state.quantityQuote }} grams of gold <br />for
+              {{ Number(state.quoteBtcGold?.quoteAmount) / 10 ** 8 }} BTC</Button
             >
           </td>
-          <td class="text-right">
+          <td class="text-right hidden xl:revert">
             <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
               :title="store.state.tokens.btc.toString()"
               >BTC</span
             >
           </td>
-          <td class="text-right">@</td>
-          <td v-if="state.quoteBtcGold?.quoteAmount">
+          <td class="text-right hidden xl:revert">@</td>
+          <td class="hidden lg:revert" v-if="state.quoteBtcGold?.quoteAmount">
             {{
-              (Number(state.quoteBtcGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
+              (Number(state.quoteBtcGold?.quoteAmount) / (state.quantityQuote * 10 ** 8)).toFixed(4)
             }}
           </td>
-          <td v-else>No quote</td>
-          <td class="text-right" v-if="state.quoteGoldBtc?.quoteAmount">
+          <td class="hidden lg:revert" v-else>No quote</td>
+          <td class="text-right hidden lg:revert" v-if="state.quoteGoldBtc?.quoteAmount">
             {{
-              (Number(state.quoteGoldBtc?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
+              (Number(state.quoteGoldBtc?.quoteAmount) / (state.quantityQuote * 10 ** 8)).toFixed(4)
             }}
           </td>
-          <td class="text-right" v-else>No quote</td>
-          <td>@</td>
-          <td>
+          <td class="text-right hidden lg:revert" v-else>No quote</td>
+          <td class="hidden xl:revert">@</td>
+          <td class="hidden xl:revert">
             <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
               :title="store.state.tokens.btc.toString()"
               >BTC</span
             >
           </td>
           <td>
-            <Button v-if="state.quoteGoldBtc" class="m-1" @click="executeQuote(state.quoteGoldBtc)"
-              >Sell gold</Button
+            <Button
+              v-if="state.quoteGoldBtc"
+              class="m-1 offer"
+              @click="executeQuote(state.quoteGoldBtc)"
+              >Sell {{ state.quantityQuote }} grams of gold <br />for
+              {{ Number(state.quoteGoldBtc?.quoteAmount) / 10 ** 8 }} BTC</Button
             >
           </td>
-          <td>
+          <td class="hidden md:revert">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -619,6 +635,10 @@ async function optIn(assetId: number) {
       <p>
         Blockchain DEX trading is using DEX aggregator
         <a href="https://www.folksrouter.io" target="_blank">Folks router</a>.
+        <span v-if="store.state.authState.account"
+          >Your account is
+          <AlgorandAddress :address="store.state.authState.account"></AlgorandAddress>.</span
+        >
       </p>
     </Panel>
   </Layout>
@@ -626,5 +646,30 @@ async function optIn(assetId: number) {
 <style>
 #tradingtable tr {
   height: 3em;
+}
+
+@media screen and (min-width: 768px) {
+  .md\:revert {
+    display: revert !important;
+  }
+}
+@media screen and (min-width: 992px) {
+  .lg\:revert {
+    display: revert !important;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .xl\:revert {
+    display: revert !important;
+  }
+}
+
+.bid {
+  border: 1px solid green;
+  box-shadow: 5px 10px green;
+}
+.offer {
+  border: 1px solid red;
+  box-shadow: 5px 10px red;
 }
 </style>
