@@ -27,6 +27,14 @@ import Layout from '@/layouts/AuthLayout.vue'
             >
             by Pera since 2023-11-14
           </p>
+          <p>
+            Price development
+            <a href="https://vestige.fi/asset/1241945177" target="_blank">by Vestige</a>
+          </p>
+          <p>
+            Download ASA.Gold
+            <a href="/ASA.Gold-Pitch-Deck.pdf" target="_blank">Pitch deck</a>
+          </p>
         </div>
         <div class="col-12 md:col-3">
           <img
