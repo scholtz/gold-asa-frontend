@@ -21,8 +21,8 @@ import ProductsCarousel from '@/components/ProductsCarousel.vue'
       </div>
       <div class="m-4">
         Each gold coin has its
-        <abbr title="Non Funginble Token - Each coin is unique">NFT</abbr>, which can be traded
-        using smart contract or DeFi
+        <abbr title="Non Fungible Token - Each coin is unique">NFT</abbr>, which can be traded using
+        smart contract or DeFi
       </div>
       <div class="m-4">NFTs in stock can be redeemed by parcel delivery within EU area</div>
     </div>
