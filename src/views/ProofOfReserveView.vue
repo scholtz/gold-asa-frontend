@@ -3,7 +3,7 @@ import Layout from '@/layouts/AuthLayout.vue'
 import { onMounted, reactive, ref } from 'vue'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
-import ProductBox from '@/components/ProductBox.vue'
+import ReservesList from '@/components/ReservesList.vue'
 import Panel from 'primevue/panel'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -125,45 +125,7 @@ const loadMintedTokens = async () => {
               />
             </p>
             <h2>List of gold coins in reserves</h2>
-            <table class="w-full text-left">
-              <thead>
-                <tr>
-                  <th>ASA ID</th>
-                  <th>Name</th>
-                  <th>Weight</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in products" :key="item.asa">
-                  <td>
-                    <RouterLink :to="`/coin/${item.nft.properties.slugName}`">{{
-                      item.asa
-                    }}</RouterLink>
-                  </td>
-                  <td>{{ item.nft.name }}</td>
-                  <td>{{ item.state.weight / 10 ** 6 }} g</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colspan="3"><Divider /></td>
-                </tr>
-                <tr>
-                  <th colspan="2">Sum of weight of gold in reserves</th>
-                  <th>
-                    {{
-                      products
-                        .map((a) => a.state.weight)
-                        .reduce(function (a, b) {
-                          return a + b
-                        }) /
-                      10 ** 6
-                    }}
-                    g
-                  </th>
-                </tr>
-              </tfoot>
-            </table>
+            <ReservesList />
           </div>
         </div>
       </Panel>
