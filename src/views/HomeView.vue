@@ -24,7 +24,7 @@ import ProductsCarousel from '@/components/ProductsCarousel.vue'
         <abbr title="Non Fungible Token - Each coin is unique">NFT</abbr>, which can be traded using
         smart contract or DeFi
       </div>
-      <div class="m-4">NFTs in stock can be redeemed by parcel delivery within EU area</div>
+      <div class="sm:m-1 m-4">NFTs in stock can be redeemed by parcel delivery within EU area</div>
     </div>
     <div class="grid">
       <div class="col-12">
