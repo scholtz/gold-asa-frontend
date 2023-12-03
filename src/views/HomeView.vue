@@ -7,19 +7,19 @@ import ProductsCarousel from '@/components/ProductsCarousel.vue'
   <Layout :hideTopMenu="false">
     <div class="text-center m-8">
       <h1>Aurum Standard Asset</h1>
-      <div class="m-4">
+      <div class="sm:m-1 m-4">
         <RouterLink to="/trade-gold">Buy</RouterLink>, use, or
         <RouterLink to="/trade-gold">sell</RouterLink> gold token backed by real gold
       </div>
-      <div class="m-4">
+      <div class="sm:m-1 m-4">
         Everybody can <RouterLink to="/proof-of-reserve">audit our reserves</RouterLink> - its what
         we sell in the <RouterLink to="/buy-gold-coins">eshop</RouterLink>
       </div>
-      <div class="m-4">
+      <div class="sm:m-1 m-4">
         Visit our <RouterLink to="/buy-gold-coins">gold eshop</RouterLink> including
         <RouterLink to="/buy-gold-coins">secondary marketplace</RouterLink>
       </div>
-      <div class="m-4">
+      <div class="sm:m-1 m-4">
         Each gold coin has its
         <abbr title="Non Fungible Token - Each coin is unique">NFT</abbr>, which can be traded using
         smart contract or DeFi
