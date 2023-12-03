@@ -5,7 +5,7 @@ import ProductsCarousel from '@/components/ProductsCarousel.vue'
 
 <template>
   <Layout :hideTopMenu="false">
-    <div class="text-center m-8">
+    <div class="text-center sm:m-2 m-8">
       <h1>Aurum Standard Asset</h1>
       <div class="sm:m-1 m-4">
         <RouterLink to="/trade-gold">Buy</RouterLink>, use, or
