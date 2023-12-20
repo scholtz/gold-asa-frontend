@@ -1,142 +1,279 @@
 <script setup lang="ts">
-import Layout from '@/layouts/AuthLayout.vue'
-import { onMounted, reactive, ref } from 'vue'
-import { ProductService } from '@/service/ProductService'
-import type IEshopItem from '@/types/IEshopItem'
-import ReservesList from '@/components/ReservesList.vue'
-import Panel from 'primevue/panel'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import type { RouterLink } from 'vue-router'
-import { useAppStore } from '@/stores/app'
-import ProgressSpinner from 'primevue/progressspinner'
-import delay from '@/scripts/common/delay'
-import getAlgodClient from '@/scripts/algo/getAlgodClient'
-import getAsa from '@/scripts/algo/getAsa'
-import { isReturnStatement } from 'typescript'
-import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
-import { toNamespacedPath } from 'path'
-import Divider from 'primevue/divider'
-const store = useAppStore()
+import Layout from "@/layouts/AuthLayout.vue";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { onMounted, reactive, ref } from "vue";
+import { ProductService } from "@/service/ProductService";
+import type IEshopItem from "@/types/IEshopItem";
+import ReservesList from "@/components/ReservesList.vue";
+import Image from "primevue/image";
+import Panel from "primevue/panel";
+import DataTable from "primevue/datatable";
+import Button from "primevue/button";
+import Card from "primevue/card";
+import Timeline from "primevue/timeline";
+import Column from "primevue/column";
+import type { RouterLink } from "vue-router";
+import { useAppStore } from "@/stores/app";
+import ProgressSpinner from "primevue/progressspinner";
+import delay from "@/scripts/common/delay";
+import getAlgodClient from "@/scripts/algo/getAlgodClient";
+import getAsa from "@/scripts/algo/getAsa";
+import { isReturnStatement } from "typescript";
+import formatAssetPrice from "@/scripts/algo/formatAssetPrice";
+import { toNamespacedPath } from "path";
+import Divider from "primevue/divider";
+const store = useAppStore();
 
 const state = reactive({
-  mintedTokens: ''
-})
+  mintedTokens: "",
+});
 
 onMounted(async () => {
-  const data = (await ProductService.getAllProducts()).filter((c) => c.state.state == 1)
+  const data = (await ProductService.getAllProducts()).filter((c) => c.state.state == 1);
   if (data) {
-    products.value = data
+    products.value = data;
   }
-  await loadMintedTokens()
-})
+  await loadMintedTokens();
 
-const products = ref<IEshopItem[]>()
+  AOS.init({
+    duration: 800,
+    easing: "ease-in-out",
+    once: true,
+  });
+});
 
+const products = ref<IEshopItem[]>();
+const events = ref([
+  {
+    status: "Disadvantages Of Gold Are:",
+    date: "15/10/2020 10:30",
+    icon: "pi pi-comment",
+    color: "#9C27B0",
+    description: [
+      "No Income or Yield - Gold doesn't generate any income or yield on its own. Unlike stocks or bonds, which can provide dividends or interest, holding gold won't produce any periodic cash flow.",
+      "Lack of Cash Flow - Gold doesn't generate cash flow, which means investors can miss out on opportunities to reinvest in assets that do produce income.",
+      "You can stake your gold in AMMs and generate yield",
+      "Self custody - your keys your crypto",
+      "Non fractionable - When you own 1 gold coin you are not likely going to split it in half when you need to pay only half of the price.",
+    ],
+  },
+  {
+    status: "With Tokenized Gold This Disadavtages Does Not Apply.",
+    date: "15/10/2020 14:00",
+    icon: "pi pi-comment",
+    subtitle: "Now You Can Enjoy Combination of Algorand's Features With Gold Market.",
+    color: "#673AB7",
+    description: [
+      "Transaction finality faster then using credit card",
+      "Almost zero transaction costs (0.001 algo ~ $0.0001)",
+      "You can stake your gold in AMMs and generate yield",
+      "Self custody - your keys your crypto",
+      "You can fraction gold up to 6 decimals of gold gram ~ $0,00005",
+    ],
+  },
+]);
 const explorerLink = () => {
   switch (store.state.env) {
-    case 'mainnet-v1.0':
-      return `https://algoexplorer.io/asset/${store.state.tokens.gold}`
-    case 'testnet-v1.0':
-      return `https://testnet.algoexplorer.io/asset/${store.state.tokens.gold}`
+    case "mainnet-v1.0":
+      return `https://algoexplorer.io/asset/${store.state.tokens.gold}`;
+    case "testnet-v1.0":
+      return `https://testnet.algoexplorer.io/asset/${store.state.tokens.gold}`;
     default:
-      return `https://app.dappflow.org/explorer/asset/${store.state.tokens.gold}/transactions`
+      return `https://app.dappflow.org/explorer/asset/${store.state.tokens.gold}/transactions`;
   }
-}
+};
 
 const loadMintedTokens = async () => {
-  const algod = getAlgodClient(store.state)
-  const asa = await getAsa({ assetId: store.state.tokens.gold, client: algod })
+  const algod = getAlgodClient(store.state);
+  const asa = await getAsa({ assetId: store.state.tokens.gold, client: algod });
   if (!asa) {
-    state.mintedTokens = 'Unable to load info at the moment'
-    return
+    state.mintedTokens = "Unable to load info at the moment";
+    return;
   }
-  const total = Number(asa.params.total)
+  const total = Number(asa.params.total);
   const account = await algod
     .accountAssetInformation(asa.params.reserve, store.state.tokens.gold)
-    .do()
-  const inReserves = Number(account['asset-holding']['amount'])
-  console.log('account', account['asset-holding']['amount'])
+    .do();
+  const inReserves = Number(account["asset-holding"]["amount"]);
+  console.log("account", account["asset-holding"]["amount"]);
 
   state.mintedTokens = formatAssetPrice({
     assetId: store.state.tokens.gold,
-    value: total - inReserves
-  })
-}
+    value: total - inReserves,
+  });
+};
 </script>
 
 <template>
   <Layout :hideTopMenu="false">
-    <div v-if="products">
-      <Panel
-        header="Proof of reserves"
-        class="m-4 flex flex-grow-1 flex-column"
-        toggleableContent="text"
-      >
-        <div class="grid">
-          <div class="col-12 md:col-6">
-            <h2>We bring revolution to gold market</h2>
-            <p>
-              Weight of gold in the reserves is always higher then minted gold backed tokens. This
-              is ensured by the smart contract on public blockchain network - Algorand.
+    <div v-if="products" class="allbackground">
+      <div class="Dextrading-about-background">
+        <div
+          class="col-md-12 col-sm-12 text-white welcome-banner text-center nav-text text-center"
+        >
+          <div class="welcome-content">
+            <h1 class="title" data-aos="fade-down">
+              We Bring Revolution To Gold Market
+            </h1>
+            <p data-aos="zoom-in">
+              Weight of gold in the reserves is always higher then minted gold backed
+              tokens. This is ensured by the smart contract on public blockchain network -
+              Algorand.
             </p>
-            <p>Disadvantages of gold are:</p>
-            <ul>
-              <li>
-                <b>No Income or Yield</b> - Gold doesn't generate any income or yield on its own.
-                Unlike stocks or bonds, which can provide dividends or interest, holding gold won't
-                produce any periodic cash flow.
-              </li>
-              <li>
-                <b>Lack of Cash Flow</b> - Gold doesn't generate cash flow, which means investors
-                can miss out on opportunities to reinvest in assets that do produce income.
-              </li>
-              <li>
-                <b>Non fractionable</b> - When you own 1 gold coin you are not likely going to split
-                it in half when you need to pay only half of the price.
-              </li>
-            </ul>
-            <p>
-              With tokenized gold this disadavtages <i><b>does not apply</b></i
-              >. Now you can enjoy combination of algorand's features with gold market.
-            </p>
-            <ul>
-              <li>Transaction finality <b>faster then using credit card</b></li>
-              <li>Almost <b>zero transaction costs</b> (0.001 algo ~ $0.0001)</li>
-              <li>You can <b>stake</b> your gold in AMMs and generate yield</li>
-              <li><b>Self custody</b> - your keys your crypto</li>
-              <li>You can fraction gold up to 6 decimals of gold gram ~ $0,00005</li>
-            </ul>
-          </div>
-          <div class="col-12 md:col-6">
-            <h2>Reserves</h2>
-            <p>
-              Asa.Gold token id is
-              <a :href="explorerLink()" target="_blank">{{ store.state.tokens.gold }}</a>
-            </p>
-            <p>
-              Minted tokens: <span v-if="state.mintedTokens">{{ state.mintedTokens }}</span
-              ><ProgressSpinner
-                v-else
-                style="width: 1em; height: 1em"
-                strokeWidth="8"
-                animationDuration=".5s"
-                class="mx-1"
-              />
-            </p>
-            <h2>List of gold coins in reserves</h2>
-            <ReservesList />
+            <Button data-aos="fade-up" label="Secondary" severity="Secondary" rounded
+              >READ MORE</Button
+            >
           </div>
         </div>
-      </Panel>
+      </div>
+      <div class="timeline-display">
+        <div class="card card-backgroundimage">
+          <Timeline
+            :value="events"
+            align="alternate"
+            class="customized-timeline"
+            data-aos="fade-in"
+          >
+            <template #marker="slotProps">
+              <span
+                class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
+              >
+                <i :class="slotProps.item.icon"></i>
+              </span>
+            </template>
+            <template #content="slotProps">
+              <Card class="mt-5">
+                <template #title>
+                  {{ slotProps.item.status }}
+                  {{ slotProps.item.subtitle }}
+                </template>
+                <template #content>
+                  <ul>
+                    <li v-for="desc in slotProps.item.description" :key="desc">
+                      {{ desc }}
+                    </li>
+                  </ul>
+                </template>
+              </Card>
+            </template>
+          </Timeline>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row row--15 card-display text-center">
+          <div class="lg:col-4 md:col-6 sm:col-6 col-12">
+            <div class="rn-address card">
+              <div class="icon">
+                <i
+                  data-name="map-pin"
+                  data-tags="location,navigation,travel,marker"
+                  data-type="map-pin"
+                  class="vue-feather vue-feather--map-pin"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-map-pin vue-feather__content"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle></svg
+                ></i>
+              </div>
+              <div class="inner">
+                <h4 class="title">Reserves</h4>
+                <p>
+                  <a
+                    >Asa.Gold Token ID
+                    <h3 class="title">
+                      <a :href="explorerLink()" target="_blank">{{
+                        store.state.tokens.gold
+                      }}</a>
+                    </h3></a
+                  >
+                </p>
+                <p>
+                  <a
+                    >Minted Tokens
+                    <h3 class="title">
+                      <span v-if="state.mintedTokens">{{ state.mintedTokens }}</span>
+                    </h3></a
+                  >
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="data-table ptb--120">
+          <h2 class="mb-7">List Of Gold Coins In Reserves</h2>
+          <div class="grid grid-nogutter surface-section text-800">
+            <div
+              class="col-12 md:col-6 pl-6 text-center md:text-center flex align-items-center"
+            >
+              <section>
+                <ReservesList />
+              </section>
+            </div>
+            <div class="col-12 md:col-6 overflow-hidden pr-6">
+              <Image src="dexdradingcompany.jpg" alt="Image" />
+            </div>
+          </div>
+        </div> -->
+      </div>
+      <div class="container">
+        <div class="section-title">
+          <h2 class="title">Learn About Proof Of Reserves</h2>
+          <div class="bar"></div>
+          <p>We Bring Revolution To Gold Market</p>
+        </div>
+        <div class="row row--15">
+          <div class="lg:col-6 md:col-6 sm:col-6 col-12">
+            <div class="background rn-address">
+              <div class="companyimage"></div>
+            </div>
+          </div>
+          <div class="lg:col-6 md:col-6 sm:col-6 col-12">
+            <div class="background rn-address">
+              <ReservesList />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div v-else>
-      <div class="m-2 text-center">Loading..</div>
-      <Skeleton class="mb-2" borderRadius="16px"></Skeleton>
-      <Skeleton width="10rem" class="mb-2" borderRadius="16px"></Skeleton>
-      <Skeleton width="5rem" borderRadius="16px" class="mb-2"></Skeleton>
-      <Skeleton height="2rem" class="mb-2" borderRadius="16px"></Skeleton>
-      <Skeleton width="10rem" height="4rem" borderRadius="16px"></Skeleton>
+    <div v-else style="margin-top: 200px; height: 500px">
+      <div class="m-2 text-center">
+        <ProgressSpinner
+          style="width: 100px; height: 100px; margin-top: 100px"
+          strokeWidth="8"
+          fill="var(--surface-ground)"
+          animationDuration=".5s"
+          aria-label="Custom ProgressSpinner"
+        />
+      </div>
     </div>
   </Layout>
 </template>
+
+<style lang="scss" scoped>
+@media screen and (max-width: 960px) {
+  ::v-deep(.customized-timeline) {
+    .p-timeline-event:nth-child(even) {
+      flex-direction: row !important;
+
+      .p-timeline-event-content {
+        text-align: left !important;
+      }
+    }
+
+    .p-timeline-event-opposite {
+      flex: 0;
+    }
+  }
+}
+</style>

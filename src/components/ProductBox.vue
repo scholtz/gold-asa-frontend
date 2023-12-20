@@ -12,7 +12,7 @@ const props = defineProps<{
     v-if="props.item && props.item.nft"
     :to="`/coin/${props.item.nft.properties.slugName}`"
   >
-    <div class="border-1 surface-border border-round m-1 text-center py-2 px-2">
+    <div class="border-1 surface-border border-round text-center">
       <div class="mb-2">
         <IPFSImage
           :src="props.item.nft.properties.pictures[0].thumbnail"

@@ -70,7 +70,7 @@ const sum = () => {
 }
 </script>
 <template>
-  <DataTable :value="products" scrollable stripedRows sortMode="single">
+  <DataTable :value="products" scrollable stripedRows sortMode="single" class="table-data-display">
     <Column field="nft.name" header="Name" :sortable="true" style="min-width: 200px" class="nowrap"
       ><template #body="slotProps"
         ><RouterLink :to="`/coin/${slotProps.data.nft.properties.slugName}`" class="nowrap">
@@ -85,11 +85,12 @@ const sum = () => {
     </Column>
     <ColumnGroup type="footer">
       <Row>
-        <Column footer="Sum of gold in reserves:" footerStyle="text-align:right" class="nowrap" />
+        <Column footer="Sum of gold in reserves:" class="nowrap" />
         <Column class="nowrap" :footer="sum()" />
       </Row>
     </ColumnGroup>
   </DataTable>
+  
 </template>
 <style>
 .nowrap {
