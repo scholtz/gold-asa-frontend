@@ -32,7 +32,7 @@ const state = reactive({
 });
 const previewselected = ref("EUR");
 
-function isSelected(data) {
+function isSelected(data: string | null) {
   if (data === null) {
     state.currency = previewselected.value;
   } else {
