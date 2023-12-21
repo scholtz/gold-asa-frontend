@@ -1087,7 +1087,7 @@ img {
   padding-left: 100px;
 }
 
-/* .rn-address.card {
+.rn-address.card {
   background-image: url('./cardbackground.jpg')!important;
   margin-top: -230px;
   box-shadow: 0 2px 48px 0 rgba(0, 0, 0, .08);
@@ -1097,7 +1097,7 @@ img {
   padding: 30px;
   text-align: center;
 
-} */
+}
 
 .rn-address.card .inner h4.title {
   color: white;
