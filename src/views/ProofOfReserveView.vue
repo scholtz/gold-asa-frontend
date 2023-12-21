@@ -6,23 +6,14 @@ import { onMounted, reactive, ref } from "vue";
 import { ProductService } from "@/service/ProductService";
 import type IEshopItem from "@/types/IEshopItem";
 import ReservesList from "@/components/ReservesList.vue";
-import Image from "primevue/image";
-import Panel from "primevue/panel";
-import DataTable from "primevue/datatable";
 import Button from "primevue/button";
 import Card from "primevue/card";
 import Timeline from "primevue/timeline";
-import Column from "primevue/column";
-import type { RouterLink } from "vue-router";
 import { useAppStore } from "@/stores/app";
 import ProgressSpinner from "primevue/progressspinner";
-import delay from "@/scripts/common/delay";
 import getAlgodClient from "@/scripts/algo/getAlgodClient";
 import getAsa from "@/scripts/algo/getAsa";
-import { isReturnStatement } from "typescript";
 import formatAssetPrice from "@/scripts/algo/formatAssetPrice";
-import { toNamespacedPath } from "path";
-import Divider from "primevue/divider";
 const store = useAppStore();
 
 const state = reactive({
@@ -116,7 +107,7 @@ const loadMintedTokens = async () => {
             <h1 class="title" data-aos="fade-down">
               We Bring Revolution To Gold Market
             </h1>
-            <p data-aos="zoom-in">
+            <p data-aos="zoom-in" class="fontcolor">
               Weight of gold in the reserves is always higher then minted gold backed
               tokens. This is ensured by the smart contract on public blockchain network -
               Algorand.

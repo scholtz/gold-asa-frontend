@@ -734,10 +734,10 @@ img {
     background-color: #303e49;
     z-index: 120 !important;
   }
-
+/* 
   .allcoin-list-background .welcome-content {
     margin-top: 10rem;
-  }
+  } */
 
   .subTitle-0-2-13 {
     font-size: 18px;
@@ -800,14 +800,26 @@ img {
   max-height: calc(80vh - 230px);
 }
 
-.allcoin-list-background {
-  background-image: url('./gold-coin-bitcoin-on-a-black-background-the-concept-of-cryptocurrency-blockchain-technology-mixed-media-generative-ai-photo.jpg');
-  height: 600px;
-  /* padding-top: 500px; */
-  background-size: cover;
+/* .allcoin-list-background {
+  background-image: url('./6256878.jpg');
+  padding-top: 300px;
+  padding-bottom: 200px;
   background-position: center;
   z-index: 0 !important;
   align-items: center !important;
+} */
+
+.buy-coins .title {
+  margin-top: 0px !important;
+  font-size: 40px!important;
+  text-shadow: 20px 10px 30px rgba(14, 10, 65, .25);
+  font-weight: 700 !important;
+  letter-spacing: 5px;
+}
+
+.buy-coins{
+  margin-top: 1rem;
+  padding: 0!important;
 }
 
 .welcome-content {
@@ -887,13 +899,13 @@ img {
   border-radius: 1.5rem;
 }
 
-.Dextrading-about-background {
-  background-image: url('./SOIN0922061_1560x880_desktop.jpg');
-  height: 550px;
-  background-size: cover;
+/* .Dextrading-about-background {
+  background-image: url('./6244288.jpg');
+  padding-top: 100px;
+  padding-bottom: 100px;
   background-position: center;
   align-items: center !important;
-}
+} */
 
 .Dextrading-about-background .welcome-content {
   max-width: 100% !important;
@@ -908,7 +920,6 @@ img {
 
 .Dextrading-about-background .welcome-content p {
   padding: 0 25%;
-  font-size: 25px;
   line-height: 1.7;
   margin-bottom: 50px;
 }
@@ -1076,15 +1087,17 @@ img {
   padding-left: 100px;
 }
 
-.rn-address.card {
+/* .rn-address.card {
+  background-image: url('./cardbackground.jpg')!important;
   margin-top: -230px;
   box-shadow: 0 2px 48px 0 rgba(0, 0, 0, .08);
   background: #fff;
+  background-position: center;
+  background-size: cover;
   padding: 30px;
   text-align: center;
-  background-color: #f8b81f;
 
-}
+} */
 
 .rn-address.card .inner h4.title {
   color: white;
@@ -1317,8 +1330,6 @@ img {
   background-image: url('./4482651.jpg');
   height: 550px;
   margin-top: 90px;
-  /* padding-top: 30rem!important; */
-  background-size: cover;
   background-position: center;
   align-items: center !important;
 }
@@ -2024,7 +2035,7 @@ i.size-40 svg {
 }
 
 .rn-address .inner p a {
-  color: #acacac;
+  color: #7f8387;
 }
 
 @media only screen and (max-width: 767px) {
@@ -2556,4 +2567,8 @@ i.size-40 svg {
   text-transform: capitalize;
   font-size: 28px;
   font-weight: 600;
+}
+
+.coin-detail{
+  margin-top: 120px!important;
 }
