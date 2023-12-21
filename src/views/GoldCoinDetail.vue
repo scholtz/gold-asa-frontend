@@ -348,7 +348,11 @@ async function resetView() {
               </tr>
             </table>
             <div class="buy-coin-button team-info">
-              <BuyButton class="btn-default" :assetId="product.state.asset1" :item="product"></BuyButton>
+              <BuyButton
+                class="btn-default"
+                :assetId="product.state.asset1"
+                :item="product"
+              ></BuyButton>
             </div>
           </div>
         </div>
