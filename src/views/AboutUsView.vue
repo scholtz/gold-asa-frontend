@@ -1,174 +1,166 @@
 <script setup lang="ts">
-import Layout from "@/layouts/AuthLayout.vue";
-import Panel from "primevue/panel";
-import OrganizationChart from "primevue/organizationchart";
-import { ref } from "vue";
-import Avatar from "primevue/avatar";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import Steps from "primevue/steps";
-import Splitter from "primevue/splitter";
-import Card from "primevue/card";
-import SplitterPanel from "primevue/splitterpanel";
-import Timeline from "primevue/timeline";
-import { onMounted, onBeforeUnmount } from "vue";
-const isMobile = ref(false);
+import Layout from '@/layouts/AuthLayout.vue'
+import { ref } from 'vue'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+import Card from 'primevue/card'
+import Timeline from 'primevue/timeline'
+import { onMounted, onBeforeUnmount } from 'vue'
+const isMobile = ref(false)
 const events = ref([
   {
-    status: "Ordered",
-    date: "Oct 19th 2023",
-    icon: "pi pi-circle",
-    color: "#9C27B0",
-    image: "game-controller.jpg",
+    status: 'Ordered',
+    date: 'Oct 19th 2023',
+    icon: 'pi pi-circle',
+    color: '#9C27B0',
+    image: 'game-controller.jpg',
     content:
-      "Web2 Authentication Experience - We created algorand-authentication-component-vue component free for use for anybody.",
+      'Web2 Authentication Experience - We created algorand-authentication-component-vue component free for use for anybody.'
   },
   {
-    status: "Shipped",
-    date: "Oct 21st 2023",
-    icon: "pi pi-circle",
-    color: "#FF9800",
-    content: "Domain has been registered",
+    status: 'Shipped',
+    date: 'Oct 21st 2023',
+    icon: 'pi pi-circle',
+    color: '#FF9800',
+    content: 'Domain has been registered'
   },
   {
-    status: "Delivered",
-    date: "Oct 26th 2023",
-    icon: "pi pi-circle",
-    color: "#607D8B",
+    status: 'Delivered',
+    date: 'Oct 26th 2023',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
     content:
-      "We have integrated Folks Router for swapping Gold to Algorand, USDC and BTC and vice versa",
+      'We have integrated Folks Router for swapping Gold to Algorand, USDC and BTC and vice versa'
   },
 
   {
-    status: "Delivered",
-    date: "Nov 1st 2023 ",
-    icon: "pi pi-circle",
-    color: "#607D8B",
+    status: 'Delivered',
+    date: 'Nov 1st 2023 ',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
     content:
-      "We have integrated email templates, and on email verification we airdop some algos so that web2 users have even better xp",
+      'We have integrated email templates, and on email verification we airdop some algos so that web2 users have even better xp'
   },
   {
-    status: "Delivered",
-    date: "Nov 5th 2023 ",
-    icon: "pi pi-circle",
-    color: "#607D8B",
-    content: "Smart contract has been finished with full test coverage",
+    status: 'Delivered',
+    date: 'Nov 5th 2023 ',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
+    content: 'Smart contract has been finished with full test coverage'
   },
   {
-    status: "Delivered",
-    date: "Nov 6th 2023",
-    icon: "pi pi-circle",
-    color: "#607D8B",
-    content: "ASA.Gold NPM package has been published",
+    status: 'Delivered',
+    date: 'Nov 6th 2023',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
+    content: 'ASA.Gold NPM package has been published'
   },
   {
-    status: "Delivered",
-    date: "Nov 12th 2023",
-    icon: "pi pi-circle",
-    color: "#607D8B",
-    content: "Eshop is working",
+    status: 'Delivered',
+    date: 'Nov 12th 2023',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
+    content: 'Eshop is working'
   },
   {
-    status: "Delivered",
-    date: "Nov 13th 2023",
-    icon: "pi pi-circle",
-    color: "#607D8B",
-    content: "Testnet launched at https://testnet.asa.gold/",
+    status: 'Delivered',
+    date: 'Nov 13th 2023',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
+    content: 'Testnet launched at https://testnet.asa.gold/'
   },
   {
-    status: "Delivered",
-    date: "Nov 14th 2023",
-    icon: "pi pi-circle",
-    color: "#607D8B",
+    status: 'Delivered',
+    date: 'Nov 14th 2023',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
     content:
-      "Mainnet launched at https://www.asa.gold/. Gold token has been minted: Gold: 1241944285, and DAO governance token has been minted: GoldDAO: 1241945177",
-  },
-]);
+      'Mainnet launched at https://www.asa.gold/. Gold token has been minted: Gold: 1241944285, and DAO governance token has been minted: GoldDAO: 1241945177'
+  }
+])
 function handleResize() {
   if (window.innerWidth <= 941) {
-    isMobile.value = true;
+    isMobile.value = true
   } else {
-    isMobile.value = false;
+    isMobile.value = false
   }
 }
 
 onMounted(() => {
   if (window.innerWidth <= 941) {
-    isMobile.value = true;
+    isMobile.value = true
   }
-  window.addEventListener("resize", handleResize);
-});
+  window.addEventListener('resize', handleResize)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", handleResize);
-});
+  window.removeEventListener('resize', handleResize)
+})
 const datas = ref([
   {
-    key: "0_0",
-    type: "person",
+    key: '0_0',
+    type: 'person',
     data: {
-      image: "/images/OS.png",
-      name: "Olga Scholtz",
-      title: "COO Operations",
+      image: '/images/OS.png',
+      name: 'Olga Scholtz',
+      title: 'COO Operations',
       description:
-        "Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.",
-    },
+        'Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.'
+    }
   },
   {
-    key: "0_1",
-    type: "person",
+    key: '0_1',
+    type: 'person',
     data: {
-      image: "/images/MF.webp",
-      name: "Michal Fecko",
-      title: "CFO Finance",
+      image: '/images/MF.webp',
+      name: 'Michal Fecko',
+      title: 'CFO Finance',
       description:
-        "Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.",
-    },
+        'Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.'
+    }
   },
   {
-    key: "0_2",
-    type: "person",
+    key: '0_2',
+    type: 'person',
     data: {
-      image: "/images/SZ.jpg",
-      name: "Samuel Zubo",
-      title: "CMO Marketing",
+      image: '/images/SZ.jpg',
+      name: 'Samuel Zubo',
+      title: 'CMO Marketing',
       description:
-        "Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.",
-    },
+        'Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.'
+    }
   },
   {
-    key: "0_3",
-    type: "person",
+    key: '0_3',
+    type: 'person',
     data: {
-      image: "/images/DD.webp",
-      name: "Daniel Dohne",
-      title: "CTO Development",
+      image: '/images/DD.webp',
+      name: 'Daniel Dohne',
+      title: 'CTO Development',
       description:
-        "Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.",
-    },
-  },
-]);
+        'Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.'
+    }
+  }
+])
 AOS.init({
   duration: 800,
-  easing: "ease-in-out",
-  once: true,
-});
+  easing: 'ease-in-out',
+  once: true
+})
 </script>
 
 <template>
   <Layout :hideTopMenu="false">
     <div>
       <div class="about-us-background">
-        <div
-          class="col-md-12 col-sm-12 text-white welcome-banner text-center nav-text text-center"
-        >
+        <div class="md:col-12 sm:col-12 text-white welcome-banner text-center nav-text text-center">
           <div class="welcome-content">
             <h3 class="rn-sub-badge" data-aos="fade-down">
               <span class="title mt-5">About ASA.Gold project</span>
             </h3>
             <p data-aos="zoom-in">
-              The startup ASA.Gold has been started in October 2023 with goal to tokenize
-              real world asset which users can fully trust.
+              The startup ASA.Gold has been started in October 2023 with goal to tokenize real world
+              asset which users can fully trust.
             </p>
           </div>
         </div>
@@ -179,12 +171,11 @@ AOS.init({
             <h2>About ASA.Gold Project</h2>
             <div class="bar"></div>
             <p>
-              The startup ASA.Gold has been started in October 2023 with goal to tokenize
-              real world asset which users can fully trust. To allow this we created
-              hypothesis that if person can select in the eshop any product and this can
-              be shipped to him, he trusts that all other products are real as well. There
-              is no incentivization from ASA.Gold to cheat because of this public
-              oversight.
+              The startup ASA.Gold has been started in October 2023 with goal to tokenize real world
+              asset which users can fully trust. To allow this we created hypothesis that if person
+              can select in the eshop any product and this can be shipped to him, he trusts that all
+              other products are real as well. There is no incentivization from ASA.Gold to cheat
+              because of this public oversight.
             </p>
           </div>
         </div>
@@ -248,9 +239,7 @@ AOS.init({
                   <h2>Experience The Best Features Ever</h2>
                   <div class="bar"></div>
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Check our
-                    open source progress.
+                    Check our open source progress
                   </p>
                 </div>
                 <div class="row">
@@ -385,8 +374,7 @@ AOS.init({
                             d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
                           ></path></svg
                       ></i>
-                      <a
-                        href=" https://github.com/scholtz/algorand-authentication-component-vue"
+                      <a href=" https://github.com/scholtz/algorand-authentication-component-vue"
                         >AuthComponent</a
                       >
                     </div>
@@ -414,18 +402,12 @@ AOS.init({
                           <line x1="8" y1="21" x2="16" y2="21"></line>
                           <line x1="12" y1="17" x2="12" y2="21"></line></svg
                       ></i>
-                      <a href="https://www.npmjs.com/package/algorand-asa-gold"
-                        >NPM package</a
-                      >
+                      <a href="https://www.npmjs.com/package/algorand-asa-gold">NPM package</a>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="col-lg-6 col-md-12 services-right-image">
-                <img
-                  src="/images/development/cercle-shape.47fe8b0d.png"
-                  class="bg-image rotateme"
-                />
                 <img src="/images/development/main-pic.30fff806.png" />
               </div>
             </div>
@@ -436,8 +418,8 @@ AOS.init({
             <h2 data-aos="fade-up">Our Awesome Team</h2>
             <div class="bar"></div>
             <p data-aos="fade-up">
-              Ludo, Everyday Algonaut has hosted Prague algorand meetup last year on Feb
-              10th 2023 at Paralel polis. He was also speaker at ETH Denver
+              Ludo, Everyday Algonaut has hosted Prague algorand meetup last year on Feb 10th 2023
+              at Paralel polis. He was also speaker at ETH Denver
             </p>
           </div>
           <div class="container our-team-members" data-aos="fade-up">
@@ -453,9 +435,8 @@ AOS.init({
                       <span>CEO</span>
                     </div>
                     <p>
-                      Ludo, Everyday Algonaut has hosted Prague algorand meetup last year
-                      on Feb 10th 2023 at Paralel polis. He was also speaker at ETH
-                      Denver.
+                      Ludo, Everyday Algonaut has hosted Prague algorand meetup last year on Feb
+                      10th 2023 at Paralel polis. He was also speaker at ETH Denver.
                     </p>
                   </div>
                 </div>
@@ -464,11 +445,7 @@ AOS.init({
           </div>
           <div class="container our-team-members">
             <div class="row">
-              <div
-                class="col-12 md:col-6 lg:col-3"
-                v-for="(item, index) in datas"
-                :key="index"
-              >
+              <div class="col-12 md:col-6 lg:col-3" v-for="(item, index) in datas" :key="index">
                 <div class="single-team">
                   <div class="team-image">
                     <img :src="item.data.image" alt="image" />
@@ -489,126 +466,6 @@ AOS.init({
         </div>
       </div>
     </div>
-    <!-- <Panel
-      header="About ASA.Gold project"
-      class="m-4 flex flex-grow-1 flex-column"
-      toggleableContent="text"
-    >
-      <p>
-        The startup ASA.Gold has been started in October 2023 with goal to tokenize real
-        world asset which users can fully trust. To allow this we created hypothesis that
-        if person can select in the eshop any product and this can be shipped to him, he
-        trusts that all other products are real as well. There is no incentivization from
-        ASA.Gold to cheat because of this public oversight.
-      </p>
-
-      <OrganizationChart :value="data" collapsible selectionMode="multiple">
-        <template #person="slotProps">
-          <div class="flex flex-column">
-            <div class="flex flex-column align-items-center">
-              <Avatar
-                class="mr-2"
-                size="xlarge"
-                :image="slotProps.node.data.image"
-                shape="circle"
-              />
-
-              <span class="font-bold mb-2">{{ slotProps.node.data.name }}</span>
-              <span>{{ slotProps.node.data.title }}</span>
-            </div>
-          </div>
-        </template>
-        <template #default="slotProps">
-          <span>{{ slotProps.node.label }}</span>
-        </template>
-      </OrganizationChart>
-      <p>
-        Project has been initiated by and submitted to
-        <a href="https://dorahacks.io/buidl/7763" target="_blank"
-          >Algorand's Build a Bull hackathon</a
-        >.
-      </p>
-      <p>Progress we have made so far:</p>
-      <ul>
-        <li>
-          Oct 19th 2023 : Web2 Authentication Experience - We created
-          <a href="https://github.com/scholtz/algorand-authentication-component-vue"
-            >algorand-authentication-component-vue</a
-          >
-          component free for use for anybody.
-        </li>
-        <li>Oct 21st 2023 : Domain has been registered</li>
-        <li>
-          Oct 26th 2023 : We have integrated Folks Router for swapping Gold to Algorand,
-          USDC and BTC and vice versa
-        </li>
-        <li>
-          Nov 1st 2023 : We have integrated email templates, and on email verification we
-          airdop some algos so that web2 users have even better xp
-        </li>
-        <li>Nov 5th 2023 : Smart contract has been finished with full test coverage</li>
-        <li>
-          Nov 6th 2023 : ASA.Gold
-          <a href="https://www.npmjs.com/package/algorand-asa-gold">NPM package</a> has
-          been published
-        </li>
-        <li>Nov 12th 2023 : Eshop is working</li>
-        <li>
-          Nov 13th 2023 : Testnet launched at
-          <a href="https://testnet.asa.gold/">https://testnet.asa.gold/</a>
-        </li>
-        <li>
-          Nov 14th 2023 : Mainnet launched at
-          <a href="https://www.asa.gold/">https://www.asa.gold/</a>. Gold token has been
-          minted: Gold:
-          <a href="https://algoexplorer.io/asset/1241944285" target="_blank">1241944285</a
-          >, and DAO governance token has been minted: GoldDAO:
-          <a href="https://algoexplorer.io/asset/1241945177" target="_blank"
-            >1241945177</a
-          >
-        </li>
-      </ul>
-      <p>Check our open source progress:</p>
-      <ul>
-        <li>
-          FE:
-          <a href="https://github.com/scholtz/gold-asa-frontend"
-            >https://github.com/scholtz/gold-asa-frontend</a
-          >
-        </li>
-        <li>
-          BFF:
-          <a href="https://github.com/scholtz/AsaGoldBff"
-            >https://github.com/scholtz/AsaGoldBff</a
-          >
-        </li>
-        <li>
-          RepoApi:
-          <a href="https://github.com/scholtz/AsaGoldRepository"
-            >https://github.com/scholtz/AsaGoldRepository</a
-          >
-        </li>
-        <li>
-          EShop smart contract:
-          <a
-            href="https://github.com/scholtz/gold-asa-frontend/tree/main/asa-gold-smartcontract"
-            >https://github.com/scholtz/gold-asa-frontend/tree/main/asa-gold-smartcontract</a
-          >
-        </li>
-        <li>
-          AuthComponent:
-          <a href="https://github.com/scholtz/algorand-authentication-component-vue"
-            >https://github.com/scholtz/algorand-authentication-component-vue</a
-          >
-        </li>
-        <li>
-          NPM package:
-          <a href="https://www.npmjs.com/package/algorand-asa-gold"
-            >https://www.npmjs.com/package/algorand-asa-gold</a
-          >
-        </li>
-      </ul>
-    </Panel> -->
   </Layout>
 </template>
 

@@ -22,7 +22,7 @@ const products = ref<IEshopItem[]>();
         <div
           class="col-md-12 col-sm-12 text-white welcome-banner text-center nav-text text-center"
         >
-          <div class="welcome-content">
+          <div class="welcome-content buy-coins">
             <h1 class="title">
               All of Our Coins are Presented Here
               <span class="top-text"> Please Try it now </span>

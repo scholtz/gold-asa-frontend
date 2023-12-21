@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Penel from "primevue/panel";
 import Layout from "@/layouts/AuthLayout.vue";
 </script>
 <template>

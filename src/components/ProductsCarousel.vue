@@ -1,7 +1,7 @@
 <template>
   <div class="card product-slider-home" v-if="products">
     <div class="product-slider-heading text-center">
-      <strong>IMMERSE YOURSELF IN PUREST DEVOTION</strong>
+      <strong>Immerse Yourself In Purest Devotion</strong>
     </div>
     <Carousel
       :value="products"
@@ -28,7 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import Skeleton from "primevue/skeleton";
 
 import Carousel from "primevue/carousel";
 import ProductBox from "./ProductBox.vue";
@@ -50,12 +49,12 @@ const products = ref<IEshopItem[]>();
 const responsiveOptions = ref([
   {
     breakpoint: "2899px",
-    numVisible: 6,
+    numVisible: 4,
     numScroll: 1,
   },
   {
     breakpoint: "2599px",
-    numVisible: 5,
+    numVisible: 4,
     numScroll: 1,
   },
   {
@@ -75,7 +74,7 @@ const responsiveOptions = ref([
   },
   {
     breakpoint: "1199px",
-    numVisible: 3,
+    numVisible: 2,
     numScroll: 1,
   },
   {
@@ -85,21 +84,4 @@ const responsiveOptions = ref([
   },
 ]);
 
-const getSeverity = (
-  status: string
-): "success" | "info" | "warning" | "danger" | string | undefined => {
-  switch (status) {
-    case "INSTOCK":
-      return "success";
-
-    case "LOWSTOCK":
-      return "warning";
-
-    case "OUTOFSTOCK":
-      return "danger";
-
-    default:
-      return undefined;
-  }
-};
 </script>

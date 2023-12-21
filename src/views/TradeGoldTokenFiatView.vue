@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import Layout from "@/layouts/AuthLayout.vue";
-import Card from "primevue/card";
 import InputNumber from "primevue/inputnumber";
-import Dropdown from "primevue/dropdown";
 import Button from "primevue/button";
 import { useAppStore } from "@/stores/app";
 import { useToast } from "primevue/usetoast";
 import Image from "primevue/image";
-import InputText from "primevue/inputtext";
 import SelectButton from "primevue/selectbutton";
 const toast = useToast();
 const store = useAppStore();
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, ref } from "vue";
 import delay from "@/scripts/common/delay";
 import { bffConfirmRFQ, bffRFQ } from "@/scripts/axios/BFF";
 
@@ -157,8 +154,7 @@ async function transferIncomming() {
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <div class="buy-seller-with-eur w-full" style="margin-top: 110px; position: relative">
-      <Image class="buy-sell w-full"   src="./bygoldimage.jpg" alt="Image" />
+    <div class="buy-seller-with-eur w-full">
       <div
         v-if="!rfq"
         class="surface-card p-4 shadow-2 border-round w-full text-center lg:w-6 digital_gold_silver_calculator mt-4"
@@ -167,8 +163,8 @@ async function transferIncomming() {
         <div class="text-center mt-1 mb-2">
           <span
             class="text-600 font-medium line-height-3"
-            style="color: #d4aa00 !important ; font-size: 30px"
-            >PAYMENT</span
+            style="color: #757575 !important ; font-size: 30px"
+            >Payment</span
           >
         </div>
         <div class="text-center">
