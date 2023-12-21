@@ -408,7 +408,6 @@ img {
   line-height: normal;
   letter-spacing: 0.5px;
   font-weight: normal;
-  padding-bottom: 20px;
   margin: 0;
 
 }
@@ -734,7 +733,8 @@ img {
     background-color: #303e49;
     z-index: 120 !important;
   }
-/* 
+
+  /* 
   .allcoin-list-background .welcome-content {
     margin-top: 10rem;
   } */
@@ -783,6 +783,33 @@ img {
   color: #44ce6f !important;
 }
 
+.gold-detail .fontcolor {
+  margin-top: 150px;
+  margin-bottom: 0;
+  color: #6084a4;
+  line-height: 1.9 !important;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  font-size: 18px;
+  line-height: 1;
+  text-align: center;
+  margin-top: 20px;
+  overflow: hidden;
+  max-height: calc(80vh - 230px);
+}
+
+.gold-detail .fontcolor th {
+  padding-left: 3rem;
+  text-align: center;
+}
+
+.gold-detail .fontcolor td {
+  padding-left: 3rem;
+  text-align: center;
+}
+
 .fontcolor {
   margin-top: 150px;
   margin-bottom: 0;
@@ -811,15 +838,15 @@ img {
 
 .buy-coins .title {
   margin-top: 0px !important;
-  font-size: 40px!important;
+  font-size: 40px !important;
   text-shadow: 20px 10px 30px rgba(14, 10, 65, .25);
   font-weight: 700 !important;
   letter-spacing: 5px;
 }
 
-.buy-coins{
+.buy-coins {
   margin-top: 1rem;
-  padding: 0!important;
+  padding: 0 !important;
 }
 
 .welcome-content {
@@ -1088,7 +1115,7 @@ img {
 }
 
 .rn-address.card {
-  background-image: url('./cardbackground.jpg')!important;
+  background-image: url('./cardbackground.jpg') !important;
   margin-top: -230px;
   box-shadow: 0 2px 48px 0 rgba(0, 0, 0, .08);
   background: #fff;
@@ -2569,6 +2596,56 @@ i.size-40 svg {
   font-weight: 600;
 }
 
-.coin-detail{
-  margin-top: 120px!important;
+.coin-detail {
+  padding-top: 120px !important;
+  background: linear-gradient(245.22deg, #060606 35%, #060606 65.17%, #2b6bffde 92.1%);
+}
+
+.buy-coin-button {
+  padding-top: 3rem;
+  padding-left: 3rem;
+}
+
+.p-galleria-item {
+  padding-bottom: 3rem;
+  padding-top: 4rem;
+  background-color: rgb(245, 246, 248);
+  position: relative;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+.coin-detail .tab-panel{
+  background-color: #0f0f11;
+}
+.story[data-v-d5d273fe]{
+  color: #6084a4!important;
+}
+.coin-detail .tab-panel .buy-title{
+  color: white!important;
+  text-align: center;
+}
+.btn-default {
+  color: #fff !important;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 15px 40px;
+  border-radius: 500px;
+  display: inline-block;
+  font-weight: 500;
+  transition: all .4s ease-in-out;
+  background-size: 152% 100%;
+  background: #fd4766;
+  border: 2px solid #fd4766;
+  transition: transform 0.3s ease;
+}
+
+.btn-default:hover {
+  transform: scale(1.05) translateZ(10px);
+}
+
+@media (max-width:767px) {
+  .gold-detail .fontcolor th {
+    padding-left: 0rem;
+  }
+
 }
