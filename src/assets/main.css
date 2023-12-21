@@ -800,14 +800,14 @@ img {
   max-height: calc(80vh - 230px);
 }
 
-/* .allcoin-list-background {
+.allcoin-list-background {
   background-image: url('./6256878.jpg');
   padding-top: 300px;
   padding-bottom: 200px;
   background-position: center;
   z-index: 0 !important;
   align-items: center !important;
-} */
+}
 
 .buy-coins .title {
   margin-top: 0px !important;
