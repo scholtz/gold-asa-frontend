@@ -7,13 +7,13 @@ const props = defineProps<{
 </script>
 <template>
   <div>
-    <Tag v-if="props.item.state.state == 1" value="Sale from reserve" severity="success"></Tag>
+    <Tag v-if="props.item.state.state == 1" value="Sale from reserve" severity="success" rounded></Tag>
     <Tag
       v-else-if="props.item.state.state == 2"
       value="Sold - not for sale"
       severity="warning"
     ></Tag>
-    <Tag v-else-if="props.item.state.state == 3" value="For sale" severity="success"></Tag>
+    <Tag v-else-if="props.item.state.state == 3" value="For sale" severity="success" rounded></Tag>
     <Tag
       v-else-if="props.item.state.state == 4"
       value="Parcel delivery requested"
@@ -22,7 +22,7 @@ const props = defineProps<{
     <Tag
       v-else-if="props.item.state.state == 5"
       value="Shipped to customer"
-      severity="warning"
+      severity="warning" rounded
     ></Tag>
   </div>
 </template>

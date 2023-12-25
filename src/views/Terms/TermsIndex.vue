@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Penel from 'primevue/panel'
-import Layout from '@/layouts/AuthLayout.vue'
+import Penel from "primevue/panel";
+import Layout from "@/layouts/AuthLayout.vue";
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <Penel header="Terms &amp; Conditions, MiCA documents, Warranty and complaints" class="m-4">
+    <!-- <Penel header="Terms &amp; Conditions, MiCA documents, Warranty and complaints" class="m-4">
       <p>
         This terms and conditions are between you as person or legal entity and ASA.Gold Provider.
       </p>
@@ -148,6 +148,37 @@ import Layout from '@/layouts/AuthLayout.vue'
         have any questions or concerns, please contact support@asa.gold.
       </p>
       <p>In Bratislava, November 15th 2023.</p>
-    </Penel></Layout
-  >
+    </Penel> -->
+    <div class="page-title-area-terms">
+      <div class="d-table">
+        <div class="d-table-cell">
+          <div class="container">
+            <div class="sm:m-2 md:m-4 allfont privacy-content" style="color: white">
+              <h2>Terms & Conditions, MiCA documents, Warranty and complaints</h2>
+              <p>
+                This terms and conditions are between you as person or legal entity and
+                ASA.Gold Provider.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="solutions-area privacy-body ptb-80">
+      <div class="container">
+        <div class="section-title">
+          <span class="sub-title">What We Offer</span>
+          <h2>Our Featured Solutions</h2>
+          <div class="bar"></div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua.
+          </p>
+        </div>
+        <div class="row">
+          
+        </div>
+      </div>
+    </div>
+  </Layout>
 </template>
