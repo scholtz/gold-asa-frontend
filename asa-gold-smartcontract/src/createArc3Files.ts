@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import publishFileBuffer from './ipfs/publishFileBuffer'
 import CryptoJS from 'crypto-js'
 import sharp from 'sharp'
@@ -96,15 +96,31 @@ const createArc3Files = async (network: string, sn: number) => {
       CryptoJS.enc.Base64
     )
     let mime = ''
+    let ext = ''
     if (picture.url.endsWith('.jpg')) {
       mime = 'image/jpeg'
+      ext = '.jpg'
     }
     if (picture.url.endsWith('.png')) {
       mime = 'image/png'
+      ext = '.png'
     }
     if (!mime) throw Error('Unknown mime type for image ' + picture.url)
-
-    var thumbnail = await sharp(file).resize(200, 200).toBuffer()
+    let thumbnail: Buffer | undefined = undefined
+    const thumbFile = `./img/${picture.url}.small${ext}`
+    try {
+      if (existsSync(thumbFile)) {
+        thumbnail = readFileSync(thumbFile)
+      }
+    } catch (e) {
+      console.log('thumbnail does not exists yet', e)
+    }
+    if (!thumbnail?.length) {
+      thumbnail = await sharp(file).resize(200, 200).toBuffer()
+      writeFileSync(thumbFile, thumbnail, {
+        flag: 'w'
+      })
+    }
 
     const thumbnailIpfs = await publishFileBuffer(thumbnail)
     const thumbnailIntegrity = CryptoJS.SHA256(
