@@ -680,13 +680,12 @@ async function optIn(assetId: number) {
           class="css-1ek128f"
           style="margin-top: 100px"
         />
-        <p class="p-display">Blockchain DEX trading is using DEX aggregator</p>
-        <p><a href="https://www.folksrouter.io" target="_blank">Folks router.</a></p>
-        <span v-if="store.state.authState.account"
+        <p class="p-display">Blockchain DEX trading is using DEX aggregator <a href="https://www.folksrouter.io" target="_blank">Folks router.</a> <span v-if="store.state.authState.account"
           >Your account is
           <AlgorandAddress :address="store.state.authState.account"></AlgorandAddress
           >.</span
-        >
+        ></p>
+        
       </p>
     </Panel>
   </Layout>

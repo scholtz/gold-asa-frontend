@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import Image from "primevue/image";
-import Button from "primevue/button";
-import Divider from "primevue/divider";
-import { ref, onMounted, onBeforeUnmount } from "vue";
-const isMobile = ref(false);
+import Image from 'primevue/image'
+import Button from 'primevue/button'
+import Divider from 'primevue/divider'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+const isMobile = ref(false)
 
 function handleResize() {
   if (window.innerWidth <= 768) {
-    isMobile.value = true;
+    isMobile.value = true
   } else {
-    isMobile.value = false;
+    isMobile.value = false
   }
 }
 
 onMounted(() => {
   if (window.innerWidth <= 768) {
-    isMobile.value = true;
+    isMobile.value = true
   }
-  window.addEventListener("resize", handleResize);
-});
+  window.addEventListener('resize', handleResize)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", handleResize);
-});
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 <template>
   <div class="surface-section custom-footer py-7 md:px-6 lg:px-8">
@@ -38,7 +38,7 @@ onBeforeUnmount(() => {
           />
         </span>
         <div class="text-900 text-xl mb-3 font-medium footer-name">ASA - Real gold</div>
-        <span class="text-700 line-height-3">&copy; 2023 Scholtz &amp; Company, jsa</span>
+        <span class="text-300 line-height-3">&copy; 2023 Scholtz &amp; Company, jsa</span>
       </div>
       <div
         :class="
@@ -78,40 +78,34 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="font-style-div">
-          <RouterLink to="/token/dao">DAO</RouterLink>
-        </div>
-        <div class="font-style-div">
           <RouterLink to="/settings">Settings</RouterLink>
         </div>
         <div class="font-style-div">
           <RouterLink to="/price-list">Price list</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/token/gold">Tokens: Gold</RouterLink>
+          <RouterLink to="/token/dao">DAO Token</RouterLink>
+        </div>
+        <div class="font-style-div">
+          <RouterLink to="/token/gold">Gold Token</RouterLink>
         </div>
       </div>
       <div
         :class="
           isMobile
-            ? 'col-12 px-5 font-style text-center mt-2'
-            : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style'
+            ? 'col-12 px-5 font-style text-center mt-2 contactus'
+            : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style contactus'
         "
       >
         <div class="text-900 text-xl mb-3 font-medium ml-2">Contact US</div>
         <a href="https://discord.gg/8m4KTcVSH9">
-          <Button
-            icon="pi pi-discord"
-            severity="info"
-            text
-            raised
-            rounded
-            aria-label="User"
-          />
+          <Button icon="pi pi-discord" severity="info" text raised rounded aria-label="User" />
         </a>
         <a href="https://t.me/+mWQObAvGe_5lNDNk">
           <Button
             icon="pi pi-telegram"
             severity="warning"
+            label=""
             text
             raised
             rounded
@@ -119,14 +113,7 @@ onBeforeUnmount(() => {
           />
         </a>
         <a href="https://twitter.com/eAlgonaut/">
-          <Button
-            icon="pi pi-twitter"
-            severity="help"
-            text
-            raised
-            rounded
-            aria-label="Favorite"
-          />
+          <Button icon="pi pi-twitter" severity="help" text raised rounded aria-label="Favorite" />
         </a>
       </div>
     </div>

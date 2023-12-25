@@ -35,12 +35,7 @@ AOS.init({
                   <RouterLink to="/buy-gold-coins">secondary marketplace</RouterLink>
                 </div>
                 <div class="sm:m-2 md:m-4">
-                  Each gold coin has its
-                  <abbr title="Non Fungible Token - Each coin is unique">NFT</abbr>, which can be
-                  traded using smart contract or DeFi
-                </div>
-                <div class="sm:m-2 md:m-4">
-                  NFTs in stock can be redeemed by parcel delivery within EU area
+                  Gold coins are stored in bank safe deposit box and are redeemable within EU area
                 </div>
               </div>
             </section>

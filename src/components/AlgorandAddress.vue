@@ -8,6 +8,7 @@ const copyToClipboard = () => {
 </script>
 <template>
   <span
+    style="cursor: pointer"
     @click="copyToClipboard"
     v-if="props.address && props.address.length > 10"
     :title="`Address: ${props.address}. Click to copy to clipboard.`"

@@ -1,116 +1,111 @@
 <script setup lang="ts">
-import Layout from "@/layouts/AuthLayout.vue";
-import AOS from "aos";
-import "aos/dist/aos.css";
-import { onMounted, reactive, ref } from "vue";
-import { ProductService } from "@/service/ProductService";
-import type IEshopItem from "@/types/IEshopItem";
-import ReservesList from "@/components/ReservesList.vue";
-import Button from "primevue/button";
-import Card from "primevue/card";
-import Timeline from "primevue/timeline";
-import { useAppStore } from "@/stores/app";
-import ProgressSpinner from "primevue/progressspinner";
-import getAlgodClient from "@/scripts/algo/getAlgodClient";
-import getAsa from "@/scripts/algo/getAsa";
-import formatAssetPrice from "@/scripts/algo/formatAssetPrice";
-const store = useAppStore();
+import Layout from '@/layouts/AuthLayout.vue'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+import { onMounted, reactive, ref } from 'vue'
+import { ProductService } from '@/service/ProductService'
+import type IEshopItem from '@/types/IEshopItem'
+import ReservesList from '@/components/ReservesList.vue'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Timeline from 'primevue/timeline'
+import { useAppStore } from '@/stores/app'
+import ProgressSpinner from 'primevue/progressspinner'
+import getAlgodClient from '@/scripts/algo/getAlgodClient'
+import getAsa from '@/scripts/algo/getAsa'
+import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
+const store = useAppStore()
 
 const state = reactive({
-  mintedTokens: "",
-});
+  mintedTokens: ''
+})
 
 onMounted(async () => {
-  const data = (await ProductService.getAllProducts()).filter((c) => c.state.state == 1);
+  const data = (await ProductService.getAllProducts()).filter((c) => c.state.state == 1)
   if (data) {
-    products.value = data;
+    products.value = data
   }
-  await loadMintedTokens();
+  await loadMintedTokens()
 
   AOS.init({
     duration: 800,
-    easing: "ease-in-out",
-    once: true,
-  });
-});
+    easing: 'ease-in-out',
+    once: true
+  })
+})
 
-const products = ref<IEshopItem[]>();
+const products = ref<IEshopItem[]>()
 const events = ref([
   {
-    status: "Disadvantages Of Gold Are:",
-    date: "15/10/2020 10:30",
-    icon: "pi pi-comment",
-    color: "#9C27B0",
+    status: 'Disadvantages Of Gold Are:',
+    date: '15/10/2020 10:30',
+    icon: 'pi pi-comment',
+    color: '#9C27B0',
     description: [
       "No Income or Yield - Gold doesn't generate any income or yield on its own. Unlike stocks or bonds, which can provide dividends or interest, holding gold won't produce any periodic cash flow.",
       "Lack of Cash Flow - Gold doesn't generate cash flow, which means investors can miss out on opportunities to reinvest in assets that do produce income.",
-      "You can stake your gold in AMMs and generate yield",
-      "Self custody - your keys your crypto",
-      "Non fractionable - When you own 1 gold coin you are not likely going to split it in half when you need to pay only half of the price.",
-    ],
+      'You can stake your gold in AMMs and generate yield',
+      'Self custody - your keys your crypto',
+      'Non fractionable - When you own 1 gold coin you are not likely going to split it in half when you need to pay only half of the price.'
+    ]
   },
   {
-    status: "With Tokenized Gold This Disadavtages Does Not Apply.",
-    date: "15/10/2020 14:00",
-    icon: "pi pi-comment",
+    status: 'With Tokenized Gold This Disadavtages Does Not Apply.',
+    date: '15/10/2020 14:00',
+    icon: 'pi pi-comment',
     subtitle: "Now You Can Enjoy Combination of Algorand's Features With Gold Market.",
-    color: "#673AB7",
+    color: '#673AB7',
     description: [
-      "Transaction finality faster then using credit card",
-      "Almost zero transaction costs (0.001 algo ~ $0.0001)",
-      "You can stake your gold in AMMs and generate yield",
-      "Self custody - your keys your crypto",
-      "You can fraction gold up to 6 decimals of gold gram ~ $0,00005",
-    ],
-  },
-]);
+      'Transaction finality faster then using credit card',
+      'Almost zero transaction costs (0.001 algo ~ $0.0001)',
+      'You can stake your gold in AMMs and generate yield',
+      'Self custody - your keys your crypto',
+      'You can fraction gold up to 6 decimals of gold gram ~ $0,00005'
+    ]
+  }
+])
 const explorerLink = () => {
   switch (store.state.env) {
-    case "mainnet-v1.0":
-      return `https://algoexplorer.io/asset/${store.state.tokens.gold}`;
-    case "testnet-v1.0":
-      return `https://testnet.algoexplorer.io/asset/${store.state.tokens.gold}`;
+    case 'mainnet-v1.0':
+      return `https://algoexplorer.io/asset/${store.state.tokens.gold}`
+    case 'testnet-v1.0':
+      return `https://testnet.algoexplorer.io/asset/${store.state.tokens.gold}`
     default:
-      return `https://app.dappflow.org/explorer/asset/${store.state.tokens.gold}/transactions`;
+      return `https://app.dappflow.org/explorer/asset/${store.state.tokens.gold}/transactions`
   }
-};
+}
 
 const loadMintedTokens = async () => {
-  const algod = getAlgodClient(store.state);
-  const asa = await getAsa({ assetId: store.state.tokens.gold, client: algod });
+  const algod = getAlgodClient(store.state)
+  const asa = await getAsa({ assetId: store.state.tokens.gold, client: algod })
   if (!asa) {
-    state.mintedTokens = "Unable to load info at the moment";
-    return;
+    state.mintedTokens = 'Unable to load info at the moment'
+    return
   }
-  const total = Number(asa.params.total);
+  const total = Number(asa.params.total)
   const account = await algod
     .accountAssetInformation(asa.params.reserve, store.state.tokens.gold)
-    .do();
-  const inReserves = Number(account["asset-holding"]["amount"]);
-  console.log("account", account["asset-holding"]["amount"]);
+    .do()
+  const inReserves = Number(account['asset-holding']['amount'])
+  console.log('account', account['asset-holding']['amount'])
 
   state.mintedTokens = formatAssetPrice({
     assetId: store.state.tokens.gold,
-    value: total - inReserves,
-  });
-};
+    value: total - inReserves
+  })
+}
 </script>
 
 <template>
   <Layout :hideTopMenu="false">
     <div v-if="products" class="allbackground">
       <div class="Dextrading-about-background">
-        <div
-          class="col-md-12 col-sm-12 text-white welcome-banner text-center nav-text text-center"
-        >
+        <div class="col-md-12 col-sm-12 text-white welcome-banner text-center nav-text text-center">
           <div class="welcome-content">
-            <h1 class="title" data-aos="fade-down">
-              We Bring Revolution To Gold Market
-            </h1>
+            <h1 class="title" data-aos="fade-down">We Bring Revolution To Gold Market</h1>
             <p data-aos="zoom-in" class="fontcolor">
-              Weight of gold in the reserves is always higher then minted gold backed
-              tokens. This is ensured by the smart contract on public blockchain network -
-              Algorand.
+              Weight of gold in the reserves is always higher then minted gold backed tokens. This
+              is ensured by the smart contract on public blockchain network - Algorand.
             </p>
             <Button data-aos="fade-up" label="Secondary" severity="Secondary" rounded
               >READ MORE</Button
@@ -183,9 +178,7 @@ const loadMintedTokens = async () => {
                   <a
                     >Asa.Gold Token ID
                     <h3 class="title">
-                      <a :href="explorerLink()" target="_blank">{{
-                        store.state.tokens.gold
-                      }}</a>
+                      <a :href="explorerLink()" target="_blank">{{ store.state.tokens.gold }}</a>
                     </h3></a
                   >
                 </p>

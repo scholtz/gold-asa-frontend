@@ -76,6 +76,13 @@ const events = ref([
     color: '#607D8B',
     content:
       'Mainnet launched at https://www.asa.gold/. Gold token has been minted: Gold: 1241944285, and DAO governance token has been minted: GoldDAO: 1241945177'
+  },
+  {
+    status: 'Delivered',
+    date: 'Dec 26th 2023',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
+    content: 'Website design improvements'
   }
 ])
 function handleResize() {
@@ -104,8 +111,7 @@ const datas = ref([
       image: '/images/OS.png',
       name: 'Olga Scholtz',
       title: 'COO Operations',
-      description:
-        'Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.'
+      description: 'Olga is good in operations and managing the company legal activities.'
     }
   },
   {
@@ -115,8 +121,7 @@ const datas = ref([
       image: '/images/MF.webp',
       name: 'Michal Fecko',
       title: 'CFO Finance',
-      description:
-        'Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.'
+      description: 'Michal is skilled equity and commodities traders based in switzerland.'
     }
   },
   {
@@ -126,8 +131,7 @@ const datas = ref([
       image: '/images/SZ.jpg',
       name: 'Samuel Zubo',
       title: 'CMO Marketing',
-      description:
-        'Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.'
+      description: 'Samo has extensive knowledge in running the eshops and online services.'
     }
   },
   {
@@ -137,8 +141,7 @@ const datas = ref([
       image: '/images/DD.webp',
       name: 'Daniel Dohne',
       title: 'CTO Development',
-      description:
-        'Ankur has 27 years of production and techno-commercial marketing experience in the Indian gems and jewellery industry.'
+      description: 'Daniel is expert in the blockchain technology and adoption.'
     }
   }
 ])
@@ -238,9 +241,7 @@ AOS.init({
                 <div class="section-title">
                   <h2>Experience The Best Features Ever</h2>
                   <div class="bar"></div>
-                  <p>
-                    Check our open source progress
-                  </p>
+                  <p>Check our open source progress</p>
                 </div>
                 <div class="row">
                   <div class="col-6 md:col-6 lg:col-6">
@@ -263,8 +264,9 @@ AOS.init({
                           class="feather feather-lock vue-feather__content"
                         >
                           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg
-                      ></i>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                      </i>
                       <a href="https://github.com/scholtz/gold-asa-frontend">FE</a>
                     </div>
                   </div>
@@ -418,8 +420,8 @@ AOS.init({
             <h2 data-aos="fade-up">Our Awesome Team</h2>
             <div class="bar"></div>
             <p data-aos="fade-up">
-              Ludo, Everyday Algonaut has hosted Prague algorand meetup last year on Feb 10th 2023
-              at Paralel polis. He was also speaker at ETH Denver
+              Ludo, Everyday Algonaut, is founder of ASA.Gold, AWallet, Vote Coin and other
+              algorand's significant projects
             </p>
           </div>
           <div class="container our-team-members" data-aos="fade-up">
@@ -435,8 +437,8 @@ AOS.init({
                       <span>CEO</span>
                     </div>
                     <p>
-                      Ludo, Everyday Algonaut has hosted Prague algorand meetup last year on Feb
-                      10th 2023 at Paralel polis. He was also speaker at ETH Denver.
+                      Ludo, Everyday Algonaut, is founder of ASA.Gold, AWallet, Vote Coin and other
+                      algorand's significant projects
                     </p>
                   </div>
                 </div>

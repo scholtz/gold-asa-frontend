@@ -16,7 +16,7 @@ const store = useAppStore()
 const status = reactive({
   email: '',
   terms: '2023-11-12',
-  gdpr: '2023-11-12',
+  gdpr: '2023-12-26',
   hasMarketing: false,
   sendingEmail: false,
   emailSent: false,

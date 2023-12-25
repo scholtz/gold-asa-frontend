@@ -1,92 +1,86 @@
 <script setup lang="ts">
-import { defineProps, onBeforeUnmount } from "vue";
-import { useRouter, RouterLink } from "vue-router";
-import { ref, onMounted, onUnmounted } from "vue";
-import InputText from "primevue/inputtext";
-import Menubar from "primevue/menubar";
-import Button from "primevue/button";
-import Image from "primevue/image";
-import Badge from "primevue/badge";
-import { useAppStore } from "@/stores/app";
+import { useRouter, RouterLink } from 'vue-router'
+import { ref, onMounted, onUnmounted } from 'vue'
+import Menubar from 'primevue/menubar'
+import Button from 'primevue/button'
+import Badge from 'primevue/badge'
+import { useAppStore } from '@/stores/app'
 const props = defineProps<{
-  hideTopMenu: boolean;
-}>();
+  hideTopMenu: boolean
+}>()
 
-const router = useRouter();
-const store = useAppStore();
+const router = useRouter()
+const store = useAppStore()
 
 const items = ref([
   {
-    label: "Home",
-    icon: "pi pi-fw pi-home",
-    route: "/",
+    label: 'Home',
+    icon: 'pi pi-fw pi-home',
+    route: '/'
   },
   {
-    label: "Fiat payment",
-    icon: "pi pi-fw pi-money-bill",
-    route: "/buy-gold-with-eur",
+    label: 'Fiat payment',
+    icon: 'pi pi-fw pi-money-bill',
+    route: '/buy-gold-with-eur'
   },
   {
-    label: "DEX trading",
-    icon: "pi pi-fw pi-bitcoin",
-    route: "/trade-gold",
+    label: 'DEX trading',
+    icon: 'pi pi-fw pi-bitcoin',
+    route: '/trade-gold'
   },
   {
-    label: "Buy gold coins",
-    icon: "pi pi-fw pi-shopping-cart",
-    route: "/buy-gold-coins",
+    label: 'Buy gold coins',
+    icon: 'pi pi-fw pi-shopping-cart',
+    route: '/buy-gold-coins'
   },
   {
-    label: "Proof of reserves",
-    icon: "pi pi-fw pi-verified",
-    route: "/proof-of-reserve",
-  },
-]);
+    label: 'Proof of reserves',
+    icon: 'pi pi-fw pi-verified',
+    route: '/proof-of-reserve'
+  }
+])
 // window.addEventListener("scroll", handleScroll);
 
 function logout() {
   if (!store.state.authComponent) {
-    console.error(
-      "Unable to logout, authcomponent not initialized",
-      store.state.authComponent
-    );
-    return;
+    console.error('Unable to logout, authcomponent not initialized', store.state.authComponent)
+    return
   }
-  console.log("sending logout");
-  store.state.authComponent?.logout();
-  store.state.authState.isAuthenticated = false;
-  store.state.authState.arc76email = "";
-  store.state.authState.arc14Header = "";
-  store.state.authState.account = "";
-  router.push("/");
-  console.log("logout sent");
+  console.log('sending logout')
+  store.state.authComponent?.logout()
+  store.state.authState.isAuthenticated = false
+  store.state.authState.arc76email = ''
+  store.state.authState.arc14Header = ''
+  store.state.authState.account = ''
+  router.push('/')
+  console.log('logout sent')
 }
 
-const showScrollMessage = ref(false);
-const dynamicClass = ref(false);
+const showScrollMessage = ref(false)
+const dynamicClass = ref(false)
 
 const handleScroll = () => {
-  const scrollPosition = window.scrollY || window.pageYOffset;
-  showScrollMessage.value = scrollPosition > 0;
+  const scrollPosition = window.scrollY || window.pageYOffset
+  showScrollMessage.value = scrollPosition > 0
 
   if (scrollPosition > 100) {
-    dynamicClass.value = true;
+    dynamicClass.value = true
   } else {
-    dynamicClass.value = false;
+    dynamicClass.value = false
   }
-};
+}
 
 onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-});
+  window.addEventListener('scroll', handleScroll)
+})
 
 onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll);
-});
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <template>
-  <header :class="[dynamicClass === true ? 'rn-header stick' : 'scroll-content']">
+  <header :class="[dynamicClass === true ? 'rn-header stick' : '']">
     <Menubar v-if="!props.hideTopMenu" :model="items">
       <template #start>
         <div class="block md:hidden">
@@ -110,9 +104,9 @@ onUnmounted(() => {
           </div>
         </div>
       </template>
-      <template #item="{ item, props, label }">
-        <RouterLink v-if="item.route" v-slot="routerProps" :to="item.route">
-          <a v-ripple class="flex align-items-center" v-bind="props.action">
+      <template #item="{ item, props }">
+        <RouterLink v-if="item.route" :to="item.route">
+          <a class="flex align-items-center" v-bind="props.action">
             <span :class="item.icon" />
             <span class="ml-2">{{ item.label }}</span>
           </a>
@@ -144,11 +138,7 @@ onUnmounted(() => {
             :value="store.state.algodHost"
             severity="warn"
           ></Badge>
-          <Badge
-            class="align-self-center mr-3"
-            value="Stable Beta"
-            severity="secondary"
-          ></Badge>
+          <Badge class="align-self-center mr-3" value="Stable Beta" severity="secondary"></Badge>
           <Button
             class="Icon-button"
             icon="pi pi-user"

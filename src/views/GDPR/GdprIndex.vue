@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import Layout from "@/layouts/AuthLayout.vue";
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
+AOS.init({
+  duration: 800,
+  easing: 'ease-in-out',
+  once: true
+})
 </script>
 <template>
   <Layout :hideTopMenu="false">
-
     <div class="page-title-area">
       <div class="d-table">
         <div class="d-table-cell">
@@ -46,14 +53,14 @@ import Layout from "@/layouts/AuthLayout.vue";
                 Personal data of the Data Subject may be further transferred to the
                 following recipients/categories of recipients:
                 <div class="privacy-description">
-                <ul>
-                  <li>Employees of the Processor</li>
-                  <li>Suppliers of the Processor</li>
-                  <li>Persons in another contractual relationship with the Processor</li>
-                  <li>Financial institutions and insurance companies</li>
-                  <li>State authorities within the framework of the fulfillment of the Processor's legal obligations established by the relevant legal regulations</li>
-                </ul>
-              </div>
+                  <ul>
+                    <li>Employees of the Processor</li>
+                    <li>Suppliers of the Processor</li>
+                    <li>Persons in another contractual relationship with the Processor</li>
+                    <li>Financial institutions and insurance companies</li>
+                    <li>State authorities within the framework of the fulfillment of the Processor's legal obligations established by the relevant legal regulations</li>
+                  </ul>
+                </div>
               </p>
             </div>
           </div>
@@ -229,9 +236,9 @@ import Layout from "@/layouts/AuthLayout.vue";
                 <br />
                 If any of the points in this Privacy Policy is not valid accoring to current legislation, the point is replaced with valid legislation. This does not have effect on the document as a whole.
                 <br />
-                This Privacy Policy is valid from 12.11.2023.
+                This Privacy Policy is valid from 26.12.2023.
                 <br />
-                This Privacy Policy is effective from 12.11.2023.
+                This Privacy Policy is effective from 26.12.2023.
               </p>
             </div>
           </div>
