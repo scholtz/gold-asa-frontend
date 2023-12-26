@@ -173,6 +173,7 @@ export const useAppStore = defineStore('app', () => {
 })
 
 export const resetConfiguration = () => {
+  localStorage.clear()
   const app = useAppStore()
   app.state = defaultState
 }
