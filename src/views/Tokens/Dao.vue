@@ -38,7 +38,7 @@ import Layout from '@/layouts/AuthLayout.vue'
         </div>
         <div class="col-12 md:col-3">
           <img
-            src="https://cloudflare-ipfs.com/ipfs/QmUvP2dfc2qhn7Ym3p2h4B6MQHFLx9F3UFmowyoZ89NkXy"
+            src="https://bff.asa.gold/ipfs/QmUvP2dfc2qhn7Ym3p2h4B6MQHFLx9F3UFmowyoZ89NkXy"
             class="w-full"
             alt="DAO Token"
           />

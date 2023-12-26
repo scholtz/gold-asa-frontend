@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 function getPicture() {
-  return props.src.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/')
+  return props.src.replace('ipfs://', 'https://bff.asa.gold/ipfs/')
 }
 </script>
 <template>

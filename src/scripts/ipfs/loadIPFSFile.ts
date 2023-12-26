@@ -6,7 +6,13 @@ interface ICache {
 
 export const loadIPFSFile = async (hash: string) => {
   const cacheKey = `ipfs-${hash}`
-  const ipfsGateways = ['cloudflare-ipfs.com', 'gateway.ipfs.io', 'ipfs.io', 'dweb.link']
+  const ipfsGateways = [
+    'bff.asa.gold',
+    'cloudflare-ipfs.com',
+    'gateway.ipfs.io',
+    'ipfs.io',
+    'dweb.link'
+  ]
   const cache = localStorage.getItem(cacheKey)
   if (cache) {
     try {
