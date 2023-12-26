@@ -59,7 +59,10 @@ const toast = useToast()
 async function storeProfile() {
   state.saving = true
   try {
-    if (!store.state.authState?.arc14Header) return
+    if (!store.state.authState?.arc14Header) {
+      console.error('Missing arc14Header')
+      return
+    }
     const profile = await bffUpdateProfile(state.profile, store.state.authState.arc14Header)
     if (!profile) return
     state.saving = false

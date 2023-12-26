@@ -78,8 +78,18 @@ const router = createRouter({
       component: () => import('../views/Terms/TermsIndex.vue')
     },
     {
-      path: '/gdpr/:id',
+      path: '/gdpr/latest',
       name: 'gdpr',
+      component: () => import('../views/GDPR/GdprIndex.vue')
+    },
+    {
+      path: '/gdpr/2023-11-12',
+      name: '2023-11-12',
+      component: () => import('../views/GDPR/V2023-11-12.vue')
+    },
+    {
+      path: '/gdpr/2023-12-26',
+      name: '2023-12-26',
       component: () => import('../views/GDPR/GdprIndex.vue')
     },
     {
