@@ -364,10 +364,10 @@ async function optIn(assetId: number) {
   <Layout :hideTopMenu="false" class="ChangeBackgroundcolor">
     <div class="bg-0-2-10 bg-d1-0-2-20 dextrading-background">
       <div class="title-0-2-11 title-d2-0-2-21">
-        <div class="bigTitle-0-2-12 bigTitle-d3-0-2-22">
+        <div class="bigTitle-0-2-12 bigTitle-d3-0-2-22 title">
           Explore decentralized trading
         </div>
-        <div class="subTitle-0-2-13 subTitle-d4-0-2-23">
+        <div class="subTitle-0-2-13 subTitle-d4-0-2-23 title">
           facilitated by algorand blockchain and folks DEX aggregator
         </div>
         <div class="flex flex-row dextrading-inputstyle">

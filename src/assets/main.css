@@ -2697,3 +2697,11 @@ i.size-40 svg {
 .p-menubar-button {
   color: #eee;
 }
+
+.title {
+  text-shadow:
+    0.04em 0 #666,
+    0 0.03em #666,
+    -0.01em 0 #666,
+    0 -0.01em #666;
+}
