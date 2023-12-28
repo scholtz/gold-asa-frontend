@@ -6,7 +6,6 @@ import { onMounted, reactive, ref } from 'vue'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
 import ReservesList from '@/components/ReservesList.vue'
-import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Timeline from 'primevue/timeline'
 import { useAppStore } from '@/stores/app'
@@ -107,9 +106,6 @@ const loadMintedTokens = async () => {
               Weight of gold in the reserves is always higher then minted gold backed tokens. This
               is ensured by the smart contract on public blockchain network - Algorand.
             </p>
-            <Button data-aos="fade-up" label="Secondary" severity="Secondary" rounded
-              >READ MORE</Button
-            >
           </div>
         </div>
       </div>
@@ -169,26 +165,17 @@ const loadMintedTokens = async () => {
                     class="feather feather-map-pin vue-feather__content"
                   >
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle></svg
-                ></i>
+                    <circle cx="12" cy="10" r="3"></circle></svg></i>
               </div>
               <div class="inner">
                 <h4 class="title">Reserves</h4>
                 <p>
-                  <a
-                    >Asa.Gold Token ID
-                    <h3 class="title">
-                      <a :href="explorerLink()" target="_blank">{{ store.state.tokens.gold }}</a>
-                    </h3></a
-                  >
+                  <h3 class="title">Asa.Gold Token ID</h3>
+                  <a class="text-300" :href="explorerLink()" target="_blank">{{ store.state.tokens.gold }}</a> 
                 </p>
                 <p>
-                  <a
-                    >Minted Tokens
-                    <h3 class="title">
-                      <span v-if="state.mintedTokens">{{ state.mintedTokens }}</span>
-                    </h3></a
-                  >
+                  <h3 class="title">Minted Tokens</h3>
+                  <span v-if="state.mintedTokens">{{ state.mintedTokens }}</span>
                 </p>
               </div>
             </div>
