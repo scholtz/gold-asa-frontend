@@ -162,16 +162,12 @@ body {
 }
 
 .logo {
-  padding-left: 100px;
-  padding-right: 100px;
-  /* padding-top: 8px; */
   cursor: pointer;
 }
 
-@media (max-width: 1470px) {
-  .logo {
-    padding-left: 10px;
-    padding-right: 0px;
+@media (min-width: 1920px) {
+  .p-menubar-start {
+    padding-left: 20px;
   }
 }
 
@@ -2693,6 +2689,11 @@ i.size-40 svg {
   color: #eee;
 }
 
-.p-menubar {
+.p-menubar,
+.p-menubar-root-list {
   border-radius: 0px;
+  background: #303e49;
+}
+.p-menubar-button {
+  color: #eee;
 }

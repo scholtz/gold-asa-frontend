@@ -92,16 +92,14 @@ onUnmounted(() => {
             @click="$router.push('/')"
           />
         </div>
-        <div class="hidden md:block">
-          <div class="flex flex-row">
-            <img
-              class="logo m-1"
-              src="/images/logo.png"
-              style="width: 80px"
-              alt="logo"
-              @click="$router.push('/')"
-            />
-          </div>
+        <div class="hidden md:block lg:block xl:block">
+          <img
+            class="logo m-1"
+            src="/images/logo.png"
+            style="width: 80px"
+            alt="logo"
+            @click="$router.push('/')"
+          />
         </div>
       </template>
       <template #item="{ item, props }">
