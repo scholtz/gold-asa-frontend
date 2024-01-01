@@ -84,9 +84,30 @@ const createArc3Files = async (network: string, sn: number) => {
       { url: `sn-${pad(sn, 4)}-p-back.png` }
     ]
   }
+  const properties13 = {
+    name: 'Gold coin 1 oz, SN ' + sn,
+    slugName: 'gold-coin-1-oz-sn-' + sn,
+    network: network,
+    form: 'coin',
+    serialNumber: sn,
+    issueDate: '2023-01-01',
+    inReservesSince: '2024-01-01',
+    reservesNumismaticValue: 32.651735,
+    diameter: 37,
+    diameterUnit: 'mm',
+    weight: 31.1,
+    fitness: 999.9,
+    goldWeight: 31.09689,
+    weightUnit: 'g',
+    quality: 'stand',
+    story:
+      '“Wiener Philharmoniker“ is one of the most popular investment coins. Since 1989 it has been struck in the Vienna Mint in four sizes and weights (1 ounce, 1/2, 1/4 and 1/10 of an ounce). And the motif of the Vienna Philharmonic Orchestra which is considered to be one of the best music ensembles worldwide, was not chosen by coincidence. The coin is minted of the purest 24 carat gold. In 2002, the original 2000, 1000, 500 and 250 shilling coins were replaced with 100, 50, 25 and 10 euro coins. The obverse of the coins features the organ in the Golden Hall of the Musikverein in Vienna, the renowned seat of  the Vienna Philharmonic Orchestra. The reverse is decorated with various musical instruments. Gold coin with serial number XIII is special as it is the first addition to the ASA.gold reserves since the project launch. The gold coin NFT has been minted on January 1st 2024.',
+    pictures: [{ url: `sn-${pad(sn, 4)}-p-front.png` }, { url: `sn-${pad(sn, 4)}-p-back.png` }]
+  }
   let properties: any = properties1
   if (sn == 2) properties = properties2
   if (sn >= 3) properties = properties3_12
+  if (sn == 13) properties = properties13
   var pictures = []
   for (const picture of properties.pictures) {
     const file = readFileSync(`./img/${picture.url}`)

@@ -13,7 +13,8 @@
     "fix": "eslint . --ext .ts --fix",
     "build-package": "tsup src/index.ts --format cjs,esm --clean --sourcemap index --dts src/index.ts --dts-resolve",
     "tsup": "tsup --help",
-    "publishCmd": "npm publish"
+    "publishCmd": "npm publish",
+    "deploynft": "jest -t \"03 deploy nfts\""
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

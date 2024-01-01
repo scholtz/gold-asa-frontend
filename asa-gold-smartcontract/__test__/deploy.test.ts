@@ -90,17 +90,20 @@ describe('deploy', () => {
       assetIndex: goldToken
     })
   })
-  test('03 deploy init nfts', async () => {
+  test('03 deploy nfts', async () => {
     if (!process.env.seller) throw Error('Seller not defined')
     if (!process.env.accountDeploy) throw Error('accountDeploy not defined')
     if (!process.env.accountDeployGoldToken) throw Error('accountDeployGoldToken not defined')
+    if (!goldToken) throw Error('goldToken not defined')
+    if (!appId) throw Error('appId not defined')
+
     const network = 'mainnet'
     accountDeploy = algosdk.mnemonicToSecretKey(process.env.accountDeploy)
     accountDeployGoldToken = algosdk.mnemonicToSecretKey(process.env.accountDeployGoldToken)
     const seller = algosdk.mnemonicToSecretKey(process.env.seller)
     console.log('seller account: ' + seller.addr)
 
-    for (let sn = 1; sn <= 12; sn++) {
+    for (let sn = 13; sn <= 13; sn++) {
       console.log('sn', sn)
       let file = `gold-coin-1-oz-sn-${sn}`
       let price = 500000000
@@ -113,6 +116,11 @@ describe('deploy', () => {
         file = `gold-coin-1-10-oz-sn-${sn}`
         price = 4083399
         weight = 3109689
+      }
+      if (sn == 13) {
+        file = `gold-coin-1-oz-sn-${sn}`
+        price = 33584641
+        weight = 31096890
       }
       const integrity = readFileSync(`arc0003/${network}/${file}.integrity`).toString('utf-8')
 
