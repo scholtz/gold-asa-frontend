@@ -2,6 +2,9 @@ import type { AsaData } from '@/types/ASAData'
 import algosdk from 'algosdk'
 
 const parseAsaData = (input: Uint8Array) => {
+  if (input.length != 192) {
+    throw new Error('Box has wrong length')
+  }
   const ret: AsaData = {
     state: algosdk.decodeUint64(input.subarray(0, 8), 'safe'),
     sellerAddr: algosdk.encodeAddress(input.subarray(8, 40)),
