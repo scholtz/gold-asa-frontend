@@ -206,7 +206,7 @@ const loadMintedTokens = async () => {
         <div class="row row--15">
           <div class="lg:col-6 md:col-6 sm:col-6 col-12">
             <div class="background rn-address">
-              <div class="companyimage"></div>
+              <div class="reservesimage"></div>
             </div>
           </div>
           <div class="lg:col-6 md:col-6 sm:col-6 col-12">

@@ -1908,6 +1908,15 @@ i.size-62 {
   height: 700px;
 }
 
+.reservesimage {
+  background-image: url('./all-coins-2.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 20px;
+  height: 700px;
+}
+
 .section-title .title {
   margin-bottom: 0;
   text-transform: capitalize;

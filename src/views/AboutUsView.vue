@@ -83,6 +83,13 @@ const events = ref([
     icon: 'pi pi-circle',
     color: '#607D8B',
     content: 'Website design improvements'
+  },
+  {
+    status: 'Delivered',
+    date: 'Jan 1st 2024',
+    icon: 'pi pi-circle',
+    color: '#607D8B',
+    content: 'New coin added to the reserves - 1 oz Wiener Philharmoniker'
   }
 ])
 function handleResize() {
