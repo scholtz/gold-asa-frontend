@@ -415,7 +415,9 @@ async function optIn(assetId: number) {
       </div>
       <table :class="refreshCount" id="tradingtable" class="text-center">
         <tr id="tradingtable-tr">
-          <th class="text-center hidden md:revert">Your balance</th>
+          <th class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
+            Your balance
+          </th>
           <th class="text-center hidden md:revert">Action button</th>
           <th class="text-center hidden xl:revert">Token</th>
           <th class="hidden xl:revert"></th>
@@ -424,7 +426,9 @@ async function optIn(assetId: number) {
           <th class="hidden xl:revert"></th>
           <th class="text-center hidden xl:revert">Token</th>
           <th class="text-center hidden md:revert">Action button</th>
-          <th class="text-center hidden md:revert">Your balance</th>
+          <th class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
+            Your balance
+          </th>
         </tr>
         <tr
           v-if="
@@ -455,7 +459,7 @@ async function optIn(assetId: number) {
           </td>
         </tr>
         <tr v-else>
-          <td class="text-center hidden md:revert">
+          <td class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -509,7 +513,7 @@ async function optIn(assetId: number) {
               {{ Number(state.quoteGoldEur?.quoteAmount) / 10 ** 6 }} EURs</Button
             >
           </td>
-          <td class="hidden md:revert">
+          <td class="hidden md:revert" v-if="store.state.authState.isAuthenticated">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -533,7 +537,7 @@ async function optIn(assetId: number) {
           </td>
         </tr>
         <tr v-else>
-          <td class="text-center hidden md:revert">
+          <td class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -591,7 +595,7 @@ async function optIn(assetId: number) {
               {{ Number(state.quoteGoldUsdc?.quoteAmount) / 10 ** 6 }} USDC</Button
             >
           </td>
-          <td class="hidden md:revert">
+          <td class="hidden md:revert" v-if="store.state.authState.isAuthenticated">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -604,7 +608,7 @@ async function optIn(assetId: number) {
         </tr>
 
         <tr>
-          <td class="text-center hidden md:revert">
+          <td class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
             {{ format(state.accountInformation?.amount, store.state.tokens.algo) }}
           </td>
           <td class="text-center">
@@ -655,7 +659,7 @@ async function optIn(assetId: number) {
               {{ Number(state.quoteGoldAlgo?.quoteAmount) / 10 ** 6 }} Algo</Button
             >
           </td>
-          <td class="hidden md:revert">
+          <td class="hidden md:revert" v-if="store.state.authState.isAuthenticated">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -679,7 +683,7 @@ async function optIn(assetId: number) {
           </td>
         </tr>
         <tr v-else>
-          <td class="text-center hidden md:revert">
+          <td class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
             {{
               format(
                 state.accountInformation?.assets?.find(
@@ -733,7 +737,7 @@ async function optIn(assetId: number) {
               {{ Number(state.quoteGoldBtc?.quoteAmount) / 10 ** 8 }} BTC</Button
             >
           </td>
-          <td class="hidden md:revert">
+          <td class="hidden md:revert" v-if="store.state.authState.isAuthenticated">
             {{
               format(
                 state.accountInformation?.assets?.find(
