@@ -122,6 +122,7 @@ export const useAppStore = defineStore('app', () => {
   } catch (e: any) {
     console.error(e)
   }
+  if (initState.theme != 'lara-light-teal') initState.theme = 'lara-light-teal'
   if (initState.currentTheme != initState.theme) {
     console.log('setting theme:', initState.theme)
     console.log(`setting theme from ${initState.currentTheme} to ${initState.theme}`)
@@ -157,7 +158,7 @@ export const useAppStore = defineStore('app', () => {
     async (newState, oldState) => {
       console.log('state update', oldState, newState)
       localStorage.setItem('state', JSON.stringify(newState))
-
+      if (state.theme != 'lara-light-teal') state.theme = 'lara-light-teal'
       if (state.currentTheme != state.theme) {
         console.log(`setting theme from ${state.currentTheme} to ${state.theme}`)
         PrimeVue.changeTheme(state.currentTheme, state.theme, 'theme-link')
