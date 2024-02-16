@@ -59,6 +59,8 @@ onMounted(() => {
 <template>
   <div class="flex flex-column justify-content-center min-h-full p-0 m-0">
     <Toast />
+    <div v-if="!props.hideTopMenu" style="height: 200px"></div>
+    <TopHeader :hideTopMenu="props.hideTopMenu" />
     <Suspense>
       <AlgorandAuthentication
         arc14Realm="ASA.Gold"
@@ -72,7 +74,6 @@ onMounted(() => {
         :algodToken="store.state.algodToken"
         :store="store.state.authState"
       >
-        <TopHeader :hideTopMenu="props.hideTopMenu" />
         <ForcedEmailVerification>
           <div class="flex-grow-1">
             <slot />

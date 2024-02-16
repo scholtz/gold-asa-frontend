@@ -13,6 +13,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import getAsa from '@/scripts/algo/getAsa'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
+import Button from 'primevue/button'
 const store = useAppStore()
 
 const state = reactive({
@@ -31,42 +32,69 @@ onMounted(async () => {
     easing: 'ease-in-out',
     once: true
   })
+  await makeEventTexts()
 })
 
+const sum = () => {
+  if (!products.value) return ''
+  const ret = products.value
+    .map((a) => a.state.weight)
+    .reduce(function (a, b) {
+      return a + b
+    })
+  return formatAssetPrice({
+    assetId: store.state.tokens.gold,
+    value: ret
+  })
+}
 const products = ref<IEshopItem[]>()
-const events = ref([
-  {
-    status: 'Disadvantages Of Gold Are:',
-    date: '15/10/2020 10:30',
-    icon: 'pi pi-comment',
-    color: '#9C27B0',
-    description: [
-      "No Income or Yield - Gold doesn't generate any income or yield on its own. Unlike stocks or bonds, which can provide dividends or interest, holding gold won't produce any periodic cash flow.",
-      "Lack of Cash Flow - Gold doesn't generate cash flow, which means investors can miss out on opportunities to reinvest in assets that do produce income.",
-      'You can stake your gold in AMMs and generate yield',
-      'Self custody - your keys your crypto',
-      'Non fractionable - When you own 1 gold coin you are not likely going to split it in half when you need to pay only half of the price.'
-    ]
-  },
-  {
-    status: 'With Tokenized Gold This Disadavtages Does Not Apply.',
-    date: '15/10/2020 14:00',
-    icon: 'pi pi-comment',
-    subtitle: "Now You Can Enjoy Combination of Algorand's Features With Gold Market.",
-    color: '#673AB7',
-    description: [
-      'Transaction finality faster then using credit card',
-      'Almost zero transaction costs (0.001 algo ~ $0.0001)',
-      'You can stake your gold in AMMs and generate yield',
-      'Self custody - your keys your crypto',
-      'You can fraction gold up to 6 decimals of gold gram ~ $0,00005'
-    ]
-  }
-])
+const events = ref()
+const makeEventTexts = () => {
+  events.value = [
+    {
+      status: 'Proof of reserves:',
+      date: '15/10/2020 10:30',
+      icon: 'pi pi-comment',
+      color: '#9C27B0',
+      description: [
+        `Weight of gold in the physical reserves (${sum()}) is always higher then minted gold backed tokens (${
+          state.mintedTokens
+        } grams). This is ensured by the smart contract on public blockchain network - Algorand. Weight of gold of physical reserves is the sum of gold composition of each gold item in the reserves which can be observed in our eshop or on this website. The minted gold is all gold in the circulation, in technical term for algorand, the original minted amount minus the amount of tokens at the reserves account. Each sale of the gold item from the reserves is routed back to the reserves account.`
+      ]
+    },
+    {
+      status: 'Disadvantages of gold are:',
+      date: '15/10/2020 10:30',
+      icon: 'pi pi-comment',
+      color: '#9C27B0',
+      description: [
+        "No Income or Yield - Gold doesn't generate any income or yield on its own. Unlike stocks or bonds, which can provide dividends or interest, holding gold won't produce any periodic cash flow.",
+        "Lack of Cash Flow - Gold doesn't generate cash flow, which means investors can miss out on opportunities to reinvest in assets that do produce income.",
+        'You can stake your gold in AMMs and generate yield',
+        'Self custody - your keys your crypto',
+        'Non fractionable - When you own 1 gold coin you are not likely going to split it in half when you need to pay only half of the price.'
+      ]
+    },
+    {
+      status: 'With Tokenized Gold This Disadavtages Does Not Apply.',
+      date: '15/10/2020 14:00',
+      icon: 'pi pi-comment',
+      subtitle: "Now You Can Enjoy Combination of Algorand's Features With Gold Market.",
+      color: '#673AB7',
+      description: [
+        'Transaction finality faster then using credit card',
+        'Almost zero transaction costs (0.001 algo ~ $0.0001)',
+        'You can stake your gold in AMMs and generate yield',
+        'Self custody - your keys your crypto',
+        'You can fraction gold up to 6 decimals of gold gram ~ $0,00005'
+      ]
+    }
+  ]
+}
 const explorerLink = () => {
   switch (store.state.env) {
     case 'mainnet-v1.0':
-      return `https://algoexplorer.io/asset/${store.state.tokens.gold}`
+      return `https://allo.info/asset/${store.state.tokens.gold}/token/`
     case 'testnet-v1.0':
       return `https://testnet.algoexplorer.io/asset/${store.state.tokens.gold}`
     default:
@@ -99,13 +127,11 @@ const loadMintedTokens = async () => {
   <Layout :hideTopMenu="false">
     <div v-if="products" class="allbackground">
       <div class="Dextrading-about-background">
-        <div class="col-md-12 col-sm-12 text-white welcome-banner text-center nav-text text-center">
+        <div
+          class="col-md-12 col-sm-12 text-secondary welcome-banner text-center nav-text text-center"
+        >
           <div class="welcome-content">
             <h1 class="title" data-aos="fade-down">We Bring Revolution To Gold Market</h1>
-            <p data-aos="zoom-in" class="fontcolor">
-              Weight of gold in the reserves is always higher then minted gold backed tokens. This
-              is ensured by the smart contract on public blockchain network - Algorand.
-            </p>
           </div>
         </div>
       </div>
@@ -119,7 +145,7 @@ const loadMintedTokens = async () => {
           >
             <template #marker="slotProps">
               <span
-                class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
+                class="flex w-2rem h-2rem align-items-center justify-content-center text-secondary border-circle z-1 shadow-1"
               >
                 <i :class="slotProps.item.icon"></i>
               </span>
@@ -165,18 +191,24 @@ const loadMintedTokens = async () => {
                     class="feather feather-map-pin vue-feather__content"
                   >
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle></svg></i>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </i>
               </div>
               <div class="inner">
-                <h4 class="title">Reserves</h4>
-                <p>
-                  <h3 class="title">Asa.Gold Token ID</h3>
-                  <a class="text-300" :href="explorerLink()" target="_blank">{{ store.state.tokens.gold }}</a> 
-                </p>
-                <p>
-                  <h3 class="title">Minted Tokens</h3>
-                  <span v-if="state.mintedTokens">{{ state.mintedTokens }}</span>
-                </p>
+                <h4 class="title text-primary">Reserves</h4>
+                <div>
+                  <h3 class="title text-primary">Asa.Gold Token ID</h3>
+                  <a class="text-300" :href="explorerLink()" target="_blank">
+                    <Button secondary>{{ store.state.tokens.gold }}</Button>
+                  </a>
+                </div>
+                <div>
+                  <h3 class="title text-primary">Minted Tokens</h3>
+                  <span v-if="state.mintedTokens" class="text-primary">{{
+                    state.mintedTokens
+                  }}</span>
+                </div>
               </div>
             </div>
           </div>

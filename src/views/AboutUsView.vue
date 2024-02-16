@@ -163,7 +163,9 @@ AOS.init({
   <Layout :hideTopMenu="false">
     <div>
       <div class="about-us-background">
-        <div class="md:col-12 sm:col-12 text-white welcome-banner text-center nav-text text-center">
+        <div
+          class="md:col-12 sm:col-12 text-secondary welcome-banner text-center nav-text text-center"
+        >
           <div class="welcome-content">
             <h3 class="rn-sub-badge" data-aos="fade-down">
               <span class="title mt-5">About ASA.Gold project</span>
@@ -222,7 +224,7 @@ AOS.init({
           >
             <template #marker="slotProps">
               <span
-                class="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
+                class="flex w-2rem h-2rem align-items-center justify-content-center text-secondary border-circle z-1 shadow-1"
               >
                 <i :class="slotProps.item.icon" style="color: #059dff"></i>
               </span>

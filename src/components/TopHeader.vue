@@ -18,11 +18,11 @@ const items = ref([
     icon: 'pi pi-fw pi-home',
     route: '/'
   },
-  {
-    label: 'Fiat payment',
-    icon: 'pi pi-fw pi-money-bill',
-    route: '/buy-gold-with-eur'
-  },
+  // {
+  //   label: 'Fiat payment',
+  //   icon: 'pi pi-fw pi-money-bill',
+  //   route: '/buy-gold-with-eur'
+  // },
   {
     label: 'DEX trading',
     icon: 'pi pi-fw pi-bitcoin',
@@ -63,7 +63,7 @@ const handleScroll = () => {
   const scrollPosition = window.scrollY || window.pageYOffset
   showScrollMessage.value = scrollPosition > 0
 
-  if (scrollPosition > 100) {
+  if (scrollPosition >= 0) {
     dynamicClass.value = true
   } else {
     dynamicClass.value = false
@@ -80,8 +80,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header :class="[dynamicClass === true ? 'rn-header stick' : '']">
-    <Menubar v-if="!props.hideTopMenu" :model="items">
+  <header :class="[true ? 'rn-header stick' : '']">
+    <Menubar v-if="!props.hideTopMenu" :model="items" class="border-0 m-4">
       <template #start>
         <div class="block md:hidden">
           <img
@@ -104,10 +104,10 @@ onUnmounted(() => {
       </template>
       <template #item="{ item, props }">
         <RouterLink v-if="item.route" :to="item.route">
-          <a class="flex align-items-center" v-bind="props.action">
-            <span :class="item.icon" />
-            <span class="ml-2">{{ item.label }}</span>
-          </a>
+          <Button link class="align-items-center flex flex-row" v-bind="props.action">
+            <i class="text" :class="item.icon" />
+            <div class="text ml-2">{{ item.label }}</div>
+          </Button>
         </RouterLink>
       </template>
       <template #end>

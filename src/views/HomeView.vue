@@ -14,7 +14,7 @@ AOS.init({
     <div class="grid grid-nogutter surface-section backgroundImage text-800">
       <div class="container">
         <div
-          class="col-12 md:col-12 sm:col-12 text-white welcome-banner text-center nav-text text-center"
+          class="col-12 md:col-12 sm:col-12 text-secondary welcome-banner text-center nav-text text-center"
         >
           <div class="welcome-content">
             <section class="fontcolor">

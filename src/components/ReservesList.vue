@@ -72,10 +72,12 @@ const sum = () => {
 <template>
   <DataTable :value="products" scrollable stripedRows sortMode="single" class="table-data-display">
     <Column field="nft.name" header="Name" :sortable="true" style="min-width: 200px" class="nowrap"
-      ><template #body="slotProps"
-        ><RouterLink :to="`/coin/${slotProps.data.nft.properties.slugName}`" class="nowrap">
-          {{ slotProps.data.nft.name }}</RouterLink
-        >
+      ><template #body="slotProps">
+        <RouterLink :to="`/coin/${slotProps.data.nft.properties.slugName}`" class="nowrap">
+          <Button link>
+            {{ slotProps.data.nft.name }}
+          </Button>
+        </RouterLink>
       </template></Column
     >
     <Column field="state.weight" header="Weight" :sortable="true">
@@ -90,7 +92,6 @@ const sum = () => {
       </Row>
     </ColumnGroup>
   </DataTable>
-  
 </template>
 <style>
 .nowrap {

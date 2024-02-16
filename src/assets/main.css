@@ -1,3 +1,16 @@
+#gradient-canvas {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -10000;
+  --gradient-color-1: #fff;
+  --gradient-color-2: #eee;
+  --gradient-color-3: #ddd;
+  --gradient-color-4: #ccc;
+}
+
 html,
 body {
   font-family:
@@ -77,7 +90,6 @@ body {
   font-size: 12px;
   top: 0;
   left: 0;
-  background-color: #303e49 !important;
   width: 100%;
   height: 50px;
   /* -webkit-animation: headerSticky .95s ease forwards; */
@@ -196,15 +208,7 @@ body {
   margin-right: 10px;
 }
 
-.p-menuitem-content a {
-  text-decoration: none;
-  font-size: 14px;
-  color: white;
-  font-weight: bold;
-}
-
 .product-slider-home .product-slider-heading {
-  color: white;
   padding-top: 50px;
   font-weight: 700;
   font-size: 20px;
@@ -277,10 +281,6 @@ img {
   max-height: 100%;
 }
 
-.fontcolor {
-  color: white;
-}
-
 .border-1 {
   border: none !important;
   /* box-shadow: 0 2px 48px 0 rgba(0, 0, 0, .08); */
@@ -290,14 +290,6 @@ img {
   padding-top: 50px !important;
   padding-bottom: 50px !important;
   /* # */
-}
-
-.border-1 .mb-1 {
-  color: white;
-}
-
-.border-1 .mb-3 {
-  color: white;
 }
 
 .product-slider-home {
@@ -961,7 +953,6 @@ img {
 }
 
 .timeline-display {
-  background: linear-gradient(245.22deg, #3bd0d8 35%, #2b6aff 65.17%, #aadefe 92.1%);
   padding-top: 3rem;
   padding-bottom: 13rem;
 }
@@ -1517,7 +1508,6 @@ img {
 }
 
 .section-title h2 a {
-  color: white;
   font-size: 44px;
   line-height: 1.23;
 }
@@ -1891,7 +1881,6 @@ i.size-62 {
   font-size: 35px;
   font-weight: 600;
   padding-top: 1rem;
-  color: white;
 }
 
 .background.rn-address {
@@ -2173,7 +2162,6 @@ i.size-40 svg {
 
 .services-content .section-title p {
   margin: 0;
-  color: #ffffff;
 }
 
 .services-content .row {
@@ -2201,34 +2189,20 @@ i.size-40 svg {
   padding: 15px 12px;
   color: black;
   font-weight: 500;
-  background-color: #fff;
   -webkit-box-shadow: 0 2px 48px 0 rgba(0, 0, 0, 0.08);
   box-shadow: 0 2px 48px 0 rgba(0, 0, 0, 0.08);
   margin-top: 20px;
 }
 
 .services-content .box:hover {
-  color: #fff;
   -webkit-transform: translateY(-10px);
   transform: translateY(-10px);
   background-color: rgb(5, 157, 255);
 }
 
-.features-area .align-items-center .section-title p {
-  color: #ffffff !important;
-}
-
 .services-content .box:hover:before {
   opacity: 1;
   visibility: visible;
-}
-
-.services-content .box:hover > a {
-  color: white;
-}
-
-.services-content .box:hover svg {
-  color: #fff;
 }
 
 .vue-feather {
@@ -2583,18 +2557,12 @@ i.size-40 svg {
 
 .page-title-area,
 .page-title-area-terms .privacy-content h2 {
-  color: #ffffff;
   font-size: 35px;
 }
 
 .page-title-area,
 .page-title-area-terms .privacy-content p {
-  color: #ffffff;
   font-size: 20px;
-}
-
-.privacy-body {
-  background: linear-gradient(245.22deg, #060606 35%, #060606 65.17%, #2b6bffde 92.1%);
 }
 
 .solutions-area {
@@ -2605,8 +2573,6 @@ i.size-40 svg {
 
 .section-title .sub-title {
   display: inline-block;
-  color: #c679e3;
-  background-color: #f5dffd;
   margin-bottom: 18px;
   border-radius: 30px;
   padding: 5px 20px 4px;
@@ -2622,7 +2588,6 @@ i.size-40 svg {
 
 .coin-detail {
   padding-top: 120px !important;
-  background: linear-gradient(245.22deg, #060606 35%, #060606 65.17%, #2b6bffde 92.1%);
 }
 
 .buy-coin-button {
@@ -2640,14 +2605,10 @@ i.size-40 svg {
     0 2px 2px 0 rgba(0, 0, 0, 0.14),
     0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
-.coin-detail .tab-panel {
-  background-color: #0f0f11;
-}
 .story[data-v-d5d273fe] {
   color: #6084a4 !important;
 }
 .coin-detail .tab-panel .buy-title {
-  color: white !important;
   text-align: center;
 }
 .btn-default {
@@ -2683,34 +2644,14 @@ i.size-40 svg {
   display: none;
 }
 
-.p-menubar
-  .p-menubar-root-list
-  > .p-menuitem
-  > .p-menuitem-content
-  .p-menuitem-link
-  .p-menuitem-text,
-.p-menubar
-  .p-menubar-root-list
-  > .p-menuitem
-  > .p-menuitem-content
-  .p-menuitem-link
-  .p-menuitem-icon {
-  color: #eee;
-}
-
-.p-menubar,
-.p-menubar-root-list {
-  border-radius: 0px;
-  background: #303e49;
-}
-.p-menubar-button {
-  color: #eee;
-}
-
 .title {
   text-shadow:
     0.04em 0 #666,
     0 0.03em #666,
     -0.01em 0 #666,
     0 -0.01em #666;
+}
+
+a {
+  text-decoration: none;
 }

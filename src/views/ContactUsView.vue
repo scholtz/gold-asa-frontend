@@ -59,7 +59,9 @@ const selection = ref({})
   <Layout :hideTopMenu="false">
     <div>
       <div class="contact-us-background">
-        <div class="col-md-12 col-sm-12 text-white welcome-banner text-center nav-text text-center">
+        <div
+          class="col-md-12 col-sm-12 text-secondary welcome-banner text-center nav-text text-center"
+        >
           <div class="welcome-content">
             <h3 class="rn-sub-badge" data-aos="fade-down">
               <span class="title">Contact US</span>

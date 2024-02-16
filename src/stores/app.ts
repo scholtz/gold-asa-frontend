@@ -27,6 +27,7 @@ export interface IState {
     usdc: number
     algo: number
     btc: number
+    eur: number
   }
   customToken: number | null
   account: IAccount | null
@@ -38,7 +39,8 @@ const tokens = {
   gold: 67395862,
   usdc: 37074699,
   algo: 0,
-  btc: 67396528
+  btc: 67396528,
+  eur: 227855942
 }
 const reloadAccount = async (): Promise<void> => {
   console.log('reload account base')
@@ -48,8 +50,8 @@ const defaultState: IState = {
   algodHost: 'https://testnet-api.algonode.cloud',
   algodPort: 443,
   algodToken: '',
-  theme: 'md-light-indigo',
-  currentTheme: 'md-light-indigo',
+  theme: 'lara-light-teal',
+  currentTheme: '_empty',
   authState: new AuthenticationStore(),
   tokens: tokens,
   customToken: null,
@@ -71,10 +73,11 @@ interface IConfig {
   usdcToken: number
   algoToken: number
   btcToken: number
+  eurToken: number
   feeCollector: string
 }
 
-const initState = defaultState
+const initState = { ...defaultState }
 let configData: IConfig | null = null
 try {
   const config = await axios.get('/config.json')
@@ -89,6 +92,7 @@ try {
     initState.tokens.algo = configData.algoToken
     initState.tokens.usdc = configData.usdcToken
     initState.tokens.btc = configData.btcToken
+    initState.tokens.eur = configData.eurToken
     initState.feeCollector = configData.feeCollector
   }
 } catch (e: any) {
@@ -118,11 +122,11 @@ export const useAppStore = defineStore('app', () => {
   } catch (e: any) {
     console.error(e)
   }
-  initState.currentTheme = 'md-light-indigo'
   if (initState.currentTheme != initState.theme) {
     console.log('setting theme:', initState.theme)
     console.log(`setting theme from ${initState.currentTheme} to ${initState.theme}`)
     PrimeVue.changeTheme(initState.currentTheme, initState.theme, 'theme-link')
+    PrimeVue.changeTheme(initState.currentTheme, initState.theme, 'theme-link-custom')
     initState.currentTheme = initState.theme
   }
 
@@ -137,6 +141,7 @@ export const useAppStore = defineStore('app', () => {
     initState.tokens.algo = configData.algoToken
     initState.tokens.usdc = configData.usdcToken
     initState.tokens.btc = configData.btcToken
+    initState.tokens.eur = configData.eurToken
     initState.feeCollector = configData.feeCollector
     if (storageState?.env) {
       // allow overide by the storage
@@ -156,6 +161,7 @@ export const useAppStore = defineStore('app', () => {
       if (state.currentTheme != state.theme) {
         console.log(`setting theme from ${state.currentTheme} to ${state.theme}`)
         PrimeVue.changeTheme(state.currentTheme, state.theme, 'theme-link')
+        PrimeVue.changeTheme(state.currentTheme, state.theme, 'theme-link-custom')
         state.currentTheme = state.theme
       }
       if (configData) {
@@ -165,6 +171,7 @@ export const useAppStore = defineStore('app', () => {
         state.tokens.algo = configData.algoToken
         state.tokens.usdc = configData.usdcToken
         state.tokens.btc = configData.btcToken
+        state.tokens.eur = configData.eurToken
       }
     },
     { deep: true }
@@ -175,7 +182,7 @@ export const useAppStore = defineStore('app', () => {
 export const resetConfiguration = () => {
   localStorage.clear()
   const app = useAppStore()
-  app.state = defaultState
+  app.state = { ...defaultState }
 }
 
 export const useMainnet = () => {

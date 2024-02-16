@@ -17,7 +17,7 @@ import Layout from '@/layouts/AuthLayout.vue'
     </div>
     <div class="solutions-area privacy-body ptb-80">
       <div class="container">
-        <div class="text-white">
+        <div class="text-secondary">
           <p>
             This terms and conditions are between you as person or legal entity and ASA.Gold
             Provider.
