@@ -80,8 +80,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header :class="[true ? 'rn-header stick' : '']">
-    <Menubar v-if="!props.hideTopMenu" :model="items" class="border-0 m-4">
+  <header>
+    <Menubar
+      v-if="!props.hideTopMenu"
+      :model="items"
+      class="border-0 lg:m-4 m-1"
+      breakpoint="1420px"
+    >
       <template #start>
         <div class="block md:hidden">
           <img

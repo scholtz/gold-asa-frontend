@@ -31,12 +31,10 @@ const tabMenuItems = ref([
 const active = ref(-1)
 
 active.value = tabMenuItems.value.findIndex((e) => e.route == router.currentRoute.value.path)
-
-const dynamicClass = ref(false)
 </script>
 
 <template>
-  <header :class="[dynamicClass === true ? 'rn-header stick' : '']">
+  <header>
     <Menubar v-model:activeIndex="active" :model="tabMenuItems">
       <template #item="{ label, item, props }">
         <RouterLink v-if="item.route" v-slot="routerProps" :to="item.route" custom>
