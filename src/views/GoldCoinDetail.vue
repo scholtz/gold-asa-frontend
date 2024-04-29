@@ -284,6 +284,14 @@ async function resetView() {
                 <th>Serial number</th>
                 <td>{{ product.nft.properties.serialNumber }}</td>
               </tr>
+              <tr v-if="product.nft.properties.serialNumber">
+                <th>ASA Id</th>
+                <td>
+                  <a :href="`https://allo.info/asset/${product.asa}/nft`" target="_blank">
+                    <Button link size="small">{{ product.asa }}</Button>
+                  </a>
+                </td>
+              </tr>
               <tr v-if="product.nft.properties.diameter">
                 <th>Diameter</th>
                 <td>
