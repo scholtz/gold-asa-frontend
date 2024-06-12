@@ -9,7 +9,15 @@ import Layout from '@/layouts/AuthLayout.vue'
         <div class="col-12 md:col-9">
           <p>
             Gold token Algorand Mainnet ID:
-            <a href="https://algoexplorer.io/asset/1241944285" target="_blank">1241944285</a>
+            <a href="https://allo.info/asset/1241944285" target="_blank">1241944285</a>
+          </p>
+          <p>
+            Address holding all gold reserves NFTs:
+            <a
+              href="https://allo.info/account/OAOYIJWXVC44DBCX5GKCDZVDGGHQJFAKHLTYDCT5DKJPQL7TNWLUFH5KOM/assets"
+              target="_blank"
+              >OAOY..5KOM</a
+            >
           </p>
           <p>
             Gold token white paper:

@@ -103,7 +103,7 @@ describe('deploy', () => {
     const seller = algosdk.mnemonicToSecretKey(process.env.seller)
     console.log('seller account: ' + seller.addr)
 
-    for (let sn = 13; sn <= 13; sn++) {
+    for (let sn = 14; sn <= 14; sn++) {
       console.log('sn', sn)
       let file = `gold-coin-1-oz-sn-${sn}`
       let price = 500000000
@@ -120,6 +120,11 @@ describe('deploy', () => {
       if (sn == 13) {
         file = `gold-coin-1-oz-sn-${sn}`
         price = 33584641
+        weight = 31096890
+      }
+      if (sn == 14) {
+        file = `gold-coin-1-oz-sn-${sn}`
+        price = 33403889
         weight = 31096890
       }
       const integrity = readFileSync(`arc0003/${network}/${file}.integrity`).toString('utf-8')

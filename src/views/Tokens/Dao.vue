@@ -9,7 +9,7 @@ import Layout from '@/layouts/AuthLayout.vue'
         <div class="col-12 md:col-9">
           <p>
             ASA.Gold governance token Algorand Mainnet ID:
-            <a href="https://algoexplorer.io/asset/1241945177" target="_blank">1241945177</a>
+            <a href="https://allo.info/asset/1241945177" target="_blank">1241945177</a>
           </p>
           <p>
             GoldDAO token white paper:

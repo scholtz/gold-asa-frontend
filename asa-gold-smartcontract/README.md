@@ -19,3 +19,10 @@ Run tests with `npm run test`
 [GitHub](https://github.com/scholtz/gold-asa-frontend/blob/main/asa-gold-smartcontract/README.md)
 
 [NPM](https://www.npmjs.com/package/algorand-asa-gold)
+
+## New coin to reserves
+
+- Supply photos to folder img/
+- ts-node src/bin/createToken.ts
+- Update deploy.test.ts
+- npm run deploynft
