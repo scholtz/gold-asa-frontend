@@ -1,14 +1,13 @@
 {
-  "bff": "https://bff.asa.gold",
-  "appId": 1241948099,
-  "env": "mainnet-v1.0",
-  "algodHost": "https://mainnet-api.algonode.cloud",
+  "bff": "https://testnet-bff.asa.gold",
+  "appId": 479307959,
+  "env": "testnet-v1.0",
+  "algodHost": "https://testnet-api.algonode.cloud",
   "algodPort": 443,
   "algodToken": "",
-  "goldToken": 1241944285,
-  "usdcToken": 31566704,
+  "goldToken": 450822081,
+  "usdcToken": 37074699,
   "algoToken": 0,
-  "btcToken": 386192725,
-  "eurToken": 227855942,
-  "feeCollector": "GOPQRISPHSWZBLHM2K67RJNSELDQEDNCL4DS3FTICW2Q2UM3KZWEME7BPE"
+  "btcToken": 67396528,
+  "feeCollector": "ASIINRPHOZE4NVSQVQDDZXDN372XXZJZAUUNI4SIJ63PJD37U2BQV533LM"
 }

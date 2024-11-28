@@ -3,18 +3,20 @@ import Button from 'primevue/button'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import getAsaDecimals from '@/scripts/algo/getAsaDecimals'
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useAppStore } from '@/stores/app'
 import type IEshopItem from '@/types/IEshopItem'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 import getAsaFromCache from '@/scripts/algo/getAsaFromCache'
 import { useToast } from 'primevue/usetoast'
 import delay from '@/scripts/common/delay'
-import { clientChangeQuotationTxs, getClient } from 'algorand-asa-gold'
+import { clientChangeQuotationTxs, getBoxReferenceNFT, getClient } from 'algorand-asa-gold'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import getTransactionSignerAccount from '@/scripts/algo/getTransactionSignerAccount'
 import type algosdk from 'algosdk'
 import * as algokit from '@algorandfoundation/algokit-utils'
+import ProgressSpinner from 'primevue/progressspinner'
+import clearBoxCache from '@/scripts/algo/clearBoxCache'
 
 const emit = defineEmits(['onPriceChange', 'onCancel'])
 
@@ -43,6 +45,29 @@ const state = reactive({
   asset5Amount: 0,
   sending: false,
   sent: false
+})
+const load = () => {
+  const asa1 = getAsaFromCache({ assetId: parseInt(state.asset3) })
+  state.asset1 = props.item.state.asset1.toString()
+  state.asset1Amount = props.item.state.quoteAsset1 / 10 ** (asa1?.params?.decimals ?? 6)
+  const asa2 = getAsaFromCache({ assetId: parseInt(state.asset3) })
+  state.asset2 = props.item.state.asset2.toString()
+  state.asset2Amount = props.item.state.quoteAsset2 / 10 ** (asa2?.params?.decimals ?? 6)
+  const asa3 = getAsaFromCache({ assetId: parseInt(state.asset3) })
+  state.asset3 = props.item.state.asset3.toString()
+  state.asset3Amount = props.item.state.quoteAsset3 / 10 ** (asa3?.params?.decimals ?? 6)
+  const asa4 = getAsaFromCache({ assetId: parseInt(state.asset3) })
+  state.asset4 = props.item.state.asset4.toString()
+  state.asset4Amount = props.item.state.quoteAsset4 / 10 ** (asa4?.params?.decimals ?? 6)
+  const asa5 = getAsaFromCache({ assetId: parseInt(state.asset3) })
+  state.asset5 = props.item.state.asset5.toString()
+  state.asset5Amount = props.item.state.quoteAsset5 / 10 ** (asa5?.params?.decimals ?? 6)
+
+  console.log('state.load', JSON.stringify(state))
+}
+
+onMounted(() => {
+  load()
 })
 
 const assets = ref([
@@ -185,17 +210,27 @@ const executeSale = async () => {
     }
     console.log('input', input)
     const grouped: algosdk.Transaction[] = await clientChangeQuotationTxs(input)
-    console.log('grouped', grouped)
+
     const groupedEncoded = grouped.map((tx) => tx.toByte())
-    const signedTxs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
     console.log('grouped', grouped)
+    console.log('state', JSON.stringify(state))
+    const signedTxs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
+    console.log('state', JSON.stringify(state))
+    state.sending = true
+    console.log('grouped', grouped)
+    clearBoxCache({
+      index: store.state.appId,
+      boxName: getBoxReferenceNFT({ nftAsset: props.item.asa, app: store.state.appId }).name
+    })
     const txSent = await algod.sendRawTransaction(signedTxs).do()
+
     console.log('txSent', txSent)
     state.sent = true
     state.sending = false
 
     await algokit.waitForConfirmation(txSent.txId, 3, algod)
-
+    await delay(1000)
+    load()
     handleOnPriceChange()
   } catch (e: any) {
     state.sending = false
@@ -281,9 +316,9 @@ const executeSale = async () => {
       <tr>
         <td></td>
         <td>
-          <Button :disabled="!anyPriceIsSet()" @click="state.inReview = true" class="m-2"
-            >Review sale</Button
-          >
+          <Button :disabled="!anyPriceIsSet()" @click="state.inReview = true" class="m-2">
+            Review sale
+          </Button>
           <Button severity="secondary" @click="handleOnCancel" class="m-2">Cancel</Button>
         </td>
       </tr>
@@ -369,8 +404,16 @@ const executeSale = async () => {
         :severity="state.sent ? 'success' : 'primary'"
         @click="executeSale()"
         class="m-3"
-        >Set on sale</Button
       >
+        <ProgressSpinner
+          v-if="state.sending || state.sent"
+          style="width: 1em; height: 1em"
+          strokeWidth="8"
+          animationDuration=".5s"
+          class="mx-1"
+        />
+        Set on sale
+      </Button>
 
       <Button severity="secondary" @click="state.inReview = false" class="m-3">Go back</Button>
     </div>

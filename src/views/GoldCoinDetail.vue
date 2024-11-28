@@ -27,6 +27,7 @@ const state = reactive({
 const store = useAppStore()
 const route = useRoute()
 onMounted(async () => {
+  console.log('GoldCoinDetail.onMounted')
   const products = await ProductService.getAllProducts()
   product.value = products.find((p) => p.nft.properties.slugName == route.params.slugName)
 })
@@ -101,17 +102,18 @@ const slideButtonIcon = computed(() => {
   return `pi ${isAutoPlay.value ? 'pi-pause' : 'pi-play'}`
 })
 
-async function onChange() {
+const onChange = async () => {
   console.log('onChange')
+  resetView()
   if (!product.value) return
   var client = getAlgodClient(store.state)
   const detail = await getARC0003Details({ assetId: product.value.asa, client })
   if (!detail) return
   console.log('onChange.detail', detail)
   product.value.state = detail.state
-  resetView()
 }
 async function resetView() {
+  console.log('resetView')
   state.formEditPrice = false
   state.formStopSale = false
   state.formRequestDelivery = false
@@ -235,132 +237,141 @@ async function resetView() {
               @onCancel="resetView"
               v-else-if="state.formRequestDelivery"
             />
-            <table id="values-table" class="fontcolor" v-else>
-              <tr v-if="store.state.authState.account == product.state.ownerAddr">
-                <th></th>
-                <td>
-                  <Tag severity="success">You are owner of this coin</Tag>
-                  <div>
+            <div v-else>
+              <table id="values-table" class="fontcolor">
+                <tr v-if="store.state.authState.account == product.state.ownerAddr">
+                  <th></th>
+                  <td>
+                    <Tag severity="success">You are owner of this coin</Tag>
                     <div>
-                      <Button
-                        v-if="product.state.state == 2"
-                        class="my-2"
-                        @click="state.formEditPrice = true"
-                        >Set on sale</Button
-                      >
+                      <div>
+                        <Button
+                          v-if="product.state.state == 2"
+                          class="my-2"
+                          @click="state.formEditPrice = true"
+                          >Set on sale</Button
+                        >
+                      </div>
+                      <div>
+                        <Button
+                          v-if="product.state.state == 1 || product.state.state == 3"
+                          class="my-2"
+                          @click="state.formEditPrice = true"
+                          >Change price</Button
+                        >
+                      </div>
+                      <div>
+                        <Button
+                          v-if="product.state.state == 1 || product.state.state == 3"
+                          class="my-2"
+                          @click="state.formStopSale = true"
+                          >Stop sale</Button
+                        >
+                      </div>
+                      <div>
+                        <Button
+                          v-if="product.state.state == 2 || product.state.state == 3"
+                          class="my-2"
+                          @click="state.formRequestDelivery = true"
+                          >Request physical delivery</Button
+                        >
+                      </div>
                     </div>
-                    <div>
-                      <Button
-                        v-if="product.state.state == 1 || product.state.state == 3"
-                        class="my-2"
-                        @click="state.formEditPrice = true"
-                        >Change price</Button
-                      >
-                    </div>
-                    <div>
-                      <Button
-                        v-if="product.state.state == 1 || product.state.state == 3"
-                        class="my-2"
-                        @click="state.formStopSale = true"
-                        >Stop sale</Button
-                      >
-                    </div>
-                    <div>
-                      <Button
-                        v-if="product.state.state == 2 || product.state.state == 3"
-                        class="my-2"
-                        @click="state.formRequestDelivery = true"
-                        >Request physical delivery</Button
-                      >
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <th>State</th>
-                <td><CoinState :item="product" /></td>
-              </tr>
-              <tr v-if="product.nft.properties.serialNumber">
-                <th>Serial number</th>
-                <td>{{ product.nft.properties.serialNumber }}</td>
-              </tr>
-              <tr v-if="product.nft.properties.serialNumber">
-                <th>ASA Id</th>
-                <td>
-                  <a :href="`https://allo.info/asset/${product.asa}/nft`" target="_blank">
-                    <Button link size="small">{{ product.asa }}</Button>
-                  </a>
-                </td>
-              </tr>
-              <tr v-if="product.nft.properties.diameter">
-                <th>Diameter</th>
-                <td>
-                  {{ product.nft.properties.diameter }} {{ product.nft.properties.diameterUnit }}
-                </td>
-              </tr>
-              <tr v-if="product.nft.properties.fitness">
-                <th>Fitness</th>
-                <td>{{ product.nft.properties.fitness }}</td>
-              </tr>
-              <tr v-if="product.nft.properties.weight">
-                <th>Weight of {{ product.nft.properties.form }}</th>
-                <td>{{ product.nft.properties.weight }} {{ product.nft.properties.weightUnit }}</td>
-              </tr>
-              <tr v-if="product.nft.properties.goldWeight">
-                <th>Weight of gold</th>
-                <td>
-                  {{ product.nft.properties.goldWeight }} {{ product.nft.properties.weightUnit }}
-                </td>
-              </tr>
-              <tr v-if="product.nft.properties.issueDate">
-                <th>Date of minting</th>
-                <td>{{ new Date(product.nft.properties.issueDate).toLocaleDateString() }}</td>
-              </tr>
-              <tr v-if="product.nft.properties.author">
-                <th>Author</th>
-                <td>{{ product.nft.properties.author }}</td>
-              </tr>
-              <tr v-if="product.nft.properties.mintage">
-                <th>Mintage</th>
-                <td>{{ product.nft.properties.mintage }}</td>
-              </tr>
-              <tr v-if="product.nft.properties.network">
-                <th>Blockchain network</th>
-                <td>{{ product.nft.properties.network }}</td>
-              </tr>
-              <tr v-if="product.nft.properties.inReservesSince">
-                <th>In reserves since</th>
-                <td>{{ new Date(product.nft.properties.inReservesSince).toLocaleDateString() }}</td>
-              </tr>
-              <tr
-                v-if="
-                  product.nft.properties.reservesNumismaticValue &&
-                  product.nft.properties.inReservesSince
-                "
-              >
-                <th
-                  :title="`Numismatic value on ${new Date(
+                  </td>
+                </tr>
+                <tr>
+                  <th>State</th>
+                  <td><CoinState :item="product" /></td>
+                </tr>
+                <tr v-if="product.nft.properties.serialNumber">
+                  <th>Serial number</th>
+                  <td>{{ product.nft.properties.serialNumber }}</td>
+                </tr>
+                <tr v-if="product.nft.properties.serialNumber">
+                  <th>ASA Id</th>
+                  <td>
+                    <a :href="`https://allo.info/asset/${product.asa}/nft`" target="_blank">
+                      <Button link size="small">{{ product.asa }}</Button>
+                    </a>
+                  </td>
+                </tr>
+                <tr v-if="product.nft.properties.diameter">
+                  <th>Diameter</th>
+                  <td>
+                    {{ product.nft.properties.diameter }} {{ product.nft.properties.diameterUnit }}
+                  </td>
+                </tr>
+                <tr v-if="product.nft.properties.fitness">
+                  <th>Fitness</th>
+                  <td>{{ product.nft.properties.fitness }}</td>
+                </tr>
+                <tr v-if="product.nft.properties.weight">
+                  <th>Weight of {{ product.nft.properties.form }}</th>
+                  <td>
+                    {{ product.nft.properties.weight }} {{ product.nft.properties.weightUnit }}
+                  </td>
+                </tr>
+                <tr v-if="product.nft.properties.goldWeight">
+                  <th>Weight of gold</th>
+                  <td>
+                    {{ product.nft.properties.goldWeight }} {{ product.nft.properties.weightUnit }}
+                  </td>
+                </tr>
+                <tr v-if="product.nft.properties.issueDate">
+                  <th>Date of minting</th>
+                  <td>{{ new Date(product.nft.properties.issueDate).toLocaleDateString() }}</td>
+                </tr>
+                <tr v-if="product.nft.properties.author">
+                  <th>Author</th>
+                  <td>{{ product.nft.properties.author }}</td>
+                </tr>
+                <tr v-if="product.nft.properties.mintage">
+                  <th>Mintage</th>
+                  <td>{{ product.nft.properties.mintage }}</td>
+                </tr>
+                <tr v-if="product.nft.properties.network">
+                  <th>Blockchain network</th>
+                  <td>{{ product.nft.properties.network }}</td>
+                </tr>
+                <tr v-if="product.nft.properties.inReservesSince">
+                  <th>In reserves since</th>
+                  <td>
+                    {{ new Date(product.nft.properties.inReservesSince).toLocaleDateString() }}
+                  </td>
+                </tr>
+                <tr
+                  v-if="
+                    product.nft.properties.reservesNumismaticValue &&
                     product.nft.properties.inReservesSince
-                  ).toLocaleDateString()}`"
+                  "
                 >
-                  Initial numismatic value
-                </th>
-                <td>
-                  {{
-                    formatAssetPrice({
-                      assetId: store.state.tokens.gold,
-                      value: product.nft.properties.reservesNumismaticValue * 10 ** 6
-                    })
-                  }}
-                </td>
-              </tr>
-            </table>
-            <div class="buy-coin-button team-info">
-              <BuyButton
-                class="btn-default"
-                :assetId="product.state.asset1"
-                :item="product"
-              ></BuyButton>
+                  <th
+                    :title="`Numismatic value on ${new Date(
+                      product.nft.properties.inReservesSince
+                    ).toLocaleDateString()}`"
+                  >
+                    Initial numismatic value
+                  </th>
+                  <td>
+                    {{
+                      formatAssetPrice({
+                        assetId: store.state.tokens.gold,
+                        value: product.nft.properties.reservesNumismaticValue * 10 ** 6
+                      })
+                    }}
+                  </td>
+                </tr>
+              </table>
+              <div
+                class="buy-coin-button team-info"
+                v-if="store.state.authState.account != product.state.ownerAddr"
+              >
+                <BuyButton
+                  class="btn-default"
+                  :assetId="product.state.asset1"
+                  :item="product"
+                ></BuyButton>
+              </div>
             </div>
           </div>
         </div>

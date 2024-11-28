@@ -65,7 +65,7 @@ import Panel from 'primevue/panel'
       <h2>Physical delivery</h2>
       <p>Our commission: 0,9 gold token</p>
       <p>Postal services: 0,8% of requested insurance price</p>
-      <p>Owner of the NFT can request physical deliver to EHS countries.</p>
+      <p>Owner of the NFT can request physical deliver to EEC countries.</p>
       <p><RouterLink to="/buy-gold-coins">Service link</RouterLink></p>
     </Panel></Layout
   >

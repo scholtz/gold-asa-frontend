@@ -2,7 +2,7 @@
 import type IEshopItem from '@/types/IEshopItem'
 import formatAssetPrice from '../scripts/algo/formatAssetPrice'
 import Button from 'primevue/button'
-import { clientBuyNFTTxs, getClient } from 'algorand-asa-gold'
+import { clientBuyNFTTxs, getBoxReferenceNFT, getClient } from 'algorand-asa-gold'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import { useAppStore } from '@/stores/app'
 import { useToast } from 'primevue/usetoast'
@@ -10,6 +10,8 @@ import delay from '@/scripts/common/delay'
 import { reactive } from 'vue'
 import type algosdk from 'algosdk'
 import getTransactionSignerAccount from '@/scripts/algo/getTransactionSignerAccount'
+import ProgressSpinner from 'primevue/progressspinner'
+import clearBoxCache from '@/scripts/algo/clearBoxCache'
 
 const toast = useToast()
 const props = defineProps<{
@@ -55,7 +57,12 @@ async function buy(asset: number) {
     console.log('grouped', grouped)
     const groupedEncoded = grouped.map((tx) => tx.toByte())
     const signedTxs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
+    state.sending = true
     console.log('grouped', grouped)
+    clearBoxCache({
+      index: store.state.appId,
+      boxName: getBoxReferenceNFT({ nftAsset: props.item.asa, app: store.state.appId }).name
+    })
     const txSent = await algod.sendRawTransaction(signedTxs).do()
     console.log('txSent', txSent)
     state.sent = true
@@ -86,7 +93,15 @@ function getPrice() {
     v-if="props.assetId && getPrice() > 0"
     class="mb-2"
     @click="buy(props.item.state.asset1)"
-    >Buy @
+  >
+    <ProgressSpinner
+      v-if="state.sending"
+      style="width: 1em; height: 1em"
+      strokeWidth="8"
+      animationDuration=".5s"
+      class="mx-1"
+    />
+    Buy @
     {{
       formatAssetPrice({
         assetId: props.assetId,

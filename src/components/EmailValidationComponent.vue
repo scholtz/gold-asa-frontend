@@ -211,13 +211,15 @@ onMounted(async () => {
           class="my-2"
           @click="finishVerify"
           :disabled="!status.code || status.sendingVerification"
-          ><ProgressSpinner
+        >
+          <ProgressSpinner
             v-if="status.sendingVerification"
             style="width: 1em; height: 1em"
             strokeWidth="8"
             animationDuration=".5s"
             class="mx-1"
-          />Finish verification
+          />
+          Finish verification
         </Button>
       </div>
       <div
