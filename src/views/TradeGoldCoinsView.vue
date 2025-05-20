@@ -18,19 +18,6 @@ const products = ref<IEshopItem[]>()
 <template>
   <Layout :hideTopMenu="false" class="ChangeBackgroundcolor1">
     <div v-if="products">
-      <div class="allcoin-list-background">
-        <div
-          class="col-md-12 col-sm-12 text-secondary welcome-banner text-center nav-text text-center"
-        >
-          <div class="welcome-content buy-coins">
-            <h1 class="title">All of Our Coins are Presented Here</h1>
-            <p class="top-text fontcolor">
-              Remember to enjoy your coin collection! Learning about the history and significance of
-              each coin can be a rewarding and educational experience.
-            </p>
-          </div>
-        </div>
-      </div>
       <div class="allcoin-slider">
         <ProductsCarousel />
       </div>

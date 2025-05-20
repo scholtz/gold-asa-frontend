@@ -3,6 +3,7 @@ import Layout from '@/layouts/AuthLayout.vue'
 import ProductsCarousel from '@/components/ProductsCarousel.vue'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import Button from 'primevue/button'
 AOS.init({
   duration: 800,
   easing: 'ease-in-out',
@@ -18,25 +19,12 @@ AOS.init({
         >
           <div class="welcome-content">
             <section class="fontcolor">
-              <div class="sm:m-2 md:m-4 allfont">
-                <h1 class="sm:m-2 md:m-4 title">Aurum Standard Asset</h1>
-                <div class="sm:m-2 md:m-4">
-                  <RouterLink to="/trade-gold">Buy</RouterLink>, use, or
-                  <RouterLink to="/trade-gold">sell</RouterLink> gold token backed by real gold
-                </div>
-                <div class="sm:m-2 md:m-4">
-                  Everybody can
-                  <RouterLink to="/proof-of-reserve">audit our reserves</RouterLink> - its what we
-                  sell in the <RouterLink to="/buy-gold-coins">eshop</RouterLink>
-                </div>
-                <div class="sm:m-2 md:m-4">
-                  Visit our
-                  <RouterLink to="/buy-gold-coins">gold eshop</RouterLink> including
-                  <RouterLink to="/buy-gold-coins">secondary marketplace</RouterLink>
-                </div>
-                <div class="sm:m-2 md:m-4">
-                  Gold coins are stored in bank safe deposit box and are redeemable within EU area
-                </div>
+              <div class="sm:m-2 md:m-4 allfont landing-container">
+                <h1 class="m-0 p-0">Aurum Standard Asset</h1>
+                <p class="m-2 p-0">Let't bring the gold market to the next level</p>
+                <RouterLink to="/buy-gold-coins">
+                  <Button>Buy the gold coin</Button>
+                </RouterLink>
               </div>
             </section>
           </div>
@@ -108,5 +96,10 @@ AOS.init({
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+}
+.landing-container {
+  background-color: rgba(51, 51, 51, 0.9); /* #333 with 50% opacity */
+  border-radius: 12px; /* adjust as needed */
+  padding: 0 1em 1em 1em;
 }
 </style>
