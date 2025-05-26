@@ -21,7 +21,7 @@ AOS.init({
             <section class="fontcolor">
               <div class="sm:m-2 md:m-4 allfont landing-container">
                 <h1 class="m-0 p-0">Aurum Standard Asset</h1>
-                <p class="m-2 p-0">Let't bring the gold market to the next level</p>
+                <p class="m-2 p-0">Let's bring the gold market to the next level</p>
                 <RouterLink to="/buy-gold-coins">
                   <Button>Buy the gold coin</Button>
                 </RouterLink>
