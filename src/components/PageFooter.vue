@@ -2,7 +2,9 @@
 import Image from 'primevue/image'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
+import { useRouter } from 'vue-router'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+const router = useRouter()
 const isMobile = ref(false)
 
 function handleResize() {
@@ -34,7 +36,7 @@ onBeforeUnmount(() => {
             src="/images/logo.png"
             style="width: 80px"
             alt="logo"
-            @click="$router.push('/')"
+            @click="router.push('/')"
           />
         </span>
         <div class="text-900 text-xl mb-3 font-medium footer-name">ASA - Real gold</div>
