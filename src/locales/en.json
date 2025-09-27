@@ -120,7 +120,24 @@
   "carousel": {
     "buyGoldNftTrade": "Buy the gold coin NFT, trade the NFT or request physical delivery"
   },
-  "company": {
+  "proofOfReserves": {
+    "title": "Proof of reserves:",
+    "description": "Weight of gold in the physical reserves ({reserves}) is always higher then minted gold backed tokens ({minted} grams). This is ensured by the smart contract on public blockchain network - Algorand. Weight of gold of physical reserves is the sum of gold composition of each gold item in the reserves which can be observed in our eshop or on this website. The minted gold is all gold in the circulation, in technical term for algorand, the original minted amount minus the amount of tokens at the reserves account. Each sale of the gold item from the reserves is routed back to the reserves account.",
+    "disadvantagesTitle": "Disadvantages of gold are:",
+    "disadvantage1": "No Income or Yield - Gold doesn't generate any income or yield on its own. Unlike stocks or bonds, which can provide dividends or interest, holding gold won't produce any periodic cash flow.",
+    "disadvantage2": "Lack of Cash Flow - Gold doesn't generate cash flow, which means investors can miss out on opportunities to reinvest in assets that do produce income.",
+    "advantage1": "You can stake your gold in AMMs and generate yield",
+    "advantage2": "Self custody - your keys your crypto",
+    "advantage3": "Non fractionable - When you own 1 gold coin you are not likely going to split it in half when you need to pay only half of the price.",
+    "tokenizedGoldTitle": "With Tokenized Gold This Disadvantages Does Not Apply.",
+    "algorandFeaturesSubtitle": "Now You Can Enjoy Combination of Algorand's Features With Gold Market.",
+    "fastTransactions": "Transaction finality faster then using credit card",
+    "lowCosts": "Almost zero transaction costs (0.001 algo ~ $0.0001)",
+    "stakeGold": "You can stake your gold in AMMs and generate yield",
+    "selfCustody": "Self custody - your keys your crypto",
+    "fractionable": "You can fraction gold up to 6 decimals of gold gram ~ $0,00005",
+    "unableToLoad": "Unable to load info at the moment"
+  },
     "companyId": "ID : 51882272",
     "vatId": "VAT ID : 2120828105", 
     "address": "Address : Švabinského 21, 851 01 Bratislava, Slovakia"

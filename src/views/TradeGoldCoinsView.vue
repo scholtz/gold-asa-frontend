@@ -8,6 +8,9 @@ import type IEshopItem from '@/types/IEshopItem'
 import Button from 'primevue/button'
 import ProductBox from '@/components/ProductBox.vue'
 import Panel from 'primevue/panel'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 onMounted(async () => {
   products.value = await ProductService.getAllProducts()
 })
@@ -23,7 +26,7 @@ const products = ref<IEshopItem[]>()
       </div>
 
       <Panel
-        header="List of all gold coins"
+        :header="t('trading.listOfGoldCoins')"
         class="m-4 flex flex-grow-1 flex-column card-0-2-27"
         toggleableContent="text"
       >

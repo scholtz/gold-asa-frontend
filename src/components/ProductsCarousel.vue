@@ -1,7 +1,7 @@
 <template>
   <div class="card product-slider-home" v-if="products">
     <div class="product-slider-heading text-center">
-      <strong>Buy the gold coin NFT, trade the NFT or request physical delivery</strong>
+      <strong>{{ t('carousel.buyGoldNftTrade') }}</strong>
     </div>
     <Carousel
       :value="products"
@@ -34,6 +34,9 @@ import { ref, onMounted } from 'vue'
 import ProgressSpinner from 'primevue/progressspinner'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 onMounted(async () => {
   products.value = (await ProductService.getProductsSmall()).slice(0, 9)
   if (products.value) {
