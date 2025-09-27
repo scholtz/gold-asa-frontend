@@ -15,6 +15,9 @@ import getAsa from '@/scripts/algo/getAsa'
 import algosdk from 'algosdk'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import AlgorandAddress from '@/components/AlgorandAddress.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const toast = useToast()
 
 interface IState {
@@ -380,7 +383,7 @@ async function optIn(assetId: number) {
   <Layout :hideTopMenu="false" class="ChangeBackgroundcolor">
     <div class="bg-0-2-10 bg-d1-0-2-20 dextrading-background">
       <div class="title-0-2-11 title-d2-0-2-21">
-        <div class="bigTitle-0-2-12 bigTitle-d3-0-2-22 title">Explore decentralized trading</div>
+        <div class="bigTitle-0-2-12 bigTitle-d3-0-2-22 title">{{ t('trading.exploreDecentralizedTrading') }}</div>
         <div class="subTitle-0-2-13 subTitle-d4-0-2-23 title">
           facilitated by algorand blockchain and folks DEX aggregator
         </div>

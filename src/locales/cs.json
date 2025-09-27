@@ -23,7 +23,9 @@
     "contact": "Kontakt",
     "settings": "Nastavení",
     "trade": "Obchodování",
-    "profile": "Profil"
+    "profile": "Profil",
+    "buyGoldCoins": "Koupit zlaté mince",
+    "proofOfReserves": "Důkaz rezerv"
   },
   "contact": {
     "title": "Kontaktujte nás",
@@ -69,10 +71,11 @@
     "errorOccurred": "Vyskytla se chyba:"
   },
   "trading": {
-    "dexTrading": "DEX OBCHODOVÁNÍ",
+    "dexTrading": "DEX Obchodování",
     "goldToken": "Zlatý token",
     "listOfGoldCoins": "Seznam všech zlatých mincí",
-    "priceList": "Ceník - Seznam všech služeb poskytovaných asa.gold a jejich ceny"
+    "priceList": "Ceník - Seznam všech služeb poskytovaných asa.gold a jejich ceny",
+    "exploreDecentralizedTrading": "Prozkoumejte decentralizované obchodování"
   },
   "governance": {
     "governanceToken": "Governance token ASA.Gold",

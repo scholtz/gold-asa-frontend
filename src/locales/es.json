@@ -23,7 +23,9 @@
     "contact": "Contacto",
     "settings": "Configuración",
     "trade": "Comercio",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "buyGoldCoins": "Comprar monedas de oro",
+    "proofOfReserves": "Prueba de reservas"
   },
   "contact": {
     "title": "Contáctanos",
@@ -69,10 +71,11 @@
     "errorOccurred": "Ocurrió un error:"
   },
   "trading": {
-    "dexTrading": "COMERCIO DEX",
+    "dexTrading": "Comercio DEX",
     "goldToken": "Token de oro",
     "listOfGoldCoins": "Lista de todas las monedas de oro",
-    "priceList": "Lista de precios - Lista de todos los servicios proporcionados por asa.gold y sus precios"
+    "priceList": "Lista de precios - Lista de todos los servicios proporcionados por asa.gold y sus precios",
+    "exploreDecentralizedTrading": "Explora el comercio descentralizado"
   },
   "governance": {
     "governanceToken": "Token de gobernanza ASA.Gold",

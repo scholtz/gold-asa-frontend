@@ -28,12 +28,12 @@ const items = computed(() => [
     route: '/trade-gold'
   },
   {
-    label: 'Buy gold coins',
+    label: t('navigation.buyGoldCoins'),
     icon: 'pi pi-fw pi-shopping-cart',
     route: '/buy-gold-coins'
   },
   {
-    label: 'Proof of reserves',
+    label: t('navigation.proofOfReserves'),
     icon: 'pi pi-fw pi-verified',
     route: '/proof-of-reserve'
   }
