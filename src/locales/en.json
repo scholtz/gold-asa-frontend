@@ -138,6 +138,7 @@
     "fractionable": "You can fraction gold up to 6 decimals of gold gram ~ $0,00005",
     "unableToLoad": "Unable to load info at the moment"
   },
+  "company": {
     "companyId": "ID : 51882272",
     "vatId": "VAT ID : 2120828105", 
     "address": "Address : Švabinského 21, 851 01 Bratislava, Slovakia"
