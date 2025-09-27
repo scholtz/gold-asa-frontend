@@ -1,0 +1,85 @@
+{
+  "common": {
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "close": "Schließen",
+    "submit": "Senden",
+    "back": "Zurück",
+    "next": "Weiter",
+    "yes": "Ja",
+    "no": "Nein",
+    "general": "Allgemein",
+    "orders": "Bestellungen"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "settings": "Einstellungen",
+    "trade": "Handel",
+    "profile": "Profil"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Über das ASA.Gold Projekt",
+    "inquiries": "Anfragen",
+    "generalEmail": "support@asa.gold",
+    "ordersEmail": "orders@asa.gold",
+    "teamTitle": "Unser großartiges Team-Organigramm",
+    "teamDescription": "Everyday Algonaut ist Hauptgründer und CEO des ASA.Gold-Projekts.",
+    "ceoTitle": "Geschäftsführer",
+    "ceoDescription": "Ludo, Everyday Algonaut, ist Gründer von ASA.Gold, AWallet, Vote Coin und anderen bedeutenden Algorand-Projekten.",
+    "cooTitle": "Betriebsleiter",
+    "cooDescription": "Olga ist gut im Betrieb und in der Verwaltung der rechtlichen Aktivitäten des Unternehmens.",
+    "cfoTitle": "Finanzvorstand",
+    "cfoDescription": "Michał ist ein erfahrener Aktien- und Rohstoffhändler mit Sitz in der Schweiz.",
+    "cmoTitle": "Marketingleiter",
+    "cmoDescription": "Samo hat umfangreiche Kenntnisse im Betrieb von E-Shops und Online-Diensten.",
+    "ctoTitle": "Technischer Leiter",
+    "ctoDescription": "Daniel ist Experte für Blockchain-Technologie und deren Adoption."
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "resetConfiguration": "Konfiguration zurücksetzen",
+    "dangerZone": "Gefahrenzone"
+  },
+  "profile": {
+    "title": "Benutzerprofil",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "companyName": "Firmenname",
+    "taxId": "Steuernummer",
+    "deliveryAddress": "Lieferadresse",
+    "residentialAddress": "Ihre Wohnadresse",
+    "companyAddress": "Firmenadresse",
+    "street": "Straße",
+    "city": "Stadt",
+    "zipCode": "Postleitzahl",
+    "country": "Land",
+    "naturalPerson": "Natürliche Person",
+    "legalEntity": "Juristische Person",
+    "saveProfile": "Profil speichern",
+    "profileSaved": "Profil erfolgreich gespeichert",
+    "errorOccurred": "Ein Fehler ist aufgetreten:"
+  },
+  "trading": {
+    "dexTrading": "DEX HANDEL",
+    "goldToken": "Gold Token",
+    "listOfGoldCoins": "Liste aller Goldmünzen",
+    "priceList": "Preisliste - Liste aller von asa.gold angebotenen Dienstleistungen und deren Preise"
+  },
+  "governance": {
+    "governanceToken": "ASA.Gold Governance Token"
+  },
+  "company": {
+    "companyId": "ID : 51882272",
+    "vatId": "USt-IdNr. : 2120828105",
+    "address": "Adresse : Švabinského 21, 851 01 Bratislava, Slowakei"
+  }
+}

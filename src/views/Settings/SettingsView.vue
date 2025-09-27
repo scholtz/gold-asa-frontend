@@ -4,14 +4,16 @@ import Panel from 'primevue/panel'
 import Button from 'primevue/button'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore, resetConfiguration, useMainnet, useTestnet, useSandnet } from '@/stores/app'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const store = useAppStore()
 </script>
 
 <template>
   <Layout :hideTopMenu="true">
     <MenuLevel2Settings />
-    <Panel header="Settings" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
+    <Panel :header="t('settings.title')" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
       <p class="m-0"></p>
       <div class="card">
         <!--
@@ -95,9 +97,9 @@ const store = useAppStore()
 
         <h4>Default configuration</h4>
         <div class="field grid">
-          <label class="col-12 mb-2 md:col-2 md:mb-0">Danger zone</label>
+          <label class="col-12 mb-2 md:col-2 md:mb-0">{{ t('settings.dangerZone') }}</label>
           <div class="col-12 md:col-10">
-            <Button @click="resetConfiguration" class="my-2">Reset configuration</Button>
+            <Button @click="resetConfiguration" class="my-2">{{ t('settings.resetConfiguration') }}</Button>
           </div>
         </div>
       </div>

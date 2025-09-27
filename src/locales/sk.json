@@ -1,0 +1,85 @@
+{
+  "common": {
+    "firstName": "Krstné meno",
+    "lastName": "Priezvisko",
+    "email": "E-mail",
+    "save": "Uložiť",
+    "cancel": "Zrušiť",
+    "loading": "Načítava sa...",
+    "error": "Chyba",
+    "success": "Úspech",
+    "close": "Zavrieť",
+    "submit": "Odoslať",
+    "back": "Späť",
+    "next": "Ďalej",
+    "yes": "Áno",
+    "no": "Nie",
+    "general": "Všeobecné",
+    "orders": "Objednávky"
+  },
+  "navigation": {
+    "home": "Domov",
+    "about": "O nás",
+    "contact": "Kontakt",
+    "settings": "Nastavenia",
+    "trade": "Obchodovanie",
+    "profile": "Profil"
+  },
+  "contact": {
+    "title": "Kontaktujte nás",
+    "subtitle": "O projekte ASA.Gold",
+    "inquiries": "Dotazy",
+    "generalEmail": "support@asa.gold",
+    "ordersEmail": "orders@asa.gold",
+    "teamTitle": "Naša úžasná organizačná schéma tímu",
+    "teamDescription": "Everyday Algonaut je hlavný zakladateľ a generálny riaditeľ projektu ASA.Gold.",
+    "ceoTitle": "Generálny riaditeľ",
+    "ceoDescription": "Ludo, Everyday Algonaut, je zakladateľom ASA.Gold, AWallet, Vote Coin a ďalších významných projektov algorand.",
+    "cooTitle": "Prevádzkový riaditeľ",
+    "cooDescription": "Olga je dobrá v prevádzke a riadení právnych aktivít spoločnosti.",
+    "cfoTitle": "Finančný riaditeľ",
+    "cfoDescription": "Michal je skúsený obchodník s akciami a komoditami so sídlom vo Švajčiarsku.",
+    "cmoTitle": "Marketingový riaditeľ",
+    "cmoDescription": "Samo má rozsiahle znalosti v prevádzkovaní e-shopov a online služieb.",
+    "ctoTitle": "Technický riaditeľ",
+    "ctoDescription": "Daniel je odborník na blockchain technológie a ich adopciu."
+  },
+  "settings": {
+    "title": "Nastavenia",
+    "resetConfiguration": "Resetovať konfiguráciu",
+    "dangerZone": "Nebezpečná zóna"
+  },
+  "profile": {
+    "title": "Používateľský profil",
+    "firstName": "Krstné meno",
+    "lastName": "Priezvisko",
+    "companyName": "Názov spoločnosti",
+    "taxId": "DIČ",
+    "deliveryAddress": "Dodacia adresa",
+    "residentialAddress": "Vaša adresa bydliska",
+    "companyAddress": "Adresa spoločnosti",
+    "street": "Ulica",
+    "city": "Mesto",
+    "zipCode": "PSČ",
+    "country": "Krajina",
+    "naturalPerson": "Fyzická osoba",
+    "legalEntity": "Právnická osoba",
+    "saveProfile": "Uložiť profil",
+    "profileSaved": "Profil bol úspešne uložený",
+    "errorOccurred": "Vyskytla sa chyba:"
+  },
+  "trading": {
+    "dexTrading": "DEX OBCHODOVANIE",
+    "goldToken": "Zlatý token",
+    "listOfGoldCoins": "Zoznam všetkých zlatých mincí",
+    "priceList": "Cenník - Zoznam všetkých služieb poskytovaných asa.gold a ich ceny"
+  },
+  "governance": {
+    "governanceToken": "Governance token ASA.Gold"
+  },
+  "company": {
+    "companyId": "IČO : 51882272",
+    "vatId": "DIČ : 2120828105",
+    "address": "Adresa : Švabinského 21, 851 01 Bratislava, Slovensko"
+  }
+}

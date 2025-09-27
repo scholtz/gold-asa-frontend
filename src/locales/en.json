@@ -1,0 +1,85 @@
+{
+  "common": {
+    "firstName": "Firstname",
+    "lastName": "Lastname",
+    "email": "Email",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "yes": "Yes",
+    "no": "No",
+    "general": "General",
+    "orders": "Orders"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "settings": "Settings",
+    "trade": "Trade",
+    "profile": "Profile"
+  },
+  "contact": {
+    "title": "Contact US",
+    "subtitle": "About ASA.Gold Project",
+    "inquiries": "Inquiries",
+    "generalEmail": "support@asa.gold",
+    "ordersEmail": "orders@asa.gold",
+    "teamTitle": "Our Awesome Team Organization Chart",
+    "teamDescription": "Everyday Algonaut is main founder and CEO of ASA.Gold project.",
+    "ceoTitle": "CEO",
+    "ceoDescription": "Ludo, Everyday Algonaut, is founder of ASA.Gold, AWallet, Vote Coin and other algorand's significant projects.",
+    "cooTitle": "COO Operations",
+    "cooDescription": "Olga is good in operations and managing the company legal activities.",
+    "cfoTitle": "CFO Finance",
+    "cfoDescription": "Michal is skilled equity and commodities traders based in switzerland.",
+    "cmoTitle": "CMO Marketing",
+    "cmoDescription": "Samo has extensive knowledge in running the eshops and online services.",
+    "ctoTitle": "CTO Development",
+    "ctoDescription": "Daniel is expert in the blockchain technology and adoption."
+  },
+  "settings": {
+    "title": "Settings",
+    "resetConfiguration": "Reset configuration",
+    "dangerZone": "Danger zone"
+  },
+  "profile": {
+    "title": "User profile",
+    "firstName": "Firstname",
+    "lastName": "Lastname", 
+    "companyName": "Company name",
+    "taxId": "Tax ID",
+    "deliveryAddress": "Delivery address",
+    "residentialAddress": "Your residential address",
+    "companyAddress": "Company address",
+    "street": "Street",
+    "city": "City",
+    "zipCode": "ZIP code",
+    "country": "Country",
+    "naturalPerson": "Natural Person",
+    "legalEntity": "Legal Entity",
+    "saveProfile": "Save Profile",
+    "profileSaved": "Profile saved successfully",
+    "errorOccurred": "Error occured:"
+  },
+  "trading": {
+    "dexTrading": "DEX TRADING",
+    "goldToken": "Gold token",
+    "listOfGoldCoins": "List of all gold coins",
+    "priceList": "Price list - List of all services provided by asa.gold and its prices"
+  },
+  "governance": {
+    "governanceToken": "ASA.Gold governance token"
+  },
+  "company": {
+    "companyId": "ID : 51882272",
+    "vatId": "VAT ID : 2120828105", 
+    "address": "Address : Švabinského 21, 851 01 Bratislava, Slovakia"
+  }
+}
