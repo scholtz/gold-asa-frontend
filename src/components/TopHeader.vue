@@ -94,7 +94,7 @@ onUnmounted(() => {
             src="/images/logo.png"
             style="width: 60px"
             alt="logo"
-            @click="$router.push('/')"
+            @click="router.push('/')"
           />
         </div>
         <div class="hidden md:block lg:block xl:block">
@@ -103,7 +103,7 @@ onUnmounted(() => {
             src="/images/logo.png"
             style="width: 80px"
             alt="logo"
-            @click="$router.push('/')"
+            @click="router.push('/')"
           />
         </div>
       </template>
