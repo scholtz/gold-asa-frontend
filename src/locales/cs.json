@@ -75,7 +75,21 @@
     "priceList": "Ceník - Seznam všech služeb poskytovaných asa.gold a jejich ceny"
   },
   "governance": {
-    "governanceToken": "Governance token ASA.Gold"
+    "governanceToken": "Governance token ASA.Gold",
+    "daoTokenDescription": "DAO governance token pro projekt zabezpečený zlatem - ASA.Gold. Umožňuje členům komunity ovlivňovat rozhodnutí projektu prostřednictvím transparentního, onchain, veřejně auditovatelného procesu. Formujte budoucnost digitálních aktiv zabezpečených zlatem kolaborativně, zajišťující důvěru, spravedlnost a podíl na úspěchu ASA.Gold. Připojte se k zlaté revoluci již nyní!",
+    "verifiedBy": "Ověřeno",
+    "since": "od",
+    "priceDevelopment": "Vývoj ceny",
+    "pitchDeck": "Pitch deck"
+  },
+  "tokens": {
+    "goldTokenMainnetId": "ID zlatého tokenu Algorand Mainnet:",
+    "governanceTokenMainnetId": "ID governance tokenu ASA.Gold Algorand Mainnet:",
+    "reservesAddress": "Adresa držící všechny NFT zlatých rezerv:",
+    "goldTokenWhitePaper": "Bílý dokument zlatého tokenu:",
+    "daoTokenWhitePaper": "Bílý dokument GoldDAO tokenu:",
+    "goldTokenDescription": "ASA.Gold je průlomový veřejně auditovatelný zlatý token. Zabezpečený fyzickými zlatými rezervami, náš onchain eshop zajišťuje audity v reálném čase přístupné všem, garantující autentičnost a hodnotu každého tokenu. Investujte s důvěrou do nové éry digitálních aktiv zabezpečených zlatem, kde se důvěra a zodpovědnost setkávají bezproblémově.",
+    "downloadAsaGold": "Stáhnout ASA.Gold"
   },
   "company": {
     "companyId": "IČO : 51882272",

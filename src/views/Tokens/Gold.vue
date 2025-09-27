@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import Penel from 'primevue/panel'
 import Layout from '@/layouts/AuthLayout.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <Penel header="Gold token" class="m-4">
+    <Penel :header="t('trading.goldToken')" class="m-4">
       <div class="grid">
         <div class="col-12 md:col-9">
           <p>
-            Gold token Algorand Mainnet ID:
+            {{ t('tokens.goldTokenMainnetId') }}
             <a href="https://allo.info/asset/1241944285" target="_blank">1241944285</a>
           </p>
           <p>
-            Address holding all gold reserves NFTs:
+            {{ t('tokens.reservesAddress') }}
             <a
               href="https://allo.info/account/OAOYIJWXVC44DBCX5GKCDZVDGGHQJFAKHLTYDCT5DKJPQL7TNWLUFH5KOM/assets"
               target="_blank"
@@ -20,14 +23,11 @@ import Layout from '@/layouts/AuthLayout.vue'
             >
           </p>
           <p>
-            Gold token white paper:
+            {{ t('tokens.goldTokenWhitePaper') }}
             <a href="/gold.pdf" target="_blank">gold.pdf</a>
           </p>
           <p>
-            ASA.Gold is the groundbreaking publicly auditable gold token. Backed by physical gold
-            reserves, our onchain eshop ensures real-time audits accessible to all, guaranteeing the
-            authenticity and value of each token. Invest with confidence in a new era of gold-backed
-            digital assets, where trust and accountability converge seamlessly.
+            {{ t('tokens.goldTokenDescription') }}
           </p>
           <p>
             <a href="https://explorer.perawallet.app/assets/1241944285/" target="_blank"

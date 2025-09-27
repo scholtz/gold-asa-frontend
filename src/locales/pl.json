@@ -75,7 +75,21 @@
     "priceList": "Cennik - Lista wszystkich usług świadczonych przez asa.gold i ich ceny"
   },
   "governance": {
-    "governanceToken": "Token governance ASA.Gold"
+    "governanceToken": "Token governance ASA.Gold",
+    "daoTokenDescription": "Token governance DAO dla projektu zabezpieczonego złotem - ASA.Gold. Umożliwia członkom społeczności wpływanie na decyzje projektu poprzez transparentny, onchain, publicznie audytowalny proces. Kształtuj przyszłość aktywów cyfrowych zabezpieczonych złotem w sposób współpracujący, zapewniając zaufanie, sprawiedliwość i udział w sukcesie ASA.Gold. Dołącz do złotej rewolucji już teraz!",
+    "verifiedBy": "Zweryfikowany",
+    "since": "od",
+    "priceDevelopment": "Rozwój ceny",
+    "pitchDeck": "Pitch deck"
+  },
+  "tokens": {
+    "goldTokenMainnetId": "ID tokenu złota Algorand Mainnet:",
+    "governanceTokenMainnetId": "ID tokenu governance ASA.Gold Algorand Mainnet:",
+    "reservesAddress": "Adres przechowujący wszystkie NFT rezerw złota:",
+    "goldTokenWhitePaper": "Biały dokument tokenu złota:",
+    "daoTokenWhitePaper": "Biały dokument tokenu GoldDAO:",
+    "goldTokenDescription": "ASA.Gold to przełomowy publicznie audytowalny token złota. Zabezpieczony fizycznymi rezerwami złota, nasz sklep onchain zapewnia audyty w czasie rzeczywistym dostępne dla wszystkich, gwarantując autentyczność i wartość każdego tokenu. Inwestuj z pewnością w nową erę aktywów cyfrowych zabezpieczonych złotem, gdzie zaufanie i odpowiedzialność spotykają się bezproblemowo.",
+    "downloadAsaGold": "Pobierz ASA.Gold"
   },
   "company": {
     "companyId": "ID : 51882272",
