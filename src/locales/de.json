@@ -138,6 +138,40 @@
     "fractionable": "Sie können Gold bis zu 6 Dezimalstellen eines Goldgramms teilen ~ $0,00005",
     "unableToLoad": "Informationen können momentan nicht geladen werden"
   },
+  "reserves": {
+    "sumOfGoldInReserves": "Summe des Goldes in Reserven",
+    "learnAboutProofOfReserves": "Erfahren Sie mehr über den Nachweis der Reserven",
+    "weBringRevolutionToGoldMarket": "Wir bringen Revolution zum Goldmarkt",
+    "asaGoldTokenId": "Asa.Gold Token ID",
+    "mintedTokens": "Geprägte Token",
+    "reserves": "Reserven"
+  },
+  "productDetails": {
+    "serialNumber": "Seriennummer",
+    "diameter": "Durchmesser",
+    "fitness": "Zustand",
+    "weightOfCoin": "Gewicht der Münze",
+    "story": "Geschichte",
+    "buy": "Kaufen"
+  },
+  "footer": {
+    "ourLinks": "Unsere Links",
+    "contactUs": "Kontaktieren Sie uns",
+    "resources": "RESSOURCEN",
+    "contactUsSection": "KONTAKT"
+  },
+  "terms": {
+    "title": "Geschäftsbedingungen, MiCA-Dokumente, Garantie und Beschwerden",
+    "description": "Diese Geschäftsbedingungen gelten zwischen Ihnen als Person oder juristische Person und dem ASA.Gold-Anbieter.",
+    "serviceProvider": "ASA.Gold Dienstleister",
+    "acceptanceOfTerms": "Annahme der Bedingungen",
+    "providerInfo": "Scholtz & Company, jsa, ICO 51882272, ist ASA.Gold Dienstleister."
+  },
+  "privacy": {
+    "title": "Datenschutzrichtlinie",
+    "gdprCompliance": "DSGVO-Konformität",
+    "dataCollection": "Datensammlung"
+  },
   "company": {
     "companyId": "ID : 51882272",
     "vatId": "USt-IdNr. : 2120828105",

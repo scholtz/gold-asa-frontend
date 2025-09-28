@@ -138,6 +138,40 @@
     "fractionable": "Możesz dzielić złoto do 6 miejsc po przecinku grama złota ~ $0,00005",
     "unableToLoad": "Obecnie nie można załadować informacji"
   },
+  "reserves": {
+    "sumOfGoldInReserves": "Suma złota w rezerwach",
+    "learnAboutProofOfReserves": "Dowiedz się o dowodzie rezerw",
+    "weBringRevolutionToGoldMarket": "Przynosimy rewolucję na rynek złota",
+    "asaGoldTokenId": "ID tokenu Asa.Gold",
+    "mintedTokens": "Wybite tokeny",
+    "reserves": "Rezerwy"
+  },
+  "productDetails": {
+    "serialNumber": "Numer seryjny",
+    "diameter": "Średnica",
+    "fitness": "Stan",
+    "weightOfCoin": "Waga monety",
+    "story": "Historia",
+    "buy": "Kup"
+  },
+  "footer": {
+    "ourLinks": "Nasze linki",
+    "contactUs": "Skontaktuj się z nami",
+    "resources": "ZASOBY",
+    "contactUsSection": "KONTAKT"
+  },
+  "terms": {
+    "title": "Regulamin, dokumenty MiCA, Gwarancja i reklamacje",
+    "description": "Ten regulamin obowiązuje między Tobą jako osobą lub podmiotem prawnym a dostawcą ASA.Gold.",
+    "serviceProvider": "Dostawca usług ASA.Gold",
+    "acceptanceOfTerms": "Akceptacja warunków",
+    "providerInfo": "Scholtz & Company, jsa, NIP 51882272, jest dostawcą usług ASA.Gold."
+  },
+  "privacy": {
+    "title": "Polityka prywatności",
+    "gdprCompliance": "Zgodność z RODO",
+    "dataCollection": "Zbieranie danych"
+  },
   "company": {
     "companyId": "ID : 51882272",
     "vatId": "NIP : 2120828105",

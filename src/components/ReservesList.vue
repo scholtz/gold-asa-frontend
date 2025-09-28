@@ -19,7 +19,9 @@ import Column from 'primevue/column'
 import ColumnGroup from 'primevue/columngroup'
 import Row from 'primevue/row'
 import type { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const store = useAppStore()
 
 const state = reactive({
@@ -87,7 +89,7 @@ const sum = () => {
     </Column>
     <ColumnGroup type="footer">
       <Row>
-        <Column footer="Sum of gold in reserves:" class="nowrap" />
+        <Column :footer="t('reserves.sumOfGoldInReserves') + ':'" class="nowrap" />
         <Column class="nowrap" :footer="sum()" />
       </Row>
     </ColumnGroup>

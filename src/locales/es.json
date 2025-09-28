@@ -138,6 +138,40 @@
     "fractionable": "Puedes fraccionar oro hasta 6 decimales de gramo de oro ~ $0,00005",
     "unableToLoad": "No se puede cargar información en este momento"
   },
+  "reserves": {
+    "sumOfGoldInReserves": "Suma de oro en reservas",
+    "learnAboutProofOfReserves": "Aprende sobre la prueba de reservas",
+    "weBringRevolutionToGoldMarket": "Traemos revolución al mercado del oro",
+    "asaGoldTokenId": "ID del token Asa.Gold",
+    "mintedTokens": "Tokens acuñados",
+    "reserves": "Reservas"
+  },
+  "productDetails": {
+    "serialNumber": "Número de serie",
+    "diameter": "Diámetro",
+    "fitness": "Estado",
+    "weightOfCoin": "Peso de la moneda",
+    "story": "Historia",
+    "buy": "Comprar"
+  },
+  "footer": {
+    "ourLinks": "Nuestros enlaces",
+    "contactUs": "Contáctanos",
+    "resources": "RECURSOS",
+    "contactUsSection": "CONTACTO"
+  },
+  "terms": {
+    "title": "Términos y condiciones, documentos MiCA, Garantía y quejas",
+    "description": "Estos términos y condiciones son entre usted como persona o entidad legal y el proveedor ASA.Gold.",
+    "serviceProvider": "Proveedor de servicios ASA.Gold",
+    "acceptanceOfTerms": "Aceptación de términos",
+    "providerInfo": "Scholtz & Company, jsa, ICO 51882272, es el proveedor de servicios ASA.Gold."
+  },
+  "privacy": {
+    "title": "Política de privacidad",
+    "gdprCompliance": "Cumplimiento GDPR",
+    "dataCollection": "Recolección de datos"
+  },
   "company": {
     "companyId": "ID : 51882272",
     "vatId": "NIF : 2120828105",

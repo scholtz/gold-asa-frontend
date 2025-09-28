@@ -138,6 +138,40 @@
     "fractionable": "You can fraction gold up to 6 decimals of gold gram ~ $0,00005",
     "unableToLoad": "Unable to load info at the moment"
   },
+  "reserves": {
+    "sumOfGoldInReserves": "Sum of gold in reserves",
+    "learnAboutProofOfReserves": "Learn About Proof Of Reserves",
+    "weBringRevolutionToGoldMarket": "We Bring Revolution To Gold Market",
+    "asaGoldTokenId": "Asa.Gold Token ID",
+    "mintedTokens": "Minted Tokens",
+    "reserves": "Reserves"
+  },
+  "productDetails": {
+    "serialNumber": "Serial number",
+    "diameter": "Diameter",
+    "fitness": "Fitness",
+    "weightOfCoin": "Weight of coin",
+    "story": "Story",
+    "buy": "Buy"
+  },
+  "footer": {
+    "ourLinks": "Our Links",
+    "contactUs": "Contact us",
+    "resources": "RESOURCES",
+    "contactUsSection": "CONTACT US"
+  },
+  "terms": {
+    "title": "Terms & Conditions, MiCA documents, Warranty and complaints",
+    "description": "This terms and conditions are between you as person or legal entity and ASA.Gold Provider.",
+    "serviceProvider": "ASA.Gold Service Provider",
+    "acceptanceOfTerms": "Acceptance of Terms",
+    "providerInfo": "Scholtz & Company, jsa, ICO 51882272, is ASA.Gold Service Provider."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "gdprCompliance": "GDPR Compliance",
+    "dataCollection": "Data Collection"
+  },
   "company": {
     "companyId": "ID : 51882272",
     "vatId": "VAT ID : 2120828105", 

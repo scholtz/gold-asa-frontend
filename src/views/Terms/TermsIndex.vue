@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import Penel from 'primevue/panel'
 import Layout from '@/layouts/AuthLayout.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>
 <template>
   <Layout :hideTopMenu="false">
@@ -9,7 +12,7 @@ import Layout from '@/layouts/AuthLayout.vue'
         <div class="d-table-cell">
           <div class="container">
             <div class="sm:m-2 md:m-4 allfont privacy-content" style="color: white">
-              <h2>Terms & Conditions, MiCA documents, Warranty and complaints</h2>
+              <h2>{{ t('terms.title') }}</h2>
             </div>
           </div>
         </div>
@@ -19,15 +22,14 @@ import Layout from '@/layouts/AuthLayout.vue'
       <div class="container">
         <div class="text-secondary">
           <p>
-            This terms and conditions are between you as person or legal entity and ASA.Gold
-            Provider.
+            {{ t('terms.description') }}
           </p>
 
-          <h2>1. ASA.Gold Service Provider</h2>
+          <h2>1. {{ t('terms.serviceProvider') }}</h2>
 
-          <p>Scholtz & Company, jsa, ICO 51882272, is ASA.Gold Service Provider.</p>
+          <p>{{ t('terms.providerInfo') }}</p>
 
-          <h2>2. Acceptance of Terms</h2>
+          <h2>2. {{ t('terms.acceptanceOfTerms') }}</h2>
           <p>
             By accessing or using the gold tokenization eShop - ASA.Gold project (referred to as
             "the Platform"), you agree to comply with and be bound by these Terms and Conditions. If

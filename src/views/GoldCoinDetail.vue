@@ -19,6 +19,9 @@ import { useAppStore } from '@/stores/app'
 import getARC0003Details from '@/scripts/algo/getARC0003Details'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const state = reactive({
   formEditPrice: false,
   formStopSale: false,
@@ -284,7 +287,7 @@ async function resetView() {
                   <td><CoinState :item="product" /></td>
                 </tr>
                 <tr v-if="product.nft.properties.serialNumber">
-                  <th>Serial number</th>
+                  <th>{{ t('productDetails.serialNumber') }}</th>
                   <td>{{ product.nft.properties.serialNumber }}</td>
                 </tr>
                 <tr v-if="product.nft.properties.serialNumber">
@@ -296,17 +299,17 @@ async function resetView() {
                   </td>
                 </tr>
                 <tr v-if="product.nft.properties.diameter">
-                  <th>Diameter</th>
+                  <th>{{ t('productDetails.diameter') }}</th>
                   <td>
                     {{ product.nft.properties.diameter }} {{ product.nft.properties.diameterUnit }}
                   </td>
                 </tr>
                 <tr v-if="product.nft.properties.fitness">
-                  <th>Fitness</th>
+                  <th>{{ t('productDetails.fitness') }}</th>
                   <td>{{ product.nft.properties.fitness }}</td>
                 </tr>
                 <tr v-if="product.nft.properties.weight">
-                  <th>Weight of {{ product.nft.properties.form }}</th>
+                  <th>{{ t('productDetails.weightOfCoin') }}</th>
                   <td>
                     {{ product.nft.properties.weight }} {{ product.nft.properties.weightUnit }}
                   </td>
@@ -377,7 +380,7 @@ async function resetView() {
         </div>
         <div class="row pb-8">
           <div class="md:col-12 col-12 tab-panel" v-if="product.nft.properties.story">
-            <h4 class="buy-title ml-2">Story</h4>
+            <h4 class="buy-title ml-2">{{ t('productDetails.story') }}</h4>
             <p class="story fontcolor">{{ product.nft.properties.story }}</p>
           </div>
         </div>

@@ -4,6 +4,9 @@ import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const router = useRouter()
 const isMobile = ref(false)
 
@@ -49,12 +52,12 @@ onBeforeUnmount(() => {
             : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style'
         "
       >
-        <div class="text-900 text-xl mb-3 font-medium">Our Links</div>
+        <div class="text-900 text-xl mb-3 font-medium">{{ t('footer.ourLinks') }}</div>
         <div class="font-style-div">
           <RouterLink to="/about-asa-gold">About ASA.Gold project</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/contact-us">Contact us</RouterLink>
+          <RouterLink to="/contact-us">{{ t('footer.contactUs') }}</RouterLink>
         </div>
         <div class="font-style-div">
           <RouterLink to="/gdpr/latest">GDPR policy</RouterLink>
@@ -71,7 +74,7 @@ onBeforeUnmount(() => {
             : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style'
         "
       >
-        <div class="text-900 text-xl mb-3 font-medium">RESOURCES</div>
+        <div class="text-900 text-xl mb-3 font-medium">{{ t('footer.resources') }}</div>
         <div class="font-style-div">
           <a href="https://www.asa.gold/">MainNet</a>
         </div>

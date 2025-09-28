@@ -197,15 +197,15 @@ const loadMintedTokens = async () => {
                 </i>
               </div>
               <div class="inner">
-                <h4 class="title text-primary">Reserves</h4>
+                <h4 class="title text-primary">{{ t('reserves.reserves') }}</h4>
                 <div>
-                  <h3 class="title text-primary">Asa.Gold Token ID</h3>
+                  <h3 class="title text-primary">{{ t('reserves.asaGoldTokenId') }}</h3>
                   <a class="text-300" :href="explorerLink()" target="_blank">
                     <Button secondary>{{ store.state.tokens.gold }}</Button>
                   </a>
                 </div>
                 <div>
-                  <h3 class="title text-primary">Minted Tokens</h3>
+                  <h3 class="title text-primary">{{ t('reserves.mintedTokens') }}</h3>
                   <span v-if="state.mintedTokens" class="text-primary">{{
                     state.mintedTokens
                   }}</span>
@@ -232,9 +232,9 @@ const loadMintedTokens = async () => {
       </div>
       <div class="container">
         <div class="section-title">
-          <h2 class="title">Learn About Proof Of Reserves</h2>
+          <h2 class="title">{{ t('reserves.learnAboutProofOfReserves') }}</h2>
           <div class="bar"></div>
-          <p>We Bring Revolution To Gold Market</p>
+          <p>{{ t('reserves.weBringRevolutionToGoldMarket') }}</p>
         </div>
         <div class="row row--15">
           <div class="lg:col-6 md:col-6 sm:col-6 col-12">

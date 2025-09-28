@@ -138,6 +138,40 @@
     "fractionable": "Zlato můžete dělit až na 6 desetinných míst gramu zlata ~ $0,00005",
     "unableToLoad": "Momentálně se nedají načíst informace"
   },
+  "reserves": {
+    "sumOfGoldInReserves": "Součet zlata v rezervách",
+    "learnAboutProofOfReserves": "Naučte se o důkazu rezerv",
+    "weBringRevolutionToGoldMarket": "Přinášíme revoluci na trh se zlatem",
+    "asaGoldTokenId": "ID tokenu Asa.Gold",
+    "mintedTokens": "Ražené tokeny",
+    "reserves": "Rezervy"
+  },
+  "productDetails": {
+    "serialNumber": "Sériové číslo",
+    "diameter": "Průměr",
+    "fitness": "Stav",
+    "weightOfCoin": "Hmotnost mince",
+    "story": "Příběh",
+    "buy": "Koupit"
+  },
+  "footer": {
+    "ourLinks": "Naše odkazy",
+    "contactUs": "Kontaktujte nás",
+    "resources": "ZDROJE",
+    "contactUsSection": "KONTAKT"
+  },
+  "terms": {
+    "title": "Obchodní podmínky, MiCA dokumenty, Záruka a reklamace",
+    "description": "Tyto obchodní podmínky jsou mezi vámi jako osobou nebo právnickou entitou a poskytovatelem ASA.Gold.",
+    "serviceProvider": "Poskytovatel služeb ASA.Gold",
+    "acceptanceOfTerms": "Přijetí podmínek",
+    "providerInfo": "Scholtz & Company, jsa, IČO 51882272, je poskytovatelem služeb ASA.Gold."
+  },
+  "privacy": {
+    "title": "Zásady ochrany soukromí",
+    "gdprCompliance": "Soulad s GDPR",
+    "dataCollection": "Sběr údajů"
+  },
   "company": {
     "companyId": "IČO : 51882272",
     "vatId": "DIČ : 2120828105",
