@@ -1,29 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 import Menubar from 'primevue/menubar'
 import { useRouter, RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
+const { t } = useI18n()
 
-const tabMenuItems = ref([
+const tabMenuItems = computed(() => [
   {
-    label: 'Home',
+    label: t('navigation.home'),
     icon: 'pi pi-fw pi-home',
     route: '/'
   },
   {
-    label: 'Settings',
+    label: t('settings.title'),
     icon: 'pi pi-fw pi-cog',
     route: '/settings'
   },
   {
-    label: 'Email verification',
+    label: t('settings.emailVerification'),
     icon: 'pi pi-fw pi-envelope',
     route: '/email-validation'
   },
   {
-    label: 'User profile',
+    label: t('profile.title'),
     icon: 'pi pi-fw pi-user',
     route: '/user-profile'
   }

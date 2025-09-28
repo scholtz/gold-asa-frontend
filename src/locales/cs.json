@@ -49,7 +49,8 @@
   "settings": {
     "title": "Nastavení",
     "resetConfiguration": "Resetovat konfiguraci",
-    "dangerZone": "Nebezpečná zóna"
+    "dangerZone": "Nebezpečná zóna",
+    "emailVerification": "Ověření e-mailu"
   },
   "profile": {
     "title": "Uživatelský profil",
@@ -157,6 +158,13 @@
   "footer": {
     "ourLinks": "Naše odkazy",
     "contactUs": "Kontaktujte nás",
+    "aboutAsaGoldProject": "O projektu ASA.Gold",
+    "gdprPolicy": "GDPR zásady",
+    "termsAndAgreement": "Obchodní podmínky a dohoda",
+    "settings": "Nastavení",
+    "priceList": "Ceník",
+    "daoToken": "DAO Token",
+    "goldToken": "Zlatý Token",
     "resources": "ZDROJE",
     "contactUsSection": "KONTAKT"
   },
@@ -171,6 +179,10 @@
     "title": "Zásady ochrany soukromí",
     "gdprCompliance": "Soulad s GDPR",
     "dataCollection": "Sběr údajů"
+  },
+  "emailVerification": {
+    "byVerifying": "Ověřením vašeho e-mailu přijímáte",
+    "ofOurService": "našich služeb."
   },
   "company": {
     "companyId": "IČO : 51882272",

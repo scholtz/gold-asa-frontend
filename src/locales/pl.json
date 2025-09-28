@@ -49,7 +49,8 @@
   "settings": {
     "title": "Ustawienia",
     "resetConfiguration": "Resetuj konfigurację",
-    "dangerZone": "Strefa niebezpieczna"
+    "dangerZone": "Strefa niebezpieczna",
+    "emailVerification": "Weryfikacja e-mail"
   },
   "profile": {
     "title": "Profil użytkownika",
@@ -157,6 +158,13 @@
   "footer": {
     "ourLinks": "Nasze linki",
     "contactUs": "Skontaktuj się z nami",
+    "aboutAsaGoldProject": "O projekcie ASA.Gold",
+    "gdprPolicy": "Polityka RODO",
+    "termsAndAgreement": "Regulamin i umowa",
+    "settings": "Ustawienia",
+    "priceList": "Cennik",
+    "daoToken": "Token DAO",
+    "goldToken": "Token Złota",
     "resources": "ZASOBY",
     "contactUsSection": "KONTAKT"
   },
@@ -171,6 +179,10 @@
     "title": "Polityka prywatności",
     "gdprCompliance": "Zgodność z RODO",
     "dataCollection": "Zbieranie danych"
+  },
+  "emailVerification": {
+    "byVerifying": "Weryfikując swój e-mail akceptujesz",
+    "ofOurService": "naszych usług."
   },
   "company": {
     "companyId": "ID : 51882272",

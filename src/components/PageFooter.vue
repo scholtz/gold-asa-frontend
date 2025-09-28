@@ -54,16 +54,16 @@ onBeforeUnmount(() => {
       >
         <div class="text-900 text-xl mb-3 font-medium">{{ t('footer.ourLinks') }}</div>
         <div class="font-style-div">
-          <RouterLink to="/about-asa-gold">About ASA.Gold project</RouterLink>
+          <RouterLink to="/about-asa-gold">{{ t('footer.aboutAsaGoldProject') }}</RouterLink>
         </div>
         <div class="font-style-div">
           <RouterLink to="/contact-us">{{ t('footer.contactUs') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/gdpr/latest">GDPR policy</RouterLink>
+          <RouterLink to="/gdpr/latest">{{ t('footer.gdprPolicy') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/terms/latest">Terms and agreement</RouterLink>
+          <RouterLink to="/terms/latest">{{ t('footer.termsAndAgreement') }}</RouterLink>
         </div>
       </div>
 
@@ -83,16 +83,16 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="font-style-div">
-          <RouterLink to="/settings">Settings</RouterLink>
+          <RouterLink to="/settings">{{ t('footer.settings') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/price-list">Price list</RouterLink>
+          <RouterLink to="/price-list">{{ t('footer.priceList') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/token/dao">DAO Token</RouterLink>
+          <RouterLink to="/token/dao">{{ t('footer.daoToken') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/token/gold">Gold Token</RouterLink>
+          <RouterLink to="/token/gold">{{ t('footer.goldToken') }}</RouterLink>
         </div>
       </div>
       <div
