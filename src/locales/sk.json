@@ -94,6 +94,50 @@
     "goldTokenDescription": "ASA.Gold je prelomový verejne auditovateľný zlatý token. Zabezpečený fyzickými zlatými rezervami, náš onchain eshop zabezpečuje audity v reálnom čase prístupné všetkým, garantujúc autentickosť a hodnotu každého tokenu. Investujte s dôverou do novej éry digitálnych aktív zabezpečených zlatom, kde sa dôvera a zodpovednosť stretávajú bezproblémovo.",
     "downloadAsaGold": "Stiahnuť ASA.Gold"
   },
+  "home": {
+    "aurumStandardAsset": "Aurum Standard Asset",
+    "letsBreakGoldMarket": "Priveďme trh so zlatom na ďalšiu úroveň",
+    "buyTheGoldCoin": "Kúpiť zlatú mincu",
+    "aboutAsaGoldProject": "O projekte ASA.Gold",
+    "goldMarketRevolution": "Prinášame revolúciu na trh so zlatom",
+    "buyUseAudit": "Kúpte si, používajte alebo predávajte token zlata zabezpečený skutočným zlatom. Každý môže auditovať naše rezervy - to je to, čo predávame v e-shope. Navštívte náš zlatý e-shop vrátane sekundárneho trhoviska. Každá zlatá minca má svoje NFT, ktoré sa dá obchodovať pomocou smart kontraktu alebo DeFi. NFT v sklade si možno vyžiadať dodanie balíkom v rámci EÚ.",
+    "startupDescription": "Startup ASA.Gold bol spustený v októbri 2023 s cieľom tokenizovať reálne aktíva, ktorým môžu používatelia plne dôverovať. Aby sme to umožnili, vytvorili sme hypotézu, že ak si človek môže v e-shope vybrať akýkoľvek produkt a ten mu môže byť dodaný, dôveruje tomu, že všetky ostatné produkty are skutočné. ASA.Gold nemá žiadnu motiváciu podvádzať kvôli tomuto verejnému dohľadu.",
+    "revolutionDescription": "Hmotnosť zlata v rezervách je vždy vyššia ako razené tokeny zabezpečené zlatom. Toto je zabezpečené smart kontraktom na verejnej blockchainovej sieti - Algorand."
+  },
+  "priceList": {
+    "buyGoldTokenDex": "Kúpa tokenu zlata pomocou DEX agregátora",
+    "sellGoldTokenDex": "Predaj tokenu zlata pomocou DEX agregátora",
+    "buyGoldTokenBank": "Kúpa tokenu zlata pomocou bankového prevodu",
+    "addGoldCoin": "Pridanie zlatej mince do rezerv",
+    "ourCommission": "Naša provízia:",
+    "serviceLink": "Odkaz na službu",
+    "dexCharges": "DEX agregátor účtuje približne 0,1% z objemu a podľa vybraných AMM poolov účtuje poplatky za slippage likvidity.",
+    "bankCharges": "Vaša banka vám môže účtovať dodatočný poplatok. Všetky poplatky na náš bankový účet vám preplácame (SEPA štandard a SEPA okamžité platby sú zadarmo. Toto sa týka hlavne SWIFT platieb).",
+    "rfqPrice": "RFQ cena je vypočítaná ako najvyššia cena z viacerých zdrojov predajných cien zlata.",
+    "rfqFinal": "Vaša RFQ cena je finálna a zahŕňa províziu.",
+    "addGoldDescription": "Keď kúpime skutočnú zlatú mincu alebo zliatinu, uvedieme cenu tohto nákupu ako numizmatickú hodnotu v čase nákupu do NFT. Táto numizmatická cena je vyjadrená v cene tokenu zlata, čo znamená, že cena delená gramami zlata pri nákupe dáva skutočné percento numizmatickej hodnoty. Zvyčajne k tejto cene pridáme 3% a predáme ju verejnosti prostredníctvom predaja NFT. Pridaná numizmatická hodnota sa môže zmeniť v špeciálnych prípadoch, ako sú vzácne mince, alebo môže byť nižšia pri niektorých zľavnených predajoch."
+  },
+  "carousel": {
+    "buyGoldNftTrade": "Kúpte si NFT zlatej mince, obchodujte s NFT alebo požiadajte o fyzické dodanie"
+  },
+  "proofOfReserves": {
+    "title": "Dôkaz rezerv:",
+    "description": "Hmotnosť zlata vo fyzických rezervách ({reserves}) je vždy vyššia ako razené tokeny zabezpečené zlatom ({minted} gramov). Toto je zabezpečené smart kontraktom na verejnej blockchainovej sieti - Algorand. Hmotnosť zlata fyzických rezerv je súčet kompozície zlata každej zlatej položky v rezervách, ktorú možno pozorovať v našom e-shope alebo na tejto webstránke. Razené zlato je všetko zlato v obehu, v technickom termíne pre algorand, pôvodne razené množstvo mínus množstvo tokenov na účte rezerv. Každý predaj zlatej položky z rezerv je smerovaný späť na účet rezerv.",
+    "disadvantagesTitle": "Nevýhody zlata sú:",
+    "disadvantage1": "Žiadny príjem alebo výnos - Zlato samo osebe negeneruje žiadny príjem alebo výnos. Na rozdiel od akcií alebo dlhopisov, ktoré môžu poskytovať dividendy alebo úroky, držanie zlata neprodukuje žiadny periodický peňažný tok.",
+    "disadvantage2": "Nedostatok peňažného toku - Zlato negeneruje peňažný tok, čo znamená, že investori môžu prísť o príležitosti reinvestovať do aktív, ktoré príjem produkujú.",
+    "advantage1": "Svoje zlato môžete stakovať v AMM a generovať výnos",
+    "advantage2": "Vlastná správa - vaše kľúče vaša krypto",
+    "advantage3": "Nedeliteľné - Keď vlastníte 1 zlatú mincu, pravdepodobne ju nebudete deliť na polovicu, keď potrebujete zaplatiť len polovicu ceny.",
+    "tokenizedGoldTitle": "S tokenizovaným zlatom sa tieto nevýhody neuplatňujú.",
+    "algorandFeaturesSubtitle": "Teraz si môžete užívať kombináciu funkcií Algorandu s trhom so zlatom.",
+    "fastTransactions": "Finálnosť transakcií rýchlejšia ako pri kreditnej karte",
+    "lowCosts": "Takmer nulové transakčné náklady (0.001 algo ~ $0.0001)",
+    "stakeGold": "Svoje zlato môžete stakovať v AMM a generovať výnos",
+    "selfCustody": "Vlastná správa - vaše kľúče vaša krypto",
+    "fractionable": "Zlato môžete deliť až na 6 desatinných miest gramu zlata ~ $0,00005",
+    "unableToLoad": "Momentálne sa nedajú načítať informácie"
+  },
   "company": {
     "companyId": "IČO : 51882272",
     "vatId": "DIČ : 2120828105",

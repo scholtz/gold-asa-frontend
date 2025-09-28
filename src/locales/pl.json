@@ -94,6 +94,50 @@
     "goldTokenDescription": "ASA.Gold to przełomowy publicznie audytowalny token złota. Zabezpieczony fizycznymi rezerwami złota, nasz sklep onchain zapewnia audyty w czasie rzeczywistym dostępne dla wszystkich, gwarantując autentyczność i wartość każdego tokenu. Inwestuj z pewnością w nową erę aktywów cyfrowych zabezpieczonych złotem, gdzie zaufanie i odpowiedzialność spotykają się bezproblemowo.",
     "downloadAsaGold": "Pobierz ASA.Gold"
   },
+  "home": {
+    "aurumStandardAsset": "Aurum Standard Asset",
+    "letsBreakGoldMarket": "Przenieśmy rynek złota na kolejny poziom",
+    "buyTheGoldCoin": "Kup złotą monetę",
+    "aboutAsaGoldProject": "O projekcie ASA.Gold",
+    "goldMarketRevolution": "Przynosimy rewolucję na rynek złota",
+    "buyUseAudit": "Kupuj, używaj lub sprzedawaj token złota zabezpieczony prawdziwym złotem. Każdy może auditować nasze rezerwy - to jest to, co sprzedajemy w e-sklepie. Odwiedź nasz złoty e-sklep wraz z rynkiem wtórnym. Każda złota moneta ma swoje NFT, którym można handlować za pomocą smart kontraktu lub DeFi. NFT w magazynie można żądać dostawy paczką w obszarze UE.",
+    "startupDescription": "Startup ASA.Gold został uruchomiony w październiku 2023 roku z celem tokenizacji rzeczywistych aktywów, którym użytkownicy mogą w pełni zaufać. Aby to umożliwić, stworzyliśmy hipotezę, że jeśli osoba może wybrać w e-sklepie dowolny produkt i ten może być jej dostarczony, ufa temu, że wszystkie inne produkty są również prawdziwe. ASA.Gold nie ma motywacji do oszukiwania ze względu na ten publiczny nadzór.",
+    "revolutionDescription": "Waga złota w rezerwach jest zawsze wyższa niż wybite tokeny zabezpieczone złotem. Jest to zapewnione przez smart kontrakt w publicznej sieci blockchain - Algorand."
+  },
+  "priceList": {
+    "buyGoldTokenDex": "Kup token złota za pomocą agregatora DEX",
+    "sellGoldTokenDex": "Sprzedaj token złota za pomocą agregatora DEX",
+    "buyGoldTokenBank": "Kup token złota za pomocą przelewu bankowego",
+    "addGoldCoin": "Dodaj złotą monetę do rezerw",
+    "ourCommission": "Nasza prowizja:",
+    "serviceLink": "Link do usługi",
+    "dexCharges": "Agregator DEX pobiera około 0,1% z wolumenu i zgodnie z wybranymi pulami AMM pobiera opłaty za poślizg płynności.",
+    "bankCharges": "Twój bank może pobierać dodatkową opłatę. Zwrócimy Ci wszystkie opłaty na nasze konto bankowe (przelewy SEPA standard i SEPA natychmiastowe są darmowe. Dotyczy to głównie płatności SWIFT).",
+    "rfqPrice": "Cena RFQ jest obliczana jako najwyższa cena z wielu źródeł cen sprzedaży złota.",
+    "rfqFinal": "Twoja cena RFQ jest ostateczna i zawiera prowizję.",
+    "addGoldDescription": "Gdy kupujemy prawdziwą złotą monetę lub sztabkę, podajemy cenę tego zakupu jako wartość numizmatyczną w momencie zakupu do NFT. Ta cena numizmatyczna jest wyrażona w cenie tokena złota, co oznacza, że cena podzielona przez gramy złota przy zakupie daje rzeczywisty procent wartości numizmatycznej. Zwykle dodajemy 3% do tej ceny i sprzedajemy ją publicznie poprzez sprzedaż NFT. Dodana wartość numizmatyczna może się zmienić w specjalnych przypadkach, takich jak rzadkie monety, lub może być niższa w niektórych wyprzedażach."
+  },
+  "carousel": {
+    "buyGoldNftTrade": "Kup NFT złotej monety, handluj NFT lub poproś o fizyczną dostawę"
+  },
+  "proofOfReserves": {
+    "title": "Dowód rezerw:",
+    "description": "Waga złota w fizycznych rezerwach ({reserves}) jest zawsze wyższa niż wybite tokeny zabezpieczone złotem ({minted} gramów). Jest to zapewnione przez smart kontrakt w publicznej sieci blockchain - Algorand. Waga złota fizycznych rezerw to suma składu złota każdego przedmiotu złotego w rezerwach, którą można obserwować w naszym e-sklepie lub na tej stronie internetowej. Wybite złoto to całe złoto w obiegu, w technicznym terminie dla algorand, pierwotnie wybita ilość minus ilość tokenów na koncie rezerw. Każda sprzedaż przedmiotu złotego z rezerw jest kierowana z powrotem na konto rezerw.",
+    "disadvantagesTitle": "Wady złota to:",
+    "disadvantage1": "Brak dochodu lub zysku - Złoto samo w sobie nie generuje żadnego dochodu ani zysku. W przeciwieństwie do akcji czy obligacji, które mogą zapewniać dywidendy lub odsetki, posiadanie złota nie produkuje żadnego okresowego przepływu gotówkowego.",
+    "disadvantage2": "Brak przepływu gotówkowego - Złoto nie generuje przepływu gotówkowego, co oznacza, że inwestorzy mogą stracić okazje do reinwestowania w aktywa, które dochód produkują.",
+    "advantage1": "Możesz stakować swoje złoto w AMM i generować zysk",
+    "advantage2": "Własna opieka - twoje klucze twoja krypto",
+    "advantage3": "Niepodzielne - Gdy posiadasz 1 złotą monetę, prawdopodobnie nie podzielisz jej na pół, gdy musisz zapłacić tylko połowę ceny.",
+    "tokenizedGoldTitle": "Z tokenizowanym złotem te wady nie mają zastosowania.",
+    "algorandFeaturesSubtitle": "Teraz możesz cieszyć się kombinacją funkcji Algorand z rynkiem złota.",
+    "fastTransactions": "Finalizacja transakcji szybsza niż przy karcie kredytowej",
+    "lowCosts": "Prawie zerowe koszty transakcyjne (0.001 algo ~ $0.0001)",
+    "stakeGold": "Możesz stakować swoje złoto w AMM i generować zysk",
+    "selfCustody": "Własna opieka - twoje klucze twoja krypto",
+    "fractionable": "Możesz dzielić złoto do 6 miejsc po przecinku grama złota ~ $0,00005",
+    "unableToLoad": "Obecnie nie można załadować informacji"
+  },
   "company": {
     "companyId": "ID : 51882272",
     "vatId": "NIP : 2120828105",
