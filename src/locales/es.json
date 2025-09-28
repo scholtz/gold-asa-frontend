@@ -94,6 +94,50 @@
     "goldTokenDescription": "ASA.Gold es el revolucionario token de oro públicamente auditable. Respaldado por reservas físicas de oro, nuestra tienda onchain asegura auditorías en tiempo real accesibles para todos, garantizando la autenticidad y valor de cada token. Invierte con confianza en una nueva era de activos digitales respaldados por oro, donde la confianza y la responsabilidad convergen sin problemas.",
     "downloadAsaGold": "Descargar ASA.Gold"
   },
+  "home": {
+    "aurumStandardAsset": "Aurum Standard Asset",
+    "letsBreakGoldMarket": "Llevemos el mercado del oro al siguiente nivel",
+    "buyTheGoldCoin": "Comprar la moneda de oro",
+    "aboutAsaGoldProject": "Sobre el proyecto ASA.Gold",
+    "goldMarketRevolution": "Traemos revolución al mercado del oro",
+    "buyUseAudit": "Compra, usa o vende token de oro respaldado por oro real. Todos pueden auditar nuestras reservas - es lo que vendemos en la tienda online. Visita nuestra tienda de oro incluyendo mercado secundario. Cada moneda de oro tiene su NFT, que puede ser intercambiado usando contratos inteligentes o DeFi. Los NFT en stock pueden solicitarse para entrega por paquete dentro del área de la UE.",
+    "startupDescription": "La startup ASA.Gold fue lanzada en octubre de 2023 con el objetivo de tokenizar activos del mundo real en los que los usuarios puedan confiar plenamente. Para permitir esto, creamos la hipótesis de que si una persona puede seleccionar cualquier producto en la tienda online y este puede ser enviado a él, confía en que todos los demás productos son reales también. ASA.Gold no tiene motivación para hacer trampa debido a esta supervisión pública.",
+    "revolutionDescription": "El peso del oro en las reservas es siempre mayor que los tokens respaldados por oro acuñados. Esto está asegurado por contrato inteligente en la red blockchain pública - Algorand."
+  },
+  "priceList": {
+    "buyGoldTokenDex": "Comprar token de oro usando agregador DEX",
+    "sellGoldTokenDex": "Vender token de oro usando agregador DEX",
+    "buyGoldTokenBank": "Comprar token de oro usando transferencia bancaria",
+    "addGoldCoin": "Añadir moneda de oro a reservas",
+    "ourCommission": "Nuestra comisión:",
+    "serviceLink": "Enlace del servicio",
+    "dexCharges": "El agregador DEX cobra aprox. 0,1% del volumen y según los pools AMM seleccionados cobran comisiones por deslizamiento de liquidez.",
+    "bankCharges": "Su banco puede cobrarle una tarifa adicional. Le reembolsaremos cualquier tarifa a nuestra cuenta bancaria (los pagos estándar SEPA e instantáneos SEPA son gratuitos. Esto se aplica principalmente a pagos SWIFT).",
+    "rfqPrice": "El precio RFQ se calcula como el precio más alto de múltiples fuentes de precios de venta de oro.",
+    "rfqFinal": "Su precio RFQ es final e incluye la comisión.",
+    "addGoldDescription": "Cuando compramos una moneda de oro real o lingote, establecemos el precio de esta compra como valor numismático en el momento de la compra al NFT. Este precio numismático se expresa en el precio del token de oro, lo que significa que el precio dividido por gramos de oro en la compra da el porcentaje real del valor numismático. Normalmente añadimos 3% a este precio y lo vendemos al público a través de la venta de NFT. El valor numismático añadido puede cambiar en casos especiales como monedas raras o puede ser menor en algunas ventas con descuento."
+  },
+  "carousel": {
+    "buyGoldNftTrade": "Compra el NFT de moneda de oro, intercambia el NFT o solicita entrega física"
+  },
+  "proofOfReserves": {
+    "title": "Prueba de reservas:",
+    "description": "El peso del oro en las reservas físicas ({reserves}) es siempre mayor que los tokens respaldados por oro acuñados ({minted} gramos). Esto está asegurado por contrato inteligente en la red blockchain pública - Algorand. El peso del oro de las reservas físicas es la suma de la composición de oro de cada artículo de oro en las reservas que puede observarse en nuestra tienda online o en este sitio web. El oro acuñado es todo el oro en circulación, en término técnico para algorand, la cantidad originalmente acuñada menos la cantidad de tokens en la cuenta de reservas. Cada venta de artículo de oro de las reservas se dirige de vuelta a la cuenta de reservas.",
+    "disadvantagesTitle": "Las desventajas del oro son:",
+    "disadvantage1": "Sin ingresos o rendimiento - El oro no genera ningún ingreso o rendimiento por sí solo. A diferencia de las acciones o bonos, que pueden proporcionar dividendos o intereses, mantener oro no produce ningún flujo de efectivo periódico.",
+    "disadvantage2": "Falta de flujo de efectivo - El oro no genera flujo de efectivo, lo que significa que los inversores pueden perder oportunidades de reinvertir en activos que sí producen ingresos.",
+    "advantage1": "Puedes apostar tu oro en AMMs y generar rendimiento",
+    "advantage2": "Auto custodia - tus llaves tu cripto",
+    "advantage3": "No fraccionable - Cuando posees 1 moneda de oro no es probable que la dividas por la mitad cuando necesitas pagar solo la mitad del precio.",
+    "tokenizedGoldTitle": "Con oro tokenizado estas desventajas no aplican.",
+    "algorandFeaturesSubtitle": "Ahora puedes disfrutar de la combinación de características de Algorand con el mercado del oro.",
+    "fastTransactions": "Finalidad de transacción más rápida que usar tarjeta de crédito",
+    "lowCosts": "Costos de transacción casi cero (0.001 algo ~ $0.0001)",
+    "stakeGold": "Puedes apostar tu oro en AMMs y generar rendimiento",
+    "selfCustody": "Auto custodia - tus llaves tu cripto",
+    "fractionable": "Puedes fraccionar oro hasta 6 decimales de gramo de oro ~ $0,00005",
+    "unableToLoad": "No se puede cargar información en este momento"
+  },
   "company": {
     "companyId": "ID : 51882272",
     "vatId": "NIF : 2120828105",

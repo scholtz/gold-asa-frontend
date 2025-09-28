@@ -94,6 +94,50 @@
     "goldTokenDescription": "ASA.Gold ist der bahnbrechende öffentlich auditierbare Gold Token. Gedeckt durch physische Goldreserven sorgt unser Onchain-Shop für Echtzeit-Audits, die für alle zugänglich sind und die Authentizität und den Wert jedes Tokens garantieren. Investieren Sie mit Vertrauen in eine neue Ära goldgedeckter digitaler Assets, in der Vertrauen und Verantwortlichkeit nahtlos zusammenfließen.",
     "downloadAsaGold": "ASA.Gold herunterladen"
   },
+  "home": {
+    "aurumStandardAsset": "Aurum Standard Asset",
+    "letsBreakGoldMarket": "Bringen wir den Goldmarkt auf die nächste Stufe",
+    "buyTheGoldCoin": "Goldmünze kaufen",
+    "aboutAsaGoldProject": "Über das ASA.Gold Projekt",
+    "goldMarketRevolution": "Wir bringen Revolution zum Goldmarkt",
+    "buyUseAudit": "Kaufen, verwenden oder verkaufen Sie Gold-Token, die durch echtes Gold gedeckt sind. Jeder kann unsere Reserven auditieren - das verkaufen wir im E-Shop. Besuchen Sie unseren Gold-E-Shop inklusive Sekundärmarktplatz. Jede Goldmünze hat ihr NFT, das mit Smart Contract oder DeFi gehandelt werden kann. NFTs im Lager können per Paketlieferung im EU-Bereich angefordert werden.",
+    "startupDescription": "Das Startup ASA.Gold wurde im Oktober 2023 mit dem Ziel gestartet, reale Vermögenswerte zu tokenisieren, denen Benutzer voll vertrauen können. Um dies zu ermöglichen, stellten wir die Hypothese auf, dass wenn eine Person im E-Shop ein beliebiges Produkt auswählen und es an sie geliefert werden kann, sie darauf vertraut, dass auch alle anderen Produkte echt sind. ASA.Gold hat aufgrund dieser öffentlichen Aufsicht keine Motivation zu betrügen.",
+    "revolutionDescription": "Das Gewicht des Goldes in den Reserven ist immer höher als geprägte goldgedeckte Token. Dies wird durch Smart Contract im öffentlichen Blockchain-Netzwerk - Algorand sichergestellt."
+  },
+  "priceList": {
+    "buyGoldTokenDex": "Gold-Token mit DEX-Aggregator kaufen",
+    "sellGoldTokenDex": "Gold-Token mit DEX-Aggregator verkaufen",
+    "buyGoldTokenBank": "Gold-Token per Banküberweisung kaufen",
+    "addGoldCoin": "Goldmünze zu Reserven hinzufügen",
+    "ourCommission": "Unsere Provision:",
+    "serviceLink": "Service-Link",
+    "dexCharges": "DEX-Aggregator berechnet ca. 0,1% vom Volumen und je nach gewählten AMM-Pools werden Liquiditäts-Slippage-Gebühren berechnet.",
+    "bankCharges": "Ihre Bank kann Ihnen zusätzliche Gebühren berechnen. Wir erstatten Ihnen alle Gebühren auf unser Bankkonto (SEPA-Standard und SEPA-Sofortüberweisungen sind kostenlos. Dies gilt hauptsächlich für SWIFT-Zahlungen).",
+    "rfqPrice": "RFQ-Preis wird als Höchstpreis aus mehreren Gold-Verkaufspreisquellen berechnet.",
+    "rfqFinal": "Ihr RFQ-Preis ist endgültig und beinhaltet die Provision.",
+    "addGoldDescription": "Wenn wir eine echte Goldmünze oder einen Barren kaufen, geben wir den Preis dieses Kaufs als numismatischen Wert zum Zeitpunkt des Kaufs an das NFT an. Dieser numismatische Preis wird im Gold-Token-Preis ausgedrückt, was bedeutet, dass der Preis geteilt durch Gramm Gold beim Kauf den tatsächlichen Prozentsatz des numismatischen Werts ergibt. Wir fügen normalerweise 3% zu diesem Preis hinzu und verkaufen ihn über NFT-Verkauf an die Öffentlichkeit. Der hinzugefügte numismatische Wert kann sich in besonderen Fällen wie seltenen Münzen ändern oder bei einigen reduzierten Verkäufen niedriger sein."
+  },
+  "carousel": {
+    "buyGoldNftTrade": "Kaufen Sie das Goldmünzen-NFT, handeln Sie das NFT oder fordern Sie physische Lieferung an"
+  },
+  "proofOfReserves": {
+    "title": "Nachweis der Reserven:",
+    "description": "Das Gewicht des Goldes in den physischen Reserven ({reserves}) ist immer höher als geprägte goldgedeckte Token ({minted} Gramm). Dies wird durch Smart Contract im öffentlichen Blockchain-Netzwerk - Algorand sichergestellt. Das Gewicht des Goldes der physischen Reserven ist die Summe der Goldzusammensetzung jedes Goldgegenstands in den Reserven, die in unserem E-Shop oder auf dieser Website beobachtet werden kann. Das geprägte Gold ist alles Gold im Umlauf, im technischen Begriff für Algorand, die ursprünglich geprägte Menge minus die Anzahl der Token auf dem Reservenkonto. Jeder Verkauf eines Goldgegenstands aus den Reserven wird zurück auf das Reservenkonto geleitet.",
+    "disadvantagesTitle": "Nachteile von Gold sind:",
+    "disadvantage1": "Kein Einkommen oder Rendite - Gold generiert von sich aus kein Einkommen oder Rendite. Im Gegensatz zu Aktien oder Anleihen, die Dividenden oder Zinsen bieten können, produziert das Halten von Gold keinen periodischen Cashflow.",
+    "disadvantage2": "Mangel an Cashflow - Gold generiert keinen Cashflow, was bedeutet, dass Investoren Gelegenheiten verpassen können, in Vermögenswerte zu reinvestieren, die Einkommen produzieren.",
+    "advantage1": "Sie können Ihr Gold in AMMs staken und Rendite generieren",
+    "advantage2": "Selbstverwahrung - Ihre Schlüssel Ihre Krypto",
+    "advantage3": "Nicht teilbar - Wenn Sie 1 Goldmünze besitzen, werden Sie sie wahrscheinlich nicht halbieren, wenn Sie nur die Hälfte des Preises zahlen müssen.",
+    "tokenizedGoldTitle": "Bei tokenisiertem Gold gelten diese Nachteile nicht.",
+    "algorandFeaturesSubtitle": "Jetzt können Sie die Kombination von Algorands Funktionen mit dem Goldmarkt genießen.",
+    "fastTransactions": "Transaktionsfinalität schneller als bei Kreditkarte",
+    "lowCosts": "Fast null Transaktionskosten (0.001 algo ~ $0.0001)",
+    "stakeGold": "Sie können Ihr Gold in AMMs staken und Rendite generieren",
+    "selfCustody": "Selbstverwahrung - Ihre Schlüssel Ihre Krypto",
+    "fractionable": "Sie können Gold bis zu 6 Dezimalstellen eines Goldgramms teilen ~ $0,00005",
+    "unableToLoad": "Informationen können momentan nicht geladen werden"
+  },
   "company": {
     "companyId": "ID : 51882272",
     "vatId": "USt-IdNr. : 2120828105",
