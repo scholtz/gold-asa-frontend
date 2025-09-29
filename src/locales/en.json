@@ -110,13 +110,19 @@
     "sellGoldTokenDex": "Sell gold token using DEX aggregator",
     "buyGoldTokenBank": "Buy gold token using bank transfer",
     "addGoldCoin": "Add gold coin to reserves",
+    "secondaryMarketplace": "Secondary marketplace",
+    "physicalDelivery": "Physical delivery",
     "ourCommission": "Our commission:",
     "serviceLink": "Service link",
     "dexCharges": "DEX aggregator charges approx 0,1% from the volume, and according to the selected AMM pools they charge liquidity slippage fees.",
     "bankCharges": "Your bank may charge you additional fee. We will reimburse any fees to our bank account to you (SEPA standard and SEPA instant payments are free. This mostly applies to SWIFT payments.).",
     "rfqPrice": "RFQ price acquired is calculated as top price from multiple gold selling price feeds.",
     "rfqFinal": "Your RFQ price is final and includes the commission.",
-    "addGoldDescription": "When we purchase real gold coin or ignot, we state the price of this purchase as numismatic value at time of purchase to the NFT. This numismatic price is expressed in the gold token price which means that the price divided by grams of gold at the purchase gives the real percentage of numismatic value. We add usually 3% to this price and sell it to public through NFT sale. The numismatic value added may change in special cases such as a rare coins or may be lower in some discounted sales."
+    "addGoldDescription": "When we purchase real gold coin or ignot, we state the price of this purchase as numismatic value at time of purchase to the NFT. This numismatic price is expressed in the gold token price which means that the price divided by grams of gold at the purchase gives the real percentage of numismatic value. We add usually 3% to this price and sell it to public through NFT sale. The numismatic value added may change in special cases such as a rare coins or may be lower in some discounted sales.",
+    "priceStoredOnBlockchain": "Price in the E-Shop is stored on blockchain and when person pays the price in asa.gold token he pays it directly back to reserves account effectivly burning the token. Whole process is governed by smart contract.",
+    "secondaryMarketplaceDescription": "Owner of the NFT can set his token on sale. He can select multiple combinations of price and tokens to be received and when buyer executes the buy command the smart contract takes 0,1% commission to our account.",
+    "postalServices": "Postal services: 0,8% of requested insurance price",
+    "physicalDeliveryDescription": "Owner of the NFT can request physical deliver to EEC countries."
   },
   "carousel": {
     "buyGoldNftTrade": "Buy the gold coin NFT, trade the NFT or request physical delivery"
@@ -166,7 +172,9 @@
     "daoToken": "DAO Token",
     "goldToken": "Gold Token",
     "resources": "RESOURCES",
-    "contactUsSection": "CONTACT US"
+    "contactUsSection": "CONTACT US",
+    "mainNet": "MainNet",
+    "testNet": "TestNet"
   },
   "terms": {
     "title": "Terms & Conditions, MiCA documents, Warranty and complaints",

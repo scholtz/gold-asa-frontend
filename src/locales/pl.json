@@ -116,7 +116,13 @@
     "bankCharges": "Twój bank może pobierać dodatkową opłatę. Zwrócimy Ci wszystkie opłaty na nasze konto bankowe (przelewy SEPA standard i SEPA natychmiastowe są darmowe. Dotyczy to głównie płatności SWIFT).",
     "rfqPrice": "Cena RFQ jest obliczana jako najwyższa cena z wielu źródeł cen sprzedaży złota.",
     "rfqFinal": "Twoja cena RFQ jest ostateczna i zawiera prowizję.",
-    "addGoldDescription": "Gdy kupujemy prawdziwą złotą monetę lub sztabkę, podajemy cenę tego zakupu jako wartość numizmatyczną w momencie zakupu do NFT. Ta cena numizmatyczna jest wyrażona w cenie tokena złota, co oznacza, że cena podzielona przez gramy złota przy zakupie daje rzeczywisty procent wartości numizmatycznej. Zwykle dodajemy 3% do tej ceny i sprzedajemy ją publicznie poprzez sprzedaż NFT. Dodana wartość numizmatyczna może się zmienić w specjalnych przypadkach, takich jak rzadkie monety, lub może być niższa w niektórych wyprzedażach."
+    "addGoldDescription": "Gdy kupujemy prawdziwą złotą monetę lub sztabkę, podajemy cenę tego zakupu jako wartość numizmatyczną w momencie zakupu do NFT. Ta cena numizmatyczna jest wyrażona w cenie tokena złota, co oznacza, że cena podzielona przez gramy złota przy zakupie daje rzeczywisty procent wartości numizmatycznej. Zwykle dodajemy 3% do tej ceny i sprzedajemy ją publicznie poprzez sprzedaż NFT. Dodana wartość numizmatyczna może się zmienić w specjalnych przypadkach, takich jak rzadkie monety, lub może być niższa w niektórych wyprzedażach.",
+    "secondaryMarketplace": "Rynek wtórny",
+    "physicalDelivery": "Dostawa fizyczna",
+    "priceStoredOnBlockchain": "Cena w E-Shopie jest przechowywana na blockchainie, a gdy osoba płaci cenę w tokenach asa.gold, płaci ją bezpośrednio z powrotem na konto rezerw, skutecznie spalając token. Cały proces jest zarządzany przez smart kontrakt.",
+    "secondaryMarketplaceDescription": "Właściciel NFT może wystawić swój token na sprzedaż. Może wybrać wiele kombinacji ceny i tokenów do otrzymania, a gdy kupujący wykonuje polecenie zakupu, smart kontrakt pobiera 0,1% prowizji na nasze konto.",
+    "postalServices": "Usługi pocztowe: 0,8% żądanej ceny ubezpieczenia",
+    "physicalDeliveryDescription": "Właściciel NFT może poprosić o fizyczną dostawę do krajów EOG."
   },
   "carousel": {
     "buyGoldNftTrade": "Kup NFT złotej monety, handluj NFT lub poproś o fizyczną dostawę"
@@ -166,7 +172,9 @@
     "daoToken": "Token DAO",
     "goldToken": "Token Złota",
     "resources": "ZASOBY",
-    "contactUsSection": "KONTAKT"
+    "contactUsSection": "KONTAKT",
+    "mainNet": "Sieć główna",
+    "testNet": "Sieć testowa"
   },
   "terms": {
     "title": "Regulamin, dokumenty MiCA, Gwarancja i reklamacje",

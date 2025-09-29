@@ -132,7 +132,7 @@ const loadMintedTokens = async () => {
           class="col-md-12 col-sm-12 text-secondary welcome-banner text-center nav-text text-center"
         >
           <div class="welcome-content">
-            <h1 class="title" data-aos="fade-down">We Bring Revolution To Gold Market</h1>
+            <h1 class="title" data-aos="fade-down">{{ t('reserves.weBringRevolutionToGoldMarket') }}</h1>
           </div>
         </div>
       </div>

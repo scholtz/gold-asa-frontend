@@ -116,7 +116,13 @@
     "bankCharges": "Vaše banka vám může účtovat dodatečný poplatek. Všechny poplatky na náš bankovní účet vám proplácíme (SEPA standard a SEPA okamžité platby jsou zdarma. Toto se týká hlavně SWIFT plateb).",
     "rfqPrice": "RFQ cena je vypočítána jako nejvyšší cena z více zdrojů prodejních cen zlata.",
     "rfqFinal": "Vaše RFQ cena je finální a zahrnuje provizi.",
-    "addGoldDescription": "Když koupíme skutečnou zlatou minci nebo slitinu, uvedeme cenu tohoto nákupu jako numismatickou hodnotu v čase nákupu do NFT. Tato numismatická cena je vyjádřena v ceně tokenu zlata, což znamená, že cena dělená gramy zlata při nákupu dává skutečné procento numismatické hodnoty. Obvykle k této ceně přidáme 3% a prodáme ji veřejnosti prostřednictvím prodeje NFT. Přidaná numismatická hodnota se může změnit ve speciálních případech, jako jsou vzácné mince, nebo může být nižší při některých slevových prodejích."
+    "addGoldDescription": "Když koupíme skutečnou zlatou minci nebo slitinu, uvedeme cenu tohoto nákupu jako numismatickou hodnotu v čase nákupu do NFT. Tato numismatická cena je vyjádřena v ceně tokenu zlata, což znamená, že cena dělená gramy zlata při nákupu dává skutečné procento numismatické hodnoty. Obvykle k této ceně přidáme 3% a prodáme ji veřejnosti prostřednictvím prodeje NFT. Přidaná numismatická hodnota se může změnit ve speciálních případech, jako jsou vzácné mince, nebo může být nižší při některých slevových prodejích.",
+    "secondaryMarketplace": "Sekundární trh",
+    "physicalDelivery": "Fyzické doručení",
+    "priceStoredOnBlockchain": "Cena v E-Shopu je uložena na blockchainu a když osoba zaplatí cenu v asa.gold tokenu, platí ji přímo zpět na účet rezerv, čímž efektivně spaluje token. Celý proces je řízen smart kontraktem.",
+    "secondaryMarketplaceDescription": "Vlastník NFT může nastavit svůj token na prodej. Může vybrat více kombinací ceny a tokenů k získání a když kupující vykoná příkaz nákupu, smart kontrakt vezme 0,1% provizi na náš účet.",
+    "postalServices": "Poštovní služby: 0,8% z požadované ceny pojištění",
+    "physicalDeliveryDescription": "Vlastník NFT může požádat o fyzické doručení do zemí EHS."
   },
   "carousel": {
     "buyGoldNftTrade": "Kupte si NFT zlaté mince, obchodujte s NFT nebo požádejte o fyzické dodání"
@@ -166,7 +172,9 @@
     "daoToken": "DAO Token",
     "goldToken": "Zlatý Token",
     "resources": "ZDROJE",
-    "contactUsSection": "KONTAKT"
+    "contactUsSection": "KONTAKT",
+    "mainNet": "Hlavní síť",
+    "testNet": "Testovací síť"
   },
   "terms": {
     "title": "Obchodní podmínky, MiCA dokumenty, Záruka a reklamace",

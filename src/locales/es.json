@@ -116,7 +116,13 @@
     "bankCharges": "Su banco puede cobrarle una tarifa adicional. Le reembolsaremos cualquier tarifa a nuestra cuenta bancaria (los pagos estándar SEPA e instantáneos SEPA son gratuitos. Esto se aplica principalmente a pagos SWIFT).",
     "rfqPrice": "El precio RFQ se calcula como el precio más alto de múltiples fuentes de precios de venta de oro.",
     "rfqFinal": "Su precio RFQ es final e incluye la comisión.",
-    "addGoldDescription": "Cuando compramos una moneda de oro real o lingote, establecemos el precio de esta compra como valor numismático en el momento de la compra al NFT. Este precio numismático se expresa en el precio del token de oro, lo que significa que el precio dividido por gramos de oro en la compra da el porcentaje real del valor numismático. Normalmente añadimos 3% a este precio y lo vendemos al público a través de la venta de NFT. El valor numismático añadido puede cambiar en casos especiales como monedas raras o puede ser menor en algunas ventas con descuento."
+    "addGoldDescription": "Cuando compramos una moneda de oro real o lingote, establecemos el precio de esta compra como valor numismático en el momento de la compra al NFT. Este precio numismático se expresa en el precio del token de oro, lo que significa que el precio dividido por gramos de oro en la compra da el porcentaje real del valor numismático. Normalmente añadimos 3% a este precio y lo vendemos al público a través de la venta de NFT. El valor numismático añadido puede cambiar en casos especiales como monedas raras o puede ser menor en algunas ventas con descuento.",
+    "secondaryMarketplace": "Mercado secundario",
+    "physicalDelivery": "Entrega física",
+    "priceStoredOnBlockchain": "El precio en el E-Shop se almacena en blockchain y cuando una persona paga el precio en token asa.gold, lo paga directamente de vuelta a la cuenta de reservas, quemando efectivamente el token. Todo el proceso está gobernado por un smart contract.",
+    "secondaryMarketplaceDescription": "El propietario del NFT puede poner su token en venta. Puede seleccionar múltiples combinaciones de precio y tokens a recibir y cuando el comprador ejecuta el comando de compra, el smart contract toma 0,1% de comisión para nuestra cuenta.",
+    "postalServices": "Servicios postales: 0,8% del precio de seguro solicitado",
+    "physicalDeliveryDescription": "El propietario del NFT puede solicitar entrega física a países del EEE."
   },
   "carousel": {
     "buyGoldNftTrade": "Compra el NFT de moneda de oro, intercambia el NFT o solicita entrega física"
@@ -166,7 +172,9 @@
     "daoToken": "Token DAO",
     "goldToken": "Token de Oro",
     "resources": "RECURSOS",
-    "contactUsSection": "CONTACTO"
+    "contactUsSection": "CONTACTO",
+    "mainNet": "Red principal",
+    "testNet": "Red de prueba"
   },
   "terms": {
     "title": "Términos y condiciones, documentos MiCA, Garantía y quejas",

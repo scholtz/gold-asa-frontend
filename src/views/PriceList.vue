@@ -41,26 +41,22 @@ const { t } = useI18n()
         {{ t('priceList.addGoldDescription') }}
       </p>
       <p>
-        Price in the E-Shop is stored on blockchain and when person pays the price in asa.gold token
-        he pays it directly back to reserves account effectivly burning the token. Whole process is
-        governed by smart contract.
+        {{ t('priceList.priceStoredOnBlockchain') }}
       </p>
       <p><RouterLink to="/buy-gold-coins">Service link</RouterLink></p>
 
-      <h2>Secondary marketplace</h2>
-      <p>Our commission: 0,1%</p>
+      <h2>{{ t('priceList.secondaryMarketplace') }}</h2>
+      <p>{{ t('priceList.ourCommission') }} 0,1%</p>
       <p>
-        Owner of the NFT can set his token on sale. He can select multiple combinations of price and
-        tokens to be received and when buyer executes the buy command the smart contract takes 0,1%
-        commission to our account.
+        {{ t('priceList.secondaryMarketplaceDescription') }}
       </p>
-      <p><RouterLink to="/buy-gold-coins">Service link</RouterLink></p>
+      <p><RouterLink to="/buy-gold-coins">{{ t('priceList.serviceLink') }}</RouterLink></p>
 
-      <h2>Physical delivery</h2>
-      <p>Our commission: 0,9 gold token</p>
-      <p>Postal services: 0,8% of requested insurance price</p>
-      <p>Owner of the NFT can request physical deliver to EEC countries.</p>
-      <p><RouterLink to="/buy-gold-coins">Service link</RouterLink></p>
+      <h2>{{ t('priceList.physicalDelivery') }}</h2>
+      <p>{{ t('priceList.ourCommission') }} 0,9 gold token</p>
+      <p>{{ t('priceList.postalServices') }}</p>
+      <p>{{ t('priceList.physicalDeliveryDescription') }}</p>
+      <p><RouterLink to="/buy-gold-coins">{{ t('priceList.serviceLink') }}</RouterLink></p>
     </Panel></Layout
   >
 </template>

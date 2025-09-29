@@ -116,7 +116,13 @@
     "bankCharges": "Ihre Bank kann Ihnen zusätzliche Gebühren berechnen. Wir erstatten Ihnen alle Gebühren auf unser Bankkonto (SEPA-Standard und SEPA-Sofortüberweisungen sind kostenlos. Dies gilt hauptsächlich für SWIFT-Zahlungen).",
     "rfqPrice": "RFQ-Preis wird als Höchstpreis aus mehreren Gold-Verkaufspreisquellen berechnet.",
     "rfqFinal": "Ihr RFQ-Preis ist endgültig und beinhaltet die Provision.",
-    "addGoldDescription": "Wenn wir eine echte Goldmünze oder einen Barren kaufen, geben wir den Preis dieses Kaufs als numismatischen Wert zum Zeitpunkt des Kaufs an das NFT an. Dieser numismatische Preis wird im Gold-Token-Preis ausgedrückt, was bedeutet, dass der Preis geteilt durch Gramm Gold beim Kauf den tatsächlichen Prozentsatz des numismatischen Werts ergibt. Wir fügen normalerweise 3% zu diesem Preis hinzu und verkaufen ihn über NFT-Verkauf an die Öffentlichkeit. Der hinzugefügte numismatische Wert kann sich in besonderen Fällen wie seltenen Münzen ändern oder bei einigen reduzierten Verkäufen niedriger sein."
+    "addGoldDescription": "Wenn wir eine echte Goldmünze oder einen Barren kaufen, geben wir den Preis dieses Kaufs als numismatischen Wert zum Zeitpunkt des Kaufs an das NFT an. Dieser numismatische Preis wird im Gold-Token-Preis ausgedrückt, was bedeutet, dass der Preis geteilt durch Gramm Gold beim Kauf den tatsächlichen Prozentsatz des numismatischen Werts ergibt. Wir fügen normalerweise 3% zu diesem Preis hinzu und verkaufen ihn über NFT-Verkauf an die Öffentlichkeit. Der hinzugefügte numismatische Wert kann sich in besonderen Fällen wie seltenen Münzen ändern oder bei einigen reduzierten Verkäufen niedriger sein.",
+    "secondaryMarketplace": "Sekundärmarkt",
+    "physicalDelivery": "Physische Lieferung",
+    "priceStoredOnBlockchain": "Der Preis im E-Shop wird auf der Blockchain gespeichert, und wenn eine Person den Preis in asa.gold Token bezahlt, zahlt sie ihn direkt an das Reservenkonto zurück, wodurch der Token effektiv verbrannt wird. Der gesamte Prozess wird durch einen Smart Contract gesteuert.",
+    "secondaryMarketplaceDescription": "Der Besitzer des NFT kann seinen Token zum Verkauf anbieten. Er kann mehrere Kombinationen von Preis und zu erhaltenden Token wählen, und wenn der Käufer den Kaufbefehl ausführt, nimmt der Smart Contract 0,1% Provision für unser Konto.",
+    "postalServices": "Postdienste: 0,8% des angeforderten Versicherungspreises",
+    "physicalDeliveryDescription": "Der Besitzer des NFT kann eine physische Lieferung in EWR-Länder beantragen."
   },
   "carousel": {
     "buyGoldNftTrade": "Kaufen Sie das Goldmünzen-NFT, handeln Sie das NFT oder fordern Sie physische Lieferung an"
@@ -166,7 +172,9 @@
     "daoToken": "DAO Token",
     "goldToken": "Gold Token",
     "resources": "RESSOURCEN",
-    "contactUsSection": "KONTAKT"
+    "contactUsSection": "KONTAKT",
+    "mainNet": "Hauptnetz",
+    "testNet": "Testnetz"
   },
   "terms": {
     "title": "Geschäftsbedingungen, MiCA-Dokumente, Garantie und Beschwerden",

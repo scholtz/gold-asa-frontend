@@ -76,10 +76,10 @@ onBeforeUnmount(() => {
       >
         <div class="text-900 text-xl mb-3 font-medium">{{ t('footer.resources') }}</div>
         <div class="font-style-div">
-          <a href="https://www.asa.gold/">MainNet</a>
+          <a href="https://www.asa.gold/">{{ t('footer.mainNet') }}</a>
         </div>
         <div class="font-style-div">
-          <a href="https://testnet.asa.gold/">TestNet</a>
+          <a href="https://testnet.asa.gold/">{{ t('footer.testNet') }}</a>
         </div>
 
         <div class="font-style-div">
@@ -102,7 +102,7 @@ onBeforeUnmount(() => {
             : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style contactus'
         "
       >
-        <div class="text-900 text-xl mb-3 font-medium ml-2">Contact US</div>
+        <div class="text-900 text-xl mb-3 font-medium ml-2">{{ t('footer.contactUs') }}</div>
         <a href="https://discord.gg/8m4KTcVSH9">
           <Button icon="pi pi-discord" severity="info" text raised rounded aria-label="User" />
         </a>
