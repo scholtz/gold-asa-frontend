@@ -7,9 +7,11 @@ import cs from './locales/cs.json'
 import pl from './locales/pl.json'
 import de from './locales/de.json'
 import es from './locales/es.json'
+import hu from './locales/hu.json'
+import zh from './locales/zh.json'
 
 // Supported locales
-export const SUPPORTED_LOCALES = ['en', 'sk', 'cs', 'pl', 'de', 'es']
+export const SUPPORTED_LOCALES = ['en', 'sk', 'cs', 'pl', 'de', 'es', 'hu', 'zh']
 
 // Default locale
 const DEFAULT_LOCALE = 'en'
@@ -56,7 +58,9 @@ export const i18n = createI18n({
     cs,
     pl,
     de,
-    es
+    es,
+    hu,
+    zh
   }
 })
 
@@ -93,7 +97,9 @@ export const LOCALE_NAMES = {
   cs: 'Čeština',
   pl: 'Polski',
   de: 'Deutsch',
-  es: 'Español'
+  es: 'Español',
+  hu: 'Magyar',
+  zh: '中文'
 } as const
 
 export default i18n
