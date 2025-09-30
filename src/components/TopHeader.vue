@@ -1,40 +1,39 @@
 <script setup lang="ts">
 import { useRouter, RouterLink } from 'vue-router'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import Menubar from 'primevue/menubar'
 import Button from 'primevue/button'
 import Badge from 'primevue/badge'
 import { useAppStore } from '@/stores/app'
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from './LanguageSwitcher.vue'
+
 const props = defineProps<{
   hideTopMenu: boolean
 }>()
 
+const { t } = useI18n()
 const router = useRouter()
 const store = useAppStore()
 
-const items = ref([
+const items = computed(() => [
   {
-    label: 'Home',
+    label: t('navigation.home'),
     icon: 'pi pi-fw pi-home',
     route: '/'
   },
-  // {
-  //   label: 'Fiat payment',
-  //   icon: 'pi pi-fw pi-money-bill',
-  //   route: '/buy-gold-with-eur'
-  // },
   {
-    label: 'DEX trading',
+    label: t('trading.dexTrading'),
     icon: 'pi pi-fw pi-bitcoin',
     route: '/trade-gold'
   },
   {
-    label: 'Buy gold coins',
+    label: t('navigation.buyGoldCoins'),
     icon: 'pi pi-fw pi-shopping-cart',
     route: '/buy-gold-coins'
   },
   {
-    label: 'Proof of reserves',
+    label: t('navigation.proofOfReserves'),
     icon: 'pi pi-fw pi-verified',
     route: '/proof-of-reserve'
   }
@@ -117,6 +116,7 @@ onUnmounted(() => {
       </template>
       <template #end>
         <div class="flex align-items-center gap-2 allitems">
+          <LanguageSwitcher class="mr-3" />
           <Badge
             class="align-self-center mr-3"
             v-if="store.state.env == 'testnet-v1.0'"

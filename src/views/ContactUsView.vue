@@ -4,6 +4,9 @@ import Layout from '@/layouts/AuthLayout.vue'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const datas = ref([
   {
@@ -64,10 +67,10 @@ const selection = ref({})
         >
           <div class="welcome-content">
             <h3 class="rn-sub-badge" data-aos="fade-down">
-              <span class="title">Contact US</span>
+              <span class="title">{{ t('contact.title') }}</span>
             </h3>
             <h3 class="rn-sub-badge" data-aos="fade-down">
-              <span class="subtitle">About ASA.Gold Project</span>
+              <span class="subtitle">{{ t('contact.subtitle') }}</span>
             </h3>
           </div>
         </div>
@@ -107,11 +110,11 @@ const selection = ref({})
                   ></i>
                 </div>
                 <div class="inner">
-                  <h4 class="title">Inquiries</h4>
+                  <h4 class="title">{{ t('contact.inquiries') }}</h4>
                   <p>
-                    General : <br /><br /><a href="mailto:support@asa.gold">support@asa.gold</a>
+                    {{ t('common.general') }} : <br /><br /><a href="mailto:support@asa.gold">support@asa.gold</a>
                   </p>
-                  <p>Orders : <br /><br /><a href="mailto:orders@asa.gold">orders@asa.gold</a></p>
+                  <p>{{ t('common.orders') }} : <br /><br /><a href="mailto:orders@asa.gold">orders@asa.gold</a></p>
                 </div>
               </div>
             </div>

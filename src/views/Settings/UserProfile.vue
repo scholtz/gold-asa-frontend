@@ -6,12 +6,15 @@ import InputText from 'primevue/inputtext'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore } from '@/stores/app'
 import SelectButton from 'primevue/selectbutton'
-import { onMounted, reactive, watch } from 'vue'
+import { onMounted, reactive, watch, computed } from 'vue'
 import Dropdown from 'primevue/dropdown'
 import countries from '../../scripts/common/countries'
 import { bffGetProfile, bffUpdateProfile } from '@/scripts/axios/BFF'
 import type IProfile from '@/types/IProfile'
 import { useToast } from 'primevue/usetoast'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const store = useAppStore()
 
 const emptyProfile: IProfile = {
@@ -40,16 +43,16 @@ const emptyProfile: IProfile = {
   }
 }
 const state = reactive({
-  legalEntityOptions: [
+  legalEntityOptions: computed(() => [
     {
-      name: 'Natural person',
+      name: t('profile.naturalPerson'),
       value: 'natural-person'
     },
     {
-      name: 'Legal entity',
+      name: t('profile.legalEntity'),
       value: 'legal-entity'
     }
-  ],
+  ]),
   profile: emptyProfile,
   saving: false,
   saved: false
@@ -79,7 +82,7 @@ async function storeProfile() {
     } else {
       toast.add({
         severity: 'error',
-        detail: 'Error occured:' + err.message,
+        detail: t('profile.errorOccurred') + ' ' + err.message,
         life: 5000
       })
     }
@@ -105,7 +108,7 @@ onMounted(async () => {
 <template>
   <Layout :hideTopMenu="true">
     <MenuLevel2Settings />
-    <Panel header="User profile" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
+    <Panel :header="t('profile.title')" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
       <div class="grid">
         <div class="col-12 md:col-6">
           <div class="field grid">
@@ -121,7 +124,7 @@ onMounted(async () => {
             </div>
           </div>
           <div class="field grid">
-            <label for="firstname" class="col-12 mb-2 md:col-4 md:mb-0">Firstname</label>
+            <label for="firstname" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.firstName') }}</label>
             <div class="col-12 md:col-8">
               <InputText
                 id="firstname"
@@ -132,7 +135,7 @@ onMounted(async () => {
             </div>
           </div>
           <div class="field grid">
-            <label for="lastname" class="col-12 mb-2 md:col-4 md:mb-0">Lastname</label>
+            <label for="lastname" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.lastName') }}</label>
             <div class="col-12 md:col-8">
               <InputText
                 id="lastname"
@@ -143,21 +146,21 @@ onMounted(async () => {
             </div>
           </div>
           <div class="field grid" v-if="state.profile.legalEntity == 'legal-entity'">
-            <label for="company" class="col-12 mb-2 md:col-4 md:mb-0">Company name</label>
+            <label for="company" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.companyName') }}</label>
             <div class="col-12 md:col-8">
               <InputText id="company" type="text" class="w-full" v-model="state.profile.company" />
             </div>
           </div>
           <div class="field grid" v-if="state.profile.legalEntity == 'legal-entity'">
-            <label for="taxid" class="col-12 mb-2 md:col-4 md:mb-0">Tax ID</label>
+            <label for="taxid" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.taxId') }}</label>
             <div class="col-12 md:col-8">
               <InputText id="taxid" type="text" class="w-full" v-model="state.profile.taxId" />
             </div>
           </div>
 
-          <Panel header="Delivery address">
+          <Panel :header="t('profile.deliveryAddress')">
             <div class="field grid">
-              <label for="deliveryStreet" class="col-12 mb-2 md:col-4 md:mb-0">Street</label>
+              <label for="deliveryStreet" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.street') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="deliveryStreet"
@@ -168,7 +171,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="deliveryCity" class="col-12 mb-2 md:col-4 md:mb-0">City</label>
+              <label for="deliveryCity" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.city') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="deliveryCity"
@@ -179,7 +182,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="deliveryZip" class="col-12 mb-2 md:col-4 md:mb-0">ZIP code</label>
+              <label for="deliveryZip" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.zipCode') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="deliveryZip"
@@ -190,7 +193,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="deliveryCountry" class="col-12 mb-2 md:col-4 md:mb-0">Country</label>
+              <label for="deliveryCountry" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.country') }}</label>
               <div class="col-12 md:col-8">
                 <Dropdown
                   filter
@@ -207,9 +210,9 @@ onMounted(async () => {
           </Panel>
         </div>
         <div class="col-12 md:col-6">
-          <Panel header="Your residential address">
+          <Panel :header="t('profile.residentialAddress')">
             <div class="field grid">
-              <label for="residentialStreet" class="col-12 mb-2 md:col-4 md:mb-0">Street</label>
+              <label for="residentialStreet" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.street') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="residentialStreet"
@@ -220,7 +223,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="residentialCity" class="col-12 mb-2 md:col-4 md:mb-0">City</label>
+              <label for="residentialCity" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.city') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="residentialCity"
@@ -231,7 +234,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="residentialZip" class="col-12 mb-2 md:col-4 md:mb-0">ZIP code</label>
+              <label for="residentialZip" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.zipCode') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="residentialZip"
@@ -242,7 +245,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="residentialCountry" class="col-12 mb-2 md:col-4 md:mb-0">Country</label>
+              <label for="residentialCountry" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.country') }}</label>
               <div class="col-12 md:col-8">
                 <Dropdown
                   filter
@@ -258,12 +261,12 @@ onMounted(async () => {
             </div>
           </Panel>
           <Panel
-            header="Company address"
+            :header="t('profile.companyAddress')"
             class="my-2"
             v-if="state.profile.legalEntity == 'legal-entity'"
           >
             <div class="field grid">
-              <label for="companyStreet" class="col-12 mb-2 md:col-4 md:mb-0">Street</label>
+              <label for="companyStreet" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.street') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="companyStreet"
@@ -274,7 +277,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="companyCity" class="col-12 mb-2 md:col-4 md:mb-0">City</label>
+              <label for="companyCity" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.city') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="companyCity"
@@ -285,7 +288,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="companyZip" class="col-12 mb-2 md:col-4 md:mb-0">ZIP code</label>
+              <label for="companyZip" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.zipCode') }}</label>
               <div class="col-12 md:col-8">
                 <InputText
                   id="companyZip"
@@ -296,7 +299,7 @@ onMounted(async () => {
               </div>
             </div>
             <div class="field grid">
-              <label for="companyCountry" class="col-12 mb-2 md:col-4 md:mb-0">Country</label>
+              <label for="companyCountry" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.country') }}</label>
               <div class="col-12 md:col-8">
                 <Dropdown
                   filter

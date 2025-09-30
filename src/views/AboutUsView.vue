@@ -6,6 +6,9 @@ import 'aos/dist/aos.css'
 import Card from 'primevue/card'
 import Timeline from 'primevue/timeline'
 import { onMounted, onBeforeUnmount } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const isMobile = ref(false)
 const events = ref([
   {
@@ -168,7 +171,7 @@ AOS.init({
         >
           <div class="welcome-content">
             <h3 class="rn-sub-badge" data-aos="fade-down">
-              <span class="title mt-5">About ASA.Gold project</span>
+              <span class="title mt-5">{{ t('home.aboutAsaGoldProject') }}</span>
             </h3>
             <p data-aos="zoom-in">
               The startup ASA.Gold has been started in October 2023 with goal to tokenize real world

@@ -1,0 +1,200 @@
+{
+  "common": {
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "close": "Schließen",
+    "submit": "Senden",
+    "back": "Zurück",
+    "next": "Weiter",
+    "yes": "Ja",
+    "no": "Nein",
+    "general": "Allgemein",
+    "orders": "Bestellungen"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "settings": "Einstellungen",
+    "trade": "Handel",
+    "profile": "Profil",
+    "buyGoldCoins": "Gold Münzen kaufen",
+    "proofOfReserves": "Nachweis der Reserven"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Über das ASA.Gold Projekt",
+    "inquiries": "Anfragen",
+    "generalEmail": "support@asa.gold",
+    "ordersEmail": "orders@asa.gold",
+    "teamTitle": "Unser großartiges Team-Organigramm",
+    "teamDescription": "Everyday Algonaut ist Hauptgründer und CEO des ASA.Gold-Projekts.",
+    "ceoTitle": "Geschäftsführer",
+    "ceoDescription": "Ludo, Everyday Algonaut, ist Gründer von ASA.Gold, AWallet, Vote Coin und anderen bedeutenden Algorand-Projekten.",
+    "cooTitle": "Betriebsleiter",
+    "cooDescription": "Olga ist gut im Betrieb und in der Verwaltung der rechtlichen Aktivitäten des Unternehmens.",
+    "cfoTitle": "Finanzvorstand",
+    "cfoDescription": "Michał ist ein erfahrener Aktien- und Rohstoffhändler mit Sitz in der Schweiz.",
+    "cmoTitle": "Marketingleiter",
+    "cmoDescription": "Samo hat umfangreiche Kenntnisse im Betrieb von E-Shops und Online-Diensten.",
+    "ctoTitle": "Technischer Leiter",
+    "ctoDescription": "Daniel ist Experte für Blockchain-Technologie und deren Adoption."
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "resetConfiguration": "Konfiguration zurücksetzen",
+    "dangerZone": "Gefahrenzone",
+    "emailVerification": "E-Mail-Verifizierung"
+  },
+  "profile": {
+    "title": "Benutzerprofil",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "companyName": "Firmenname",
+    "taxId": "Steuernummer",
+    "deliveryAddress": "Lieferadresse",
+    "residentialAddress": "Ihre Wohnadresse",
+    "companyAddress": "Firmenadresse",
+    "street": "Straße",
+    "city": "Stadt",
+    "zipCode": "Postleitzahl",
+    "country": "Land",
+    "naturalPerson": "Natürliche Person",
+    "legalEntity": "Juristische Person",
+    "saveProfile": "Profil speichern",
+    "profileSaved": "Profil erfolgreich gespeichert",
+    "errorOccurred": "Ein Fehler ist aufgetreten:"
+  },
+  "trading": {
+    "dexTrading": "DEX Handel",
+    "goldToken": "Gold Token",
+    "listOfGoldCoins": "Liste aller Goldmünzen",
+    "priceList": "Preisliste - Liste aller von asa.gold angebotenen Dienstleistungen und deren Preise",
+    "exploreDecentralizedTrading": "Erkunden Sie den dezentralen Handel"
+  },
+  "governance": {
+    "governanceToken": "ASA.Gold Governance Token",
+    "daoTokenDescription": "DAO Governance Token für das goldgedeckte Projekt - ASA.Gold. Ermöglicht Gemeinschaftsmitgliedern, Projektentscheidungen durch einen transparenten, onchain, öffentlich auditierbaren Prozess zu beeinflussen. Gestalten Sie die Zukunft goldgedeckter digitaler Assets kollaborativ und sorgen Sie für Vertrauen, Fairness und einen Anteil am Erfolg von ASA.Gold. Treten Sie jetzt der Gold-Revolution bei!",
+    "verifiedBy": "Verifiziert",
+    "since": "seit",
+    "priceDevelopment": "Preisentwicklung",
+    "pitchDeck": "Pitch Deck"
+  },
+  "tokens": {
+    "goldTokenMainnetId": "Gold Token Algorand Mainnet ID:",
+    "governanceTokenMainnetId": "ASA.Gold Governance Token Algorand Mainnet ID:",
+    "reservesAddress": "Adresse, die alle Gold-Reserven NFTs hält:",
+    "goldTokenWhitePaper": "Gold Token Whitepaper:",
+    "daoTokenWhitePaper": "GoldDAO Token Whitepaper:",
+    "goldTokenDescription": "ASA.Gold ist der bahnbrechende öffentlich auditierbare Gold Token. Gedeckt durch physische Goldreserven sorgt unser Onchain-Shop für Echtzeit-Audits, die für alle zugänglich sind und die Authentizität und den Wert jedes Tokens garantieren. Investieren Sie mit Vertrauen in eine neue Ära goldgedeckter digitaler Assets, in der Vertrauen und Verantwortlichkeit nahtlos zusammenfließen.",
+    "downloadAsaGold": "ASA.Gold herunterladen"
+  },
+  "home": {
+    "aurumStandardAsset": "Aurum Standard Asset",
+    "letsBreakGoldMarket": "Bringen wir den Goldmarkt auf die nächste Stufe",
+    "buyTheGoldCoin": "Goldmünze kaufen",
+    "aboutAsaGoldProject": "Über das ASA.Gold Projekt",
+    "goldMarketRevolution": "Wir bringen Revolution zum Goldmarkt",
+    "buyUseAudit": "Kaufen, verwenden oder verkaufen Sie Gold-Token, die durch echtes Gold gedeckt sind. Jeder kann unsere Reserven auditieren - das verkaufen wir im E-Shop. Besuchen Sie unseren Gold-E-Shop inklusive Sekundärmarktplatz. Jede Goldmünze hat ihr NFT, das mit Smart Contract oder DeFi gehandelt werden kann. NFTs im Lager können per Paketlieferung im EU-Bereich angefordert werden.",
+    "startupDescription": "Das Startup ASA.Gold wurde im Oktober 2023 mit dem Ziel gestartet, reale Vermögenswerte zu tokenisieren, denen Benutzer voll vertrauen können. Um dies zu ermöglichen, stellten wir die Hypothese auf, dass wenn eine Person im E-Shop ein beliebiges Produkt auswählen und es an sie geliefert werden kann, sie darauf vertraut, dass auch alle anderen Produkte echt sind. ASA.Gold hat aufgrund dieser öffentlichen Aufsicht keine Motivation zu betrügen.",
+    "revolutionDescription": "Das Gewicht des Goldes in den Reserven ist immer höher als geprägte goldgedeckte Token. Dies wird durch Smart Contract im öffentlichen Blockchain-Netzwerk - Algorand sichergestellt."
+  },
+  "priceList": {
+    "buyGoldTokenDex": "Gold-Token mit DEX-Aggregator kaufen",
+    "sellGoldTokenDex": "Gold-Token mit DEX-Aggregator verkaufen",
+    "buyGoldTokenBank": "Gold-Token per Banküberweisung kaufen",
+    "addGoldCoin": "Goldmünze zu Reserven hinzufügen",
+    "ourCommission": "Unsere Provision:",
+    "serviceLink": "Service-Link",
+    "dexCharges": "DEX-Aggregator berechnet ca. 0,1% vom Volumen und je nach gewählten AMM-Pools werden Liquiditäts-Slippage-Gebühren berechnet.",
+    "bankCharges": "Ihre Bank kann Ihnen zusätzliche Gebühren berechnen. Wir erstatten Ihnen alle Gebühren auf unser Bankkonto (SEPA-Standard und SEPA-Sofortüberweisungen sind kostenlos. Dies gilt hauptsächlich für SWIFT-Zahlungen).",
+    "rfqPrice": "RFQ-Preis wird als Höchstpreis aus mehreren Gold-Verkaufspreisquellen berechnet.",
+    "rfqFinal": "Ihr RFQ-Preis ist endgültig und beinhaltet die Provision.",
+    "addGoldDescription": "Wenn wir eine echte Goldmünze oder einen Barren kaufen, geben wir den Preis dieses Kaufs als numismatischen Wert zum Zeitpunkt des Kaufs an das NFT an. Dieser numismatische Preis wird im Gold-Token-Preis ausgedrückt, was bedeutet, dass der Preis geteilt durch Gramm Gold beim Kauf den tatsächlichen Prozentsatz des numismatischen Werts ergibt. Wir fügen normalerweise 3% zu diesem Preis hinzu und verkaufen ihn über NFT-Verkauf an die Öffentlichkeit. Der hinzugefügte numismatische Wert kann sich in besonderen Fällen wie seltenen Münzen ändern oder bei einigen reduzierten Verkäufen niedriger sein.",
+    "secondaryMarketplace": "Sekundärmarkt",
+    "physicalDelivery": "Physische Lieferung",
+    "priceStoredOnBlockchain": "Der Preis im E-Shop wird auf der Blockchain gespeichert, und wenn eine Person den Preis in asa.gold Token bezahlt, zahlt sie ihn direkt an das Reservenkonto zurück, wodurch der Token effektiv verbrannt wird. Der gesamte Prozess wird durch einen Smart Contract gesteuert.",
+    "secondaryMarketplaceDescription": "Der Besitzer des NFT kann seinen Token zum Verkauf anbieten. Er kann mehrere Kombinationen von Preis und zu erhaltenden Token wählen, und wenn der Käufer den Kaufbefehl ausführt, nimmt der Smart Contract 0,1% Provision für unser Konto.",
+    "postalServices": "Postdienste: 0,8% des angeforderten Versicherungspreises",
+    "physicalDeliveryDescription": "Der Besitzer des NFT kann eine physische Lieferung in EWR-Länder beantragen."
+  },
+  "carousel": {
+    "buyGoldNftTrade": "Kaufen Sie das Goldmünzen-NFT, handeln Sie das NFT oder fordern Sie physische Lieferung an"
+  },
+  "proofOfReserves": {
+    "title": "Nachweis der Reserven:",
+    "description": "Das Gewicht des Goldes in den physischen Reserven ({reserves}) ist immer höher als geprägte goldgedeckte Token ({minted} Gramm). Dies wird durch Smart Contract im öffentlichen Blockchain-Netzwerk - Algorand sichergestellt. Das Gewicht des Goldes der physischen Reserven ist die Summe der Goldzusammensetzung jedes Goldgegenstands in den Reserven, die in unserem E-Shop oder auf dieser Website beobachtet werden kann. Das geprägte Gold ist alles Gold im Umlauf, im technischen Begriff für Algorand, die ursprünglich geprägte Menge minus die Anzahl der Token auf dem Reservenkonto. Jeder Verkauf eines Goldgegenstands aus den Reserven wird zurück auf das Reservenkonto geleitet.",
+    "disadvantagesTitle": "Nachteile von Gold sind:",
+    "disadvantage1": "Kein Einkommen oder Rendite - Gold generiert von sich aus kein Einkommen oder Rendite. Im Gegensatz zu Aktien oder Anleihen, die Dividenden oder Zinsen bieten können, produziert das Halten von Gold keinen periodischen Cashflow.",
+    "disadvantage2": "Mangel an Cashflow - Gold generiert keinen Cashflow, was bedeutet, dass Investoren Gelegenheiten verpassen können, in Vermögenswerte zu reinvestieren, die Einkommen produzieren.",
+    "advantage1": "Sie können Ihr Gold in AMMs staken und Rendite generieren",
+    "advantage2": "Selbstverwahrung - Ihre Schlüssel Ihre Krypto",
+    "advantage3": "Nicht teilbar - Wenn Sie 1 Goldmünze besitzen, werden Sie sie wahrscheinlich nicht halbieren, wenn Sie nur die Hälfte des Preises zahlen müssen.",
+    "tokenizedGoldTitle": "Bei tokenisiertem Gold gelten diese Nachteile nicht.",
+    "algorandFeaturesSubtitle": "Jetzt können Sie die Kombination von Algorands Funktionen mit dem Goldmarkt genießen.",
+    "fastTransactions": "Transaktionsfinalität schneller als bei Kreditkarte",
+    "lowCosts": "Fast null Transaktionskosten (0.001 algo ~ $0.0001)",
+    "stakeGold": "Sie können Ihr Gold in AMMs staken und Rendite generieren",
+    "selfCustody": "Selbstverwahrung - Ihre Schlüssel Ihre Krypto",
+    "fractionable": "Sie können Gold bis zu 6 Dezimalstellen eines Goldgramms teilen ~ $0,00005",
+    "unableToLoad": "Informationen können momentan nicht geladen werden"
+  },
+  "reserves": {
+    "sumOfGoldInReserves": "Summe des Goldes in Reserven",
+    "learnAboutProofOfReserves": "Erfahren Sie mehr über den Nachweis der Reserven",
+    "weBringRevolutionToGoldMarket": "Wir bringen Revolution zum Goldmarkt",
+    "asaGoldTokenId": "Asa.Gold Token ID",
+    "mintedTokens": "Geprägte Token",
+    "reserves": "Reserven"
+  },
+  "productDetails": {
+    "serialNumber": "Seriennummer",
+    "diameter": "Durchmesser",
+    "fitness": "Zustand",
+    "weightOfCoin": "Gewicht der Münze",
+    "story": "Geschichte",
+    "buy": "Kaufen"
+  },
+  "footer": {
+    "ourLinks": "Unsere Links",
+    "contactUs": "Kontaktieren Sie uns",
+    "aboutAsaGoldProject": "Über das ASA.Gold Projekt",
+    "gdprPolicy": "DSGVO-Richtlinie",
+    "termsAndAgreement": "Geschäftsbedingungen und Vereinbarung",
+    "settings": "Einstellungen",
+    "priceList": "Preisliste",
+    "daoToken": "DAO Token",
+    "goldToken": "Gold Token",
+    "resources": "RESSOURCEN",
+    "contactUsSection": "KONTAKT",
+    "mainNet": "Hauptnetz",
+    "testNet": "Testnetz"
+  },
+  "terms": {
+    "title": "Geschäftsbedingungen, MiCA-Dokumente, Garantie und Beschwerden",
+    "description": "Diese Geschäftsbedingungen gelten zwischen Ihnen als Person oder juristische Person und dem ASA.Gold-Anbieter.",
+    "serviceProvider": "ASA.Gold Dienstleister",
+    "acceptanceOfTerms": "Annahme der Bedingungen",
+    "providerInfo": "Scholtz & Company, jsa, ICO 51882272, ist ASA.Gold Dienstleister."
+  },
+  "privacy": {
+    "title": "Datenschutzrichtlinie",
+    "gdprCompliance": "DSGVO-Konformität",
+    "dataCollection": "Datensammlung"
+  },
+  "emailVerification": {
+    "byVerifying": "Durch die Verifizierung Ihrer E-Mail akzeptieren Sie die",
+    "ofOurService": "unseres Dienstes."
+  },
+  "company": {
+    "companyId": "ID : 51882272",
+    "vatId": "USt-IdNr. : 2120828105",
+    "address": "Adresse : Švabinského 21, 851 01 Bratislava, Slowakei"
+  }
+}

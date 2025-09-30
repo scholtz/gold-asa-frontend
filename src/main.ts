@@ -8,6 +8,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n'
 
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
@@ -18,6 +19,7 @@ const app = createApp(App)
 
 app.use(PrimeVue, { ripple: true })
 app.use(ToastService)
+app.use(i18n)
 
 app.use(createPinia())
 app.use(router)

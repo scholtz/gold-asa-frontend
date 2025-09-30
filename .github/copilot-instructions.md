@@ -20,6 +20,7 @@ ASA.Gold is a revolutionary gold-backed token platform built on the Algorand blo
 - **Blockchain**: Algorand with custom smart contracts
 - **Authentication**: algorand-authentication-component-vue
 - **State Management**: Pinia stores
+- **Internationalization**: Vue I18n v9 with 6 languages
 - **Build Tool**: Vite
 - **Testing**: Vitest for unit tests, Cypress for e2e tests
 
@@ -97,6 +98,93 @@ import Layout from '@/layouts/AuthLayout.vue'
 - Leverage PrimeVue components for consistent UI
 - Apply responsive design with PrimeFlex grid system
 - Use AOS (Animate On Scroll) for page animations
+
+### Internationalization (i18n)
+
+#### Overview
+The application supports 6 languages with Vue I18n v9:
+- **English** (en) - Default/fallback language
+- **Slovak** (sk) - Slovenčina
+- **Czech** (cs) - Čeština  
+- **Polish** (pl) - Polski
+- **German** (de) - Deutsch
+- **Spanish** (es) - Español
+
+#### Language Detection and Persistence
+- **Browser Detection**: Automatically detects user's browser language on first visit
+- **localStorage Persistence**: User's language choice is saved and restored on return
+- **Fallback**: Defaults to English for unsupported languages
+
+#### Component Usage Patterns
+```vue
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+</script>
+
+<template>
+  <Panel :header="t('profile.title')">
+    <label>{{ t('profile.firstName') }}</label>
+    <Button>{{ t('common.save') }}</Button>
+  </Panel>
+</template>
+```
+
+#### Translation File Structure
+All translations are stored in `src/locales/{locale}.json` with hierarchical keys:
+```json
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading..."
+  },
+  "profile": {
+    "title": "User profile",
+    "firstName": "Firstname"
+  },
+  "navigation": {
+    "home": "Home",
+    "settings": "Settings"
+  }
+}
+```
+
+#### Adding New Translations
+1. **Add to English first**: Always add new keys to `src/locales/en.json`
+2. **Update all languages**: Translate the key in all 6 language files
+3. **Use hierarchical keys**: Group related translations (e.g., `profile.firstName`)
+4. **Consistent naming**: Use camelCase for keys
+
+#### Best Practices
+- **Reactive computed for dynamic content**: Use `computed()` for options lists
+- **Template interpolation**: Use `{{ t('key') }}` for text content
+- **Dynamic properties**: Use `:header="t('key')"` for component props
+- **Error messages**: Always translate user-facing error messages
+- **Parameterized translations**: Use `t('key', { param: value })` for dynamic values
+
+#### Language Switcher
+The `LanguageSwitcher` component is available in TopHeader:
+- Shows language names in native language
+- Persists selection to localStorage
+- Updates document language attribute
+- Available in all authenticated layouts
+
+#### Development Workflow
+When adding new features:
+1. Identify all user-facing text
+2. Add translation keys to English locale file
+3. Translate to all 6 languages 
+4. Update component to use `useI18n()` and `t()` function
+5. Test language switching functionality
+
+#### Translation Guidelines
+- **Consistent terminology**: Use same terms across the app
+- **Context awareness**: Consider cultural differences in translations
+- **Length considerations**: Account for text expansion in different languages
+- **Professional tone**: Maintain business-appropriate language
+- **Technical terms**: Keep blockchain/crypto terms in English when appropriate
 
 ### Smart Contract Development
 

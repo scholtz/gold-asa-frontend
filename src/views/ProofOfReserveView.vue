@@ -14,6 +14,9 @@ import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import getAsa from '@/scripts/algo/getAsa'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 import Button from 'primevue/button'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const store = useAppStore()
 
 const state = reactive({
@@ -52,41 +55,39 @@ const events = ref()
 const makeEventTexts = () => {
   events.value = [
     {
-      status: 'Proof of reserves:',
+      status: t('proofOfReserves.title'),
       date: '15/10/2020 10:30',
       icon: 'pi pi-comment',
       color: '#9C27B0',
       description: [
-        `Weight of gold in the physical reserves (${sum()}) is always higher then minted gold backed tokens (${
-          state.mintedTokens
-        } grams). This is ensured by the smart contract on public blockchain network - Algorand. Weight of gold of physical reserves is the sum of gold composition of each gold item in the reserves which can be observed in our eshop or on this website. The minted gold is all gold in the circulation, in technical term for algorand, the original minted amount minus the amount of tokens at the reserves account. Each sale of the gold item from the reserves is routed back to the reserves account.`
+        t('proofOfReserves.description', { reserves: sum(), minted: state.mintedTokens })
       ]
     },
     {
-      status: 'Disadvantages of gold are:',
+      status: t('proofOfReserves.disadvantagesTitle'),
       date: '15/10/2020 10:30',
       icon: 'pi pi-comment',
       color: '#9C27B0',
       description: [
-        "No Income or Yield - Gold doesn't generate any income or yield on its own. Unlike stocks or bonds, which can provide dividends or interest, holding gold won't produce any periodic cash flow.",
-        "Lack of Cash Flow - Gold doesn't generate cash flow, which means investors can miss out on opportunities to reinvest in assets that do produce income.",
-        'You can stake your gold in AMMs and generate yield',
-        'Self custody - your keys your crypto',
-        'Non fractionable - When you own 1 gold coin you are not likely going to split it in half when you need to pay only half of the price.'
+        t('proofOfReserves.disadvantage1'),
+        t('proofOfReserves.disadvantage2'),
+        t('proofOfReserves.advantage1'),
+        t('proofOfReserves.advantage2'),
+        t('proofOfReserves.advantage3')
       ]
     },
     {
-      status: 'With Tokenized Gold This Disadavtages Does Not Apply.',
+      status: t('proofOfReserves.tokenizedGoldTitle'),
       date: '15/10/2020 14:00',
       icon: 'pi pi-comment',
-      subtitle: "Now You Can Enjoy Combination of Algorand's Features With Gold Market.",
+      subtitle: t('proofOfReserves.algorandFeaturesSubtitle'),
       color: '#673AB7',
       description: [
-        'Transaction finality faster then using credit card',
-        'Almost zero transaction costs (0.001 algo ~ $0.0001)',
-        'You can stake your gold in AMMs and generate yield',
-        'Self custody - your keys your crypto',
-        'You can fraction gold up to 6 decimals of gold gram ~ $0,00005'
+        t('proofOfReserves.fastTransactions'),
+        t('proofOfReserves.lowCosts'),
+        t('proofOfReserves.stakeGold'),
+        t('proofOfReserves.selfCustody'),
+        t('proofOfReserves.fractionable')
       ]
     }
   ]
@@ -106,7 +107,7 @@ const loadMintedTokens = async () => {
   const algod = getAlgodClient(store.state)
   const asa = await getAsa({ assetId: store.state.tokens.gold, client: algod })
   if (!asa) {
-    state.mintedTokens = 'Unable to load info at the moment'
+    state.mintedTokens = t('proofOfReserves.unableToLoad')
     return
   }
   const total = Number(asa.params.total)
@@ -131,7 +132,7 @@ const loadMintedTokens = async () => {
           class="col-md-12 col-sm-12 text-secondary welcome-banner text-center nav-text text-center"
         >
           <div class="welcome-content">
-            <h1 class="title" data-aos="fade-down">We Bring Revolution To Gold Market</h1>
+            <h1 class="title" data-aos="fade-down">{{ t('reserves.weBringRevolutionToGoldMarket') }}</h1>
           </div>
         </div>
       </div>
@@ -196,15 +197,15 @@ const loadMintedTokens = async () => {
                 </i>
               </div>
               <div class="inner">
-                <h4 class="title text-primary">Reserves</h4>
+                <h4 class="title text-primary">{{ t('reserves.reserves') }}</h4>
                 <div>
-                  <h3 class="title text-primary">Asa.Gold Token ID</h3>
+                  <h3 class="title text-primary">{{ t('reserves.asaGoldTokenId') }}</h3>
                   <a class="text-300" :href="explorerLink()" target="_blank">
                     <Button secondary>{{ store.state.tokens.gold }}</Button>
                   </a>
                 </div>
                 <div>
-                  <h3 class="title text-primary">Minted Tokens</h3>
+                  <h3 class="title text-primary">{{ t('reserves.mintedTokens') }}</h3>
                   <span v-if="state.mintedTokens" class="text-primary">{{
                     state.mintedTokens
                   }}</span>
@@ -231,9 +232,9 @@ const loadMintedTokens = async () => {
       </div>
       <div class="container">
         <div class="section-title">
-          <h2 class="title">Learn About Proof Of Reserves</h2>
+          <h2 class="title">{{ t('reserves.learnAboutProofOfReserves') }}</h2>
           <div class="bar"></div>
-          <p>We Bring Revolution To Gold Market</p>
+          <p>{{ t('reserves.weBringRevolutionToGoldMarket') }}</p>
         </div>
         <div class="row row--15">
           <div class="lg:col-6 md:col-6 sm:col-6 col-12">

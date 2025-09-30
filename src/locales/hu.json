@@ -1,0 +1,133 @@
+{
+  "common": {
+    "save": "Mentés",
+    "cancel": "Mégse",
+    "loading": "Betöltés...",
+    "error": "Hiba",
+    "success": "Sikeres",
+    "confirm": "Megerősítés",
+    "delete": "Törlés",
+    "edit": "Szerkesztés",
+    "close": "Bezárás",
+    "back": "Vissza",
+    "next": "Következő",
+    "previous": "Előző",
+    "submit": "Küldés",
+    "reset": "Visszaállítás"
+  },
+  "navigation": {
+    "home": "Főoldal",
+    "dexTrading": "DEX Kereskedés",
+    "buyGoldCoins": "Aranyérmék vásárlása",
+    "proofOfReserves": "Tartalék bizonyíték",
+    "settings": "Beállítások"
+  },
+  "profile": {
+    "title": "Felhasználói profil",
+    "firstName": "Keresztnév",
+    "lastName": "Vezetéknév",
+    "company": "Cég",
+    "taxId": "Adóazonosító",
+    "naturalPerson": "Magánszemély",
+    "legalEntity": "Jogi személy",
+    "deliveryAddress": "Szállítási cím",
+    "residentialAddress": "Lakóhely címe",
+    "street": "Utca",
+    "city": "Város",
+    "zip": "Irányítószám",
+    "country": "Ország",
+    "errorOccurred": "Hiba történt:"
+  },
+  "contact": {
+    "title": "Kapcsolat",
+    "ourAwesomeTeam": "Fantasztikus csapatunk szervezeti diagramja",
+    "companyInfo": "Scholtz & Company, Jsa",
+    "id": "Azonosító: 51882272",
+    "vatId": "Áfa szám: 2120828105",
+    "address": "Cím: Švabinského 21, 851 01 Bratislava, Slovakia",
+    "inquiries": "Érdeklődések",
+    "general": "Általános",
+    "orders": "Rendelések"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "environmentSetup": "Környezet beállítás",
+    "useMainnet": "Mainnet használata",
+    "useTestnet": "Testnet használata",
+    "useSandnet": "Sandnet használata",
+    "dangerZone": "Veszélyes zóna",
+    "resetConfiguration": "Konfiguráció visszaállítása",
+    "emailVerification": "Email hitelesítés"
+  },
+  "home": {
+    "aurumStandardAsset": "Aurum Standard Asset",
+    "letsBreakGoldMarket": "Vigyük az arany piacot a következő szintre",
+    "buyTheGoldCoin": "Vásárolja meg az aranyérmét",
+    "aboutAsaGoldProject": "Az ASA.Gold projektről"
+  },
+  "carousel": {
+    "buyGoldNftTrade": "Vásárolja meg az aranyérme NFT-t, kereskedjen az NFT-vel vagy kérjen fizikai szállítást"
+  },
+  "proofOfReserves": {
+    "title": "Tartalék bizonyíték:",
+    "description": "Az arany súlya a fizikai tartalékokban...",
+    "weightOfGoldInReserves": "Az arany súlya a tartalékokban"
+  },
+  "reserves": {
+    "sumOfGoldInReserves": "Arany összege a tartalékokban",
+    "learnAboutProofOfReserves": "Tudjon meg többet a tartalék bizonyítékról",
+    "weBringRevolutionToGoldMarket": "Forradalmat hozunk az arany piacra",
+    "asaGoldTokenId": "Asa.Gold Token azonosító",
+    "mintedTokens": "Kibocsátott tokenek"
+  },
+  "productDetails": {
+    "serialNumber": "Sorozatszám",
+    "diameter": "Átmérő",
+    "fitness": "Állapot",
+    "weightOfCoin": "Érme súlya",
+    "story": "Történet",
+    "buy": "Vásárlás"
+  },
+  "footer": {
+    "ourLinks": "Linkeink",
+    "contactUs": "Lépjen kapcsolatba velünk",
+    "resources": "FORRÁSOK",
+    "aboutAsaGoldProject": "Az ASA.Gold projektről",
+    "gdprPolicy": "GDPR szabályzat",
+    "termsAndAgreement": "Feltételek és megállapodás",
+    "priceList": "Árjegyzék",
+    "daoToken": "DAO Token",
+    "goldToken": "Arany Token",
+    "mainNet": "MainNet",
+    "testNet": "TestNet"
+  },
+  "emailVerification": {
+    "byVerifying": "Az email hitelesítésével elfogadja a",
+    "ofOurService": "szolgáltatásunk."
+  },
+  "terms": {
+    "title": "Felhasználási feltételek és egyéb dokumentumok",
+    "termsAndConditions": "Felhasználási feltételek, MiCA dokumentumok, Garancia és panaszok"
+  },
+  "priceList": {
+    "secondaryMarketplace": "Másodlagos piac",
+    "physicalDelivery": "Fizikai szállítás",
+    "serviceLink": "Szolgáltatás link",
+    "ourCommission": "Jutalékunk:",
+    "postalServices": "Postai szolgáltatások: 0,8% a kért biztosítási árból",
+    "secondaryMarketplaceDescription": "Kereskedjen arany NFT-kkel másodlagos piacon",
+    "physicalDeliveryDescription": "Kérjen fizikai szállítást aranyérmékre",
+    "priceStoredOnBlockchain": "Az ár a blokkláncon van tárolva"
+  },
+  "trading": {
+    "exploreDecentralizedTrading": "Fedezze fel a decentralizált kereskedést",
+    "listOfAllGoldCoins": "Az összes aranyérme listája"
+  },
+  "tokens": {
+    "goldTokenInfo": "Arany Token információ",
+    "daoTokenInfo": "DAO Token információ",
+    "tokenSpecifications": "Token specifikációk",
+    "verified": "Hitelesítve",
+    "contractAddress": "Szerződés cím"
+  }
+}

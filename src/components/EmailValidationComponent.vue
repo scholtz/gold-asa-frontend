@@ -11,6 +11,9 @@ import ProgressSpinner from 'primevue/progressspinner'
 
 import { bffSendVerificationEmail, bffSendVerifyEmailCode } from '@/scripts/axios/BFF'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const toast = useToast()
 const store = useAppStore()
 const status = reactive({
@@ -165,8 +168,8 @@ onMounted(async () => {
         </div>
 
         <div class="col-12 md:col-10 md:col-offset-2">
-          By verifying your email you accept the
-          <a :href="`/gdpr/${status.gdpr}`" target="_blank"> GDPR policy</a> of our service.
+          {{ t('emailVerification.byVerifying') }}
+          <a :href="`/gdpr/${status.gdpr}`" target="_blank"> {{ t('footer.gdprPolicy') }}</a> {{ t('emailVerification.ofOurService') }}
         </div>
       </div>
       <div class="field grid">

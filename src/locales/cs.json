@@ -1,0 +1,200 @@
+{
+  "common": {
+    "firstName": "Křestní jméno",
+    "lastName": "Příjmení",
+    "email": "E-mail",
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "loading": "Načítá se...",
+    "error": "Chyba",
+    "success": "Úspěch",
+    "close": "Zavřít",
+    "submit": "Odeslat",
+    "back": "Zpět",
+    "next": "Další",
+    "yes": "Ano",
+    "no": "Ne",
+    "general": "Všeobecné",
+    "orders": "Objednávky"
+  },
+  "navigation": {
+    "home": "Domů",
+    "about": "O nás",
+    "contact": "Kontakt",
+    "settings": "Nastavení",
+    "trade": "Obchodování",
+    "profile": "Profil",
+    "buyGoldCoins": "Koupit zlaté mince",
+    "proofOfReserves": "Důkaz rezerv"
+  },
+  "contact": {
+    "title": "Kontaktujte nás",
+    "subtitle": "O projektu ASA.Gold",
+    "inquiries": "Dotazy",
+    "generalEmail": "support@asa.gold",
+    "ordersEmail": "orders@asa.gold",
+    "teamTitle": "Náš úžasný organizační diagram týmu",
+    "teamDescription": "Everyday Algonaut je hlavní zakladatel a generální ředitel projektu ASA.Gold.",
+    "ceoTitle": "Generální ředitel",
+    "ceoDescription": "Ludo, Everyday Algonaut, je zakladatelem ASA.Gold, AWallet, Vote Coin a dalších významných projektů algorand.",
+    "cooTitle": "Provozní ředitel",
+    "cooDescription": "Olga je dobrá v provozu a řízení právních aktivit společnosti.",
+    "cfoTitle": "Finanční ředitel",
+    "cfoDescription": "Michal je zkušený obchodník s akciemi a komoditami se sídlem ve Švýcarsku.",
+    "cmoTitle": "Marketingový ředitel",
+    "cmoDescription": "Samo má rozsáhlé znalosti v provozování e-shopů a online služeb.",
+    "ctoTitle": "Technický ředitel",
+    "ctoDescription": "Daniel je expert na blockchain technologie a jejich adopci."
+  },
+  "settings": {
+    "title": "Nastavení",
+    "resetConfiguration": "Resetovat konfiguraci",
+    "dangerZone": "Nebezpečná zóna",
+    "emailVerification": "Ověření e-mailu"
+  },
+  "profile": {
+    "title": "Uživatelský profil",
+    "firstName": "Křestní jméno",
+    "lastName": "Příjmení",
+    "companyName": "Název společnosti",
+    "taxId": "DIČ",
+    "deliveryAddress": "Dodací adresa",
+    "residentialAddress": "Vaše adresa bydliště",
+    "companyAddress": "Adresa společnosti",
+    "street": "Ulice",
+    "city": "Město",
+    "zipCode": "PSČ",
+    "country": "Země",
+    "naturalPerson": "Fyzická osoba",
+    "legalEntity": "Právnická osoba",
+    "saveProfile": "Uložit profil",
+    "profileSaved": "Profil byl úspěšně uložen",
+    "errorOccurred": "Vyskytla se chyba:"
+  },
+  "trading": {
+    "dexTrading": "DEX Obchodování",
+    "goldToken": "Zlatý token",
+    "listOfGoldCoins": "Seznam všech zlatých mincí",
+    "priceList": "Ceník - Seznam všech služeb poskytovaných asa.gold a jejich ceny",
+    "exploreDecentralizedTrading": "Prozkoumejte decentralizované obchodování"
+  },
+  "governance": {
+    "governanceToken": "Governance token ASA.Gold",
+    "daoTokenDescription": "DAO governance token pro projekt zabezpečený zlatem - ASA.Gold. Umožňuje členům komunity ovlivňovat rozhodnutí projektu prostřednictvím transparentního, onchain, veřejně auditovatelného procesu. Formujte budoucnost digitálních aktiv zabezpečených zlatem kolaborativně, zajišťující důvěru, spravedlnost a podíl na úspěchu ASA.Gold. Připojte se k zlaté revoluci již nyní!",
+    "verifiedBy": "Ověřeno",
+    "since": "od",
+    "priceDevelopment": "Vývoj ceny",
+    "pitchDeck": "Pitch deck"
+  },
+  "tokens": {
+    "goldTokenMainnetId": "ID zlatého tokenu Algorand Mainnet:",
+    "governanceTokenMainnetId": "ID governance tokenu ASA.Gold Algorand Mainnet:",
+    "reservesAddress": "Adresa držící všechny NFT zlatých rezerv:",
+    "goldTokenWhitePaper": "Bílý dokument zlatého tokenu:",
+    "daoTokenWhitePaper": "Bílý dokument GoldDAO tokenu:",
+    "goldTokenDescription": "ASA.Gold je průlomový veřejně auditovatelný zlatý token. Zabezpečený fyzickými zlatými rezervami, náš onchain eshop zajišťuje audity v reálném čase přístupné všem, garantující autentičnost a hodnotu každého tokenu. Investujte s důvěrou do nové éry digitálních aktiv zabezpečených zlatem, kde se důvěra a zodpovědnost setkávají bezproblémově.",
+    "downloadAsaGold": "Stáhnout ASA.Gold"
+  },
+  "home": {
+    "aurumStandardAsset": "Aurum Standard Asset",
+    "letsBreakGoldMarket": "Posuňme trh se zlatem na další úroveň",
+    "buyTheGoldCoin": "Koupit zlatou minci",
+    "aboutAsaGoldProject": "O projektu ASA.Gold",
+    "goldMarketRevolution": "Přinášíme revoluci na trh se zlatem",
+    "buyUseAudit": "Kupujte, používejte nebo prodávejte token zlata zabezpečený skutečným zlatem. Každý může auditovat naše rezervy - to je to, co prodáváme v e-shopu. Navštivte náš zlatý e-shop včetně sekundárního tržiště. Každá zlatá mince má své NFT, které lze obchodovat pomocí chytrého kontraktu nebo DeFi. NFT na skladě si můžete vyžádat dodání balíkem v rámci EU.",
+    "startupDescription": "Startup ASA.Gold byl spuštěn v říjnu 2023 s cílem tokenizovat reálná aktiva, kterým mohou uživatelé plně důvěřovat. Abychom to umožnili, vytvořili jsme hypotézu, že pokud si člověk může v e-shopu vybrat jakýkoliv produkt a ten mu může být dodán, důvěřuje tomu, že všechny ostatní produkty jsou skutečné také. ASA.Gold nemá žádnou motivaci podvádět kvůli tomuto veřejnému dohledu.",
+    "revolutionDescription": "Hmotnost zlata v rezervách je vždy vyšší než ražené tokeny zabezpečené zlatem. Toto je zabezpečeno chytrým kontraktem na veřejné blockchainové síti - Algorand."
+  },
+  "priceList": {
+    "buyGoldTokenDex": "Koupě tokenu zlata pomocí DEX agregátora",
+    "sellGoldTokenDex": "Prodej tokenu zlata pomocí DEX agregátora",
+    "buyGoldTokenBank": "Koupě tokenu zlata pomocí bankovního převodu",
+    "addGoldCoin": "Přidání zlaté mince do rezerv",
+    "ourCommission": "Naše provize:",
+    "serviceLink": "Odkaz na službu",
+    "dexCharges": "DEX agregátor účtuje přibližně 0,1% z objemu a podle vybraných AMM poolů účtuje poplatky za slippage likvidity.",
+    "bankCharges": "Vaše banka vám může účtovat dodatečný poplatek. Všechny poplatky na náš bankovní účet vám proplácíme (SEPA standard a SEPA okamžité platby jsou zdarma. Toto se týká hlavně SWIFT plateb).",
+    "rfqPrice": "RFQ cena je vypočítána jako nejvyšší cena z více zdrojů prodejních cen zlata.",
+    "rfqFinal": "Vaše RFQ cena je finální a zahrnuje provizi.",
+    "addGoldDescription": "Když koupíme skutečnou zlatou minci nebo slitinu, uvedeme cenu tohoto nákupu jako numismatickou hodnotu v čase nákupu do NFT. Tato numismatická cena je vyjádřena v ceně tokenu zlata, což znamená, že cena dělená gramy zlata při nákupu dává skutečné procento numismatické hodnoty. Obvykle k této ceně přidáme 3% a prodáme ji veřejnosti prostřednictvím prodeje NFT. Přidaná numismatická hodnota se může změnit ve speciálních případech, jako jsou vzácné mince, nebo může být nižší při některých slevových prodejích.",
+    "secondaryMarketplace": "Sekundární trh",
+    "physicalDelivery": "Fyzické doručení",
+    "priceStoredOnBlockchain": "Cena v E-Shopu je uložena na blockchainu a když osoba zaplatí cenu v asa.gold tokenu, platí ji přímo zpět na účet rezerv, čímž efektivně spaluje token. Celý proces je řízen smart kontraktem.",
+    "secondaryMarketplaceDescription": "Vlastník NFT může nastavit svůj token na prodej. Může vybrat více kombinací ceny a tokenů k získání a když kupující vykoná příkaz nákupu, smart kontrakt vezme 0,1% provizi na náš účet.",
+    "postalServices": "Poštovní služby: 0,8% z požadované ceny pojištění",
+    "physicalDeliveryDescription": "Vlastník NFT může požádat o fyzické doručení do zemí EHS."
+  },
+  "carousel": {
+    "buyGoldNftTrade": "Kupte si NFT zlaté mince, obchodujte s NFT nebo požádejte o fyzické dodání"
+  },
+  "proofOfReserves": {
+    "title": "Důkaz rezerv:",
+    "description": "Hmotnost zlata ve fyzických rezervách ({reserves}) je vždy vyšší než ražené tokeny zabezpečené zlatem ({minted} gramů). Toto je zabezpečeno chytrým kontraktem na veřejné blockchainové síti - Algorand. Hmotnost zlata fyzických rezerv je součet složení zlata každé zlaté položky v rezervách, kterou lze pozorovat v našem e-shopu nebo na této webové stránce. Ražené zlato je veškeré zlato v oběhu, v technickém termínu pro algorand, původně ražené množství mínus množství tokenů na účtu rezerv. Každý prodej zlaté položky z rezerv je směrován zpět na účet rezerv.",
+    "disadvantagesTitle": "Nevýhody zlata jsou:",
+    "disadvantage1": "Žádný příjem nebo výnos - Zlato samo o sobě negeneruje žádný příjem nebo výnos. Na rozdíl od akcií nebo dluhopisů, které mohou poskytovat dividendy nebo úroky, držení zlata neprodukuje žádný periodický peněžní tok.",
+    "disadvantage2": "Nedostatek peněžního toku - Zlato negeneruje peněžní tok, což znamená, že investoři mohou přijít o příležitosti reinvestovat do aktiv, která příjem produkují.",
+    "advantage1": "Své zlato můžete stakovat v AMM a generovat výnos",
+    "advantage2": "Vlastní správa - vaše klíče vaše krypto",
+    "advantage3": "Nedělitelné - Když vlastníte 1 zlatou minci, pravděpodobně ji nebudete dělit na polovinu, když potřebujete zaplatit jen polovinu ceny.",
+    "tokenizedGoldTitle": "S tokenizovaným zlatem se tyto nevýhody neuplatňují.",
+    "algorandFeaturesSubtitle": "Nyní si můžete užívat kombinaci funkcí Algorandu s trhem se zlatem.",
+    "fastTransactions": "Finalita transakcí rychlejší než u kreditní karty",
+    "lowCosts": "Téměř nulové transakční náklady (0.001 algo ~ $0.0001)",
+    "stakeGold": "Své zlato můžete stakovat v AMM a generovat výnos",
+    "selfCustody": "Vlastní správa - vaše klíče vaše krypto",
+    "fractionable": "Zlato můžete dělit až na 6 desetinných míst gramu zlata ~ $0,00005",
+    "unableToLoad": "Momentálně se nedají načíst informace"
+  },
+  "reserves": {
+    "sumOfGoldInReserves": "Součet zlata v rezervách",
+    "learnAboutProofOfReserves": "Naučte se o důkazu rezerv",
+    "weBringRevolutionToGoldMarket": "Přinášíme revoluci na trh se zlatem",
+    "asaGoldTokenId": "ID tokenu Asa.Gold",
+    "mintedTokens": "Ražené tokeny",
+    "reserves": "Rezervy"
+  },
+  "productDetails": {
+    "serialNumber": "Sériové číslo",
+    "diameter": "Průměr",
+    "fitness": "Stav",
+    "weightOfCoin": "Hmotnost mince",
+    "story": "Příběh",
+    "buy": "Koupit"
+  },
+  "footer": {
+    "ourLinks": "Naše odkazy",
+    "contactUs": "Kontaktujte nás",
+    "aboutAsaGoldProject": "O projektu ASA.Gold",
+    "gdprPolicy": "GDPR zásady",
+    "termsAndAgreement": "Obchodní podmínky a dohoda",
+    "settings": "Nastavení",
+    "priceList": "Ceník",
+    "daoToken": "DAO Token",
+    "goldToken": "Zlatý Token",
+    "resources": "ZDROJE",
+    "contactUsSection": "KONTAKT",
+    "mainNet": "Hlavní síť",
+    "testNet": "Testovací síť"
+  },
+  "terms": {
+    "title": "Obchodní podmínky, MiCA dokumenty, Záruka a reklamace",
+    "description": "Tyto obchodní podmínky jsou mezi vámi jako osobou nebo právnickou entitou a poskytovatelem ASA.Gold.",
+    "serviceProvider": "Poskytovatel služeb ASA.Gold",
+    "acceptanceOfTerms": "Přijetí podmínek",
+    "providerInfo": "Scholtz & Company, jsa, IČO 51882272, je poskytovatelem služeb ASA.Gold."
+  },
+  "privacy": {
+    "title": "Zásady ochrany soukromí",
+    "gdprCompliance": "Soulad s GDPR",
+    "dataCollection": "Sběr údajů"
+  },
+  "emailVerification": {
+    "byVerifying": "Ověřením vašeho e-mailu přijímáte",
+    "ofOurService": "našich služeb."
+  },
+  "company": {
+    "companyId": "IČO : 51882272",
+    "vatId": "DIČ : 2120828105",
+    "address": "Adresa : Švabinského 21, 851 01 Bratislava, Slovensko"
+  }
+}

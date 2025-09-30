@@ -4,6 +4,9 @@ import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const router = useRouter()
 const isMobile = ref(false)
 
@@ -49,18 +52,18 @@ onBeforeUnmount(() => {
             : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style'
         "
       >
-        <div class="text-900 text-xl mb-3 font-medium">Our Links</div>
+        <div class="text-900 text-xl mb-3 font-medium">{{ t('footer.ourLinks') }}</div>
         <div class="font-style-div">
-          <RouterLink to="/about-asa-gold">About ASA.Gold project</RouterLink>
+          <RouterLink to="/about-asa-gold">{{ t('footer.aboutAsaGoldProject') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/contact-us">Contact us</RouterLink>
+          <RouterLink to="/contact-us">{{ t('footer.contactUs') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/gdpr/latest">GDPR policy</RouterLink>
+          <RouterLink to="/gdpr/latest">{{ t('footer.gdprPolicy') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/terms/latest">Terms and agreement</RouterLink>
+          <RouterLink to="/terms/latest">{{ t('footer.termsAndAgreement') }}</RouterLink>
         </div>
       </div>
 
@@ -71,25 +74,25 @@ onBeforeUnmount(() => {
             : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style'
         "
       >
-        <div class="text-900 text-xl mb-3 font-medium">RESOURCES</div>
+        <div class="text-900 text-xl mb-3 font-medium">{{ t('footer.resources') }}</div>
         <div class="font-style-div">
-          <a href="https://www.asa.gold/">MainNet</a>
+          <a href="https://www.asa.gold/">{{ t('footer.mainNet') }}</a>
         </div>
         <div class="font-style-div">
-          <a href="https://testnet.asa.gold/">TestNet</a>
+          <a href="https://testnet.asa.gold/">{{ t('footer.testNet') }}</a>
         </div>
 
         <div class="font-style-div">
-          <RouterLink to="/settings">Settings</RouterLink>
+          <RouterLink to="/settings">{{ t('footer.settings') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/price-list">Price list</RouterLink>
+          <RouterLink to="/price-list">{{ t('footer.priceList') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/token/dao">DAO Token</RouterLink>
+          <RouterLink to="/token/dao">{{ t('footer.daoToken') }}</RouterLink>
         </div>
         <div class="font-style-div">
-          <RouterLink to="/token/gold">Gold Token</RouterLink>
+          <RouterLink to="/token/gold">{{ t('footer.goldToken') }}</RouterLink>
         </div>
       </div>
       <div
@@ -99,7 +102,7 @@ onBeforeUnmount(() => {
             : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style contactus'
         "
       >
-        <div class="text-900 text-xl mb-3 font-medium ml-2">Contact US</div>
+        <div class="text-900 text-xl mb-3 font-medium ml-2">{{ t('footer.contactUs') }}</div>
         <a href="https://discord.gg/8m4KTcVSH9">
           <Button icon="pi pi-discord" severity="info" text raised rounded aria-label="User" />
         </a>

@@ -1,0 +1,133 @@
+{
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "confirm": "确认",
+    "delete": "删除",
+    "edit": "编辑",
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "submit": "提交",
+    "reset": "重置"
+  },
+  "navigation": {
+    "home": "首页",
+    "dexTrading": "DEX交易",
+    "buyGoldCoins": "购买金币",
+    "proofOfReserves": "储备证明",
+    "settings": "设置"
+  },
+  "profile": {
+    "title": "用户档案",
+    "firstName": "名字",
+    "lastName": "姓氏",
+    "company": "公司",
+    "taxId": "税务编号",
+    "naturalPerson": "自然人",
+    "legalEntity": "法人实体",
+    "deliveryAddress": "收货地址",
+    "residentialAddress": "居住地址",
+    "street": "街道",
+    "city": "城市",
+    "zip": "邮政编码",
+    "country": "国家",
+    "errorOccurred": "发生错误："
+  },
+  "contact": {
+    "title": "联系我们",
+    "ourAwesomeTeam": "我们出色团队的组织结构图",
+    "companyInfo": "Scholtz & Company, Jsa",
+    "id": "ID：51882272",
+    "vatId": "增值税号：2120828105",
+    "address": "地址：Švabinského 21, 851 01 Bratislava, Slovakia",
+    "inquiries": "咨询",
+    "general": "一般",
+    "orders": "订单"
+  },
+  "settings": {
+    "title": "设置",
+    "environmentSetup": "环境设置",
+    "useMainnet": "使用主网",
+    "useTestnet": "使用测试网",
+    "useSandnet": "使用沙盒网",
+    "dangerZone": "危险区域",
+    "resetConfiguration": "重置配置",
+    "emailVerification": "邮箱验证"
+  },
+  "home": {
+    "aurumStandardAsset": "黄金标准资产",
+    "letsBreakGoldMarket": "让我们把黄金市场带到下一个水平",
+    "buyTheGoldCoin": "购买金币",
+    "aboutAsaGoldProject": "关于ASA.Gold项目"
+  },
+  "carousel": {
+    "buyGoldNftTrade": "购买金币NFT，交易NFT或请求实物交付"
+  },
+  "proofOfReserves": {
+    "title": "储备证明：",
+    "description": "实物储备中黄金的重量...",
+    "weightOfGoldInReserves": "储备中黄金的重量"
+  },
+  "reserves": {
+    "sumOfGoldInReserves": "储备中黄金总量",
+    "learnAboutProofOfReserves": "了解储备证明",
+    "weBringRevolutionToGoldMarket": "我们为黄金市场带来革命",
+    "asaGoldTokenId": "Asa.Gold代币ID",
+    "mintedTokens": "已铸造代币"
+  },
+  "productDetails": {
+    "serialNumber": "序列号",
+    "diameter": "直径",
+    "fitness": "成色",
+    "weightOfCoin": "硬币重量",
+    "story": "故事",
+    "buy": "购买"
+  },
+  "footer": {
+    "ourLinks": "我们的链接",
+    "contactUs": "联系我们",
+    "resources": "资源",
+    "aboutAsaGoldProject": "关于ASA.Gold项目",
+    "gdprPolicy": "GDPR政策",
+    "termsAndAgreement": "条款和协议",
+    "priceList": "价目表",
+    "daoToken": "DAO代币",
+    "goldToken": "黄金代币",
+    "mainNet": "主网",
+    "testNet": "测试网"
+  },
+  "emailVerification": {
+    "byVerifying": "通过验证您的邮箱，您接受我们",
+    "ofOurService": "服务的条款。"
+  },
+  "terms": {
+    "title": "条款和其他文件",
+    "termsAndConditions": "条款和条件，MiCA文件，保修和投诉"
+  },
+  "priceList": {
+    "secondaryMarketplace": "二级市场",
+    "physicalDelivery": "实物交付",
+    "serviceLink": "服务链接",
+    "ourCommission": "我们的佣金：",
+    "postalServices": "邮政服务：申请保险价格的0.8%",
+    "secondaryMarketplaceDescription": "在二级市场交易黄金NFT",
+    "physicalDeliveryDescription": "申请金币实物交付",
+    "priceStoredOnBlockchain": "价格存储在区块链上"
+  },
+  "trading": {
+    "exploreDecentralizedTrading": "探索去中心化交易",
+    "listOfAllGoldCoins": "所有金币列表"
+  },
+  "tokens": {
+    "goldTokenInfo": "黄金代币信息",
+    "daoTokenInfo": "DAO代币信息",
+    "tokenSpecifications": "代币规格",
+    "verified": "已验证",
+    "contractAddress": "合约地址"
+  }
+}

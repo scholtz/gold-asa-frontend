@@ -4,6 +4,10 @@ import ProductsCarousel from '@/components/ProductsCarousel.vue'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import Button from 'primevue/button'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 AOS.init({
   duration: 800,
   easing: 'ease-in-out',
@@ -20,10 +24,10 @@ AOS.init({
           <div class="welcome-content">
             <section class="fontcolor">
               <div class="sm:m-2 md:m-4 allfont landing-container">
-                <h1 class="m-0 p-0">Aurum Standard Asset</h1>
-                <p class="m-2 p-0">Let's bring the gold market to the next level</p>
+                <h1 class="m-0 p-0">{{ t('home.aurumStandardAsset') }}</h1>
+                <p class="m-2 p-0">{{ t('home.letsBreakGoldMarket') }}</p>
                 <RouterLink to="/buy-gold-coins">
-                  <Button>Buy the gold coin</Button>
+                  <Button>{{ t('home.buyTheGoldCoin') }}</Button>
                 </RouterLink>
               </div>
             </section>
@@ -34,13 +38,10 @@ AOS.init({
     <section class="services-area-two privacy-body ptb-80 bg-f9f6f6">
       <div class="container">
         <div class="section-title">
-          <h2>Aurum Standard Asset</h2>
+          <h2>{{ t('home.aurumStandardAsset') }}</h2>
           <div class="bar"></div>
           <p>
-            Buy, use, or sell gold token backed by real gold Everybody can audit our reserves - its
-            what we sell in the eshop Visit our gold eshop including secondary marketplace Each gold
-            coin has its NFT, which can be traded using smart contract or DeFi NFTs in stock can be
-            redeemed by parcel delivery within EU area
+            {{ t('home.buyUseAudit') }}
           </p>
         </div>
       </div>
@@ -48,14 +49,10 @@ AOS.init({
         <div class="row h-100 justify-content-center align-items-center">
           <div class="col-12 md:col-6 services-content" data-aos="fade-up">
             <div class="section-title">
-              <h2>About ASA.Gold Project</h2>
+              <h2>{{ t('home.aboutAsaGoldProject') }}</h2>
               <div class="bar"></div>
               <p>
-                The startup ASA.Gold has been started in October 2023 with goal to tokenize real
-                world asset which users can fully trust. To allow this we created hypothesis that if
-                person can select in the eshop any product and this can be shipped to him, he trusts
-                that all other products are real as well. There is no incentivization from ASA.Gold
-                to cheat because of this public oversight.
+                {{ t('home.startupDescription') }}
               </p>
             </div>
           </div>
@@ -69,11 +66,10 @@ AOS.init({
           </div>
           <div class="col-12 md:col-6 services-content" data-aos="fade-up">
             <div class="section-title">
-              <h2>We bring revolution to gold market</h2>
+              <h2>{{ t('home.goldMarketRevolution') }}</h2>
               <div class="bar"></div>
               <p>
-                Weight of gold in the reserves is always higher then minted gold backed tokens. This
-                is ensured by the smart contract on public blockchain network - Algorand.
+                {{ t('home.revolutionDescription') }}
               </p>
             </div>
           </div>
