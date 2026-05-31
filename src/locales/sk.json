@@ -174,7 +174,8 @@
     "resources": "ZDROJE",
     "contactUsSection": "KONTAKT",
     "mainNet": "Hlavná sieť",
-    "testNet": "Testovacia sieť"
+    "testNet": "Testovacia sieť",
+    "language": "Jazyk"
   },
   "terms": {
     "title": "Obchodné podmienky, MiCA dokumenty, Záruka a reklamácie",

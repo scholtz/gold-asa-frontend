@@ -174,7 +174,8 @@
     "resources": "RESSOURCEN",
     "contactUsSection": "KONTAKT",
     "mainNet": "Hauptnetz",
-    "testNet": "Testnetz"
+    "testNet": "Testnetz",
+    "language": "Sprache"
   },
   "terms": {
     "title": "Geschäftsbedingungen, MiCA-Dokumente, Garantie und Beschwerden",

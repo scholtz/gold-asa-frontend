@@ -5,6 +5,7 @@ import Divider from 'primevue/divider'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -122,6 +123,10 @@ onBeforeUnmount(() => {
         </a>
       </div>
     </div>
+    <div class="footer-bottom flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-5 pt-4 px-5">
+      <span class="text-900 font-medium footer-language-label">{{ t('footer.language') }}</span>
+      <LanguageSwitcher data-testid="footer-language-switcher" />
+    </div>
   </div>
 </template>
 <style scoped>
@@ -158,6 +163,13 @@ onBeforeUnmount(() => {
   height: 45px;
   margin: 10px;
   width: 45px;
+}
+.footer-bottom {
+  border-top: 1px solid rgb(216 216 216 / 20%);
+}
+.footer-language-label {
+  color: white !important;
+  font-size: 16px !important;
 }
 .footer-two {
   padding-top: 40px;

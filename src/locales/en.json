@@ -55,7 +55,7 @@
   "profile": {
     "title": "User profile",
     "firstName": "Firstname",
-    "lastName": "Lastname", 
+    "lastName": "Lastname",
     "companyName": "Company name",
     "taxId": "Tax ID",
     "deliveryAddress": "Delivery address",
@@ -174,7 +174,8 @@
     "resources": "RESOURCES",
     "contactUsSection": "CONTACT US",
     "mainNet": "MainNet",
-    "testNet": "TestNet"
+    "testNet": "TestNet",
+    "language": "Language"
   },
   "terms": {
     "title": "Terms & Conditions, MiCA documents, Warranty and complaints",
@@ -194,7 +195,7 @@
   },
   "company": {
     "companyId": "ID : 51882272",
-    "vatId": "VAT ID : 2120828105", 
+    "vatId": "VAT ID : 2120828105",
     "address": "Address : Švabinského 21, 851 01 Bratislava, Slovakia"
   }
 }

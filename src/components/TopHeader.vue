@@ -6,7 +6,6 @@ import Button from 'primevue/button'
 import Badge from 'primevue/badge'
 import { useAppStore } from '@/stores/app'
 import { useI18n } from 'vue-i18n'
-import LanguageSwitcher from './LanguageSwitcher.vue'
 
 const props = defineProps<{
   hideTopMenu: boolean
@@ -116,7 +115,6 @@ onUnmounted(() => {
       </template>
       <template #end>
         <div class="flex align-items-center gap-2 allitems">
-          <LanguageSwitcher class="mr-3" />
           <Badge
             class="align-self-center mr-3"
             v-if="store.state.env == 'testnet-v1.0'"

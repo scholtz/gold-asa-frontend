@@ -99,7 +99,8 @@
     "daoToken": "DAO代币",
     "goldToken": "黄金代币",
     "mainNet": "主网",
-    "testNet": "测试网"
+    "testNet": "测试网",
+    "language": "语言"
   },
   "emailVerification": {
     "byVerifying": "通过验证您的邮箱，您接受我们",
