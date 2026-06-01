@@ -174,7 +174,8 @@
     "resources": "RECURSOS",
     "contactUsSection": "CONTACTO",
     "mainNet": "Red principal",
-    "testNet": "Red de prueba"
+    "testNet": "Red de prueba",
+    "language": "Idioma"
   },
   "terms": {
     "title": "Términos y condiciones, documentos MiCA, Garantía y quejas",

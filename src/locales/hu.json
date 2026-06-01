@@ -99,7 +99,8 @@
     "daoToken": "DAO Token",
     "goldToken": "Arany Token",
     "mainNet": "MainNet",
-    "testNet": "TestNet"
+    "testNet": "TestNet",
+    "language": "Nyelv"
   },
   "emailVerification": {
     "byVerifying": "Az email hitelesítésével elfogadja a",

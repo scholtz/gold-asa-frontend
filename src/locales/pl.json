@@ -174,7 +174,8 @@
     "resources": "ZASOBY",
     "contactUsSection": "KONTAKT",
     "mainNet": "Sieć główna",
-    "testNet": "Sieć testowa"
+    "testNet": "Sieć testowa",
+    "language": "Język"
   },
   "terms": {
     "title": "Regulamin, dokumenty MiCA, Gwarancja i reklamacje",
