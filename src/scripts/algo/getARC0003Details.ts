@@ -5,7 +5,6 @@ import loadIPFSFile from '../ipfs/loadIPFSFile'
 import type INFT from '@/types/INFT'
 import { useAppStore } from '@/stores/app'
 import getBoxReferenceNFT from '../boxes/getBoxReferenceNFTUInt'
-import isNotFound from './isNotFound'
 import parseAsaData from './parseAsaData'
 import getBoxFromCache from './getBoxFromCache'
 interface IInput {
@@ -19,13 +18,7 @@ interface IInput {
  */
 const getARC0003Details = async (input: IInput): Promise<INFTDetail | null> => {
   const { client, assetId } = input
-  let token
-  try {
-    token = await getAsa({ client, assetId })
-  } catch (e: any) {
-    if (isNotFound(e)) return null
-    throw e
-  }
+  const token = await getAsa({ client, assetId })
   console.log('token', token)
   if (!token) return null
 
@@ -43,21 +36,11 @@ const getARC0003Details = async (input: IInput): Promise<INFTDetail | null> => {
 
   const store = useAppStore()
 
-  let box
-  try {
-    box = await getBoxFromCache({
-      client,
-      index: store.state.appId,
-      boxName: getBoxReferenceNFT({ nftAsset: assetId })
-    })
-  } catch (e: any) {
-    // a box that does not exist will not appear by retrying
-    if (isNotFound(e)) {
-      console.error(`Box of asset ${assetId} not found`)
-      return null
-    }
-    throw e
-  }
+  const box = await getBoxFromCache({
+    client,
+    index: store.state.appId,
+    boxName: getBoxReferenceNFT({ nftAsset: assetId })
+  })
   console.log('box', box)
   let state
   try {

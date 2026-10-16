@@ -39,14 +39,12 @@ describe('getARC0003Details', () => {
     await expect(getARC0003Details(input)).rejects.toThrow('boom')
   })
 
-  it('returns null when the asset does not exist (404)', async () => {
+  it('throws on a 404 from algod so a coin is never silently dropped', async () => {
     getAsa.mockRejectedValue(Object.assign(new Error('nf'), { status: 404 }))
-    expect(await getARC0003Details(input)).toBeNull()
-  })
-
-  it('returns null when the box does not exist (404)', async () => {
-    getBoxFromCache.mockRejectedValue(Object.assign(new Error('nf'), { response: { status: 404 } }))
-    expect(await getARC0003Details(input)).toBeNull()
+    await expect(getARC0003Details(input)).rejects.toThrow('nf')
+    getAsa.mockResolvedValue(token)
+    getBoxFromCache.mockRejectedValue(Object.assign(new Error('nf'), { status: 404 }))
+    await expect(getARC0003Details(input)).rejects.toThrow('nf')
   })
 
   it('returns null when the box data is invalid', async () => {

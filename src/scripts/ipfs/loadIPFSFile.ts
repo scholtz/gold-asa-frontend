@@ -41,7 +41,8 @@ export const loadIPFSFile = async (hash: string) => {
       ipfsData = await axios.get(`https://${ipfsGateways[i]}/ipfs/${hash}`, {
         timeout: 8000
       })
-      if (ipfsData?.data) {
+      // an HTML error page or other non-JSON body from a gateway is not metadata
+      if (ipfsData?.data && typeof ipfsData.data === 'object') {
         break
       }
     } catch (e) {
@@ -49,7 +50,7 @@ export const loadIPFSFile = async (hash: string) => {
     }
   }
 
-  if (ipfsData?.data) {
+  if (ipfsData?.data && typeof ipfsData.data === 'object') {
     const cacheValue: ICache = { time: new Date().toISOString(), data: ipfsData?.data }
     safeSetItem(cacheKey, JSON.stringify(cacheValue))
     return ipfsData?.data
