@@ -10,6 +10,7 @@ RUN apt update \
 COPY package.json package.json
 COPY pnpm-lock.yaml pnpm-lock.yaml
 COPY pnpm-workspace.yaml pnpm-workspace.yaml
+ENV CYPRESS_INSTALL_BINARY=0
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm run build
