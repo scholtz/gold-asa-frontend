@@ -2,7 +2,7 @@
 import Layout from '@/layouts/AuthLayout.vue'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
 import ReservesList from '@/components/ReservesList.vue'
@@ -15,6 +15,7 @@ import getAsa from '@/scripts/algo/getAsa'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 import Button from '@/components/ui/UiButton.vue'
 import UiIcon from '@/components/ui/UiIcon.vue'
+import retryingLoad from '@/scripts/common/retryingLoad'
 import { useI18n } from 'vue-i18n'
 import coinsImg from '@/assets/all-coins-2.jpg'
 
@@ -25,11 +26,14 @@ const state = reactive({
   mintedTokens: ''
 })
 
+let stopLoading: (() => void) | undefined
+onUnmounted(() => stopLoading?.())
+
 onMounted(async () => {
-  const data = (await ProductService.getAllProducts()).filter((c) => c.state.state == 1)
-  if (data) {
-    products.value = data
-  }
+  stopLoading = retryingLoad({
+    load: () => ProductService.getProductsResult(),
+    onData: (data) => (products.value = data.filter((c) => c.state.state == 1))
+  })
   await loadMintedTokens()
 
   AOS.init({
@@ -133,7 +137,6 @@ const loadMintedTokens = async () => {
   })
 }
 </script>
-
 
 <template>
   <Layout :hideTopMenu="false">

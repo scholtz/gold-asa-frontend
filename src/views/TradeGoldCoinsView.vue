@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
 import ProductsCarousel from '@/components/ProductsCarousel.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { ProductService } from '@/service/ProductService'
 import UiIcon from '@/components/ui/UiIcon.vue'
 import Skeleton from '@/components/ui/UiSkeleton.vue'
 import type IEshopItem from '@/types/IEshopItem'
 import ProductBox from '@/components/ProductBox.vue'
+import retryingLoad from '@/scripts/common/retryingLoad'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-onMounted(async () => {
-  products.value = await ProductService.getAllProducts()
+let stopLoading: (() => void) | undefined
+onMounted(() => {
+  stopLoading = retryingLoad({
+    load: () => ProductService.getProductsResult(),
+    onData: (data) => (products.value = data)
+  })
 })
+onUnmounted(() => stopLoading?.())
 
 const products = ref<IEshopItem[]>()
 </script>

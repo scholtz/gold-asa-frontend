@@ -37,7 +37,9 @@ export const loadIPFSFile = async (hash: string) => {
     // also thinking of adding a time limit instead of the 504 limit because that's a long time and if it takes longer than a second or two its probably not gonna connect
     try {
       console.log('fetching from', ipfsGateways[i])
-      ipfsData = await axios.get(`https://${ipfsGateways[i]}/ipfs/${hash}`)
+      ipfsData = await axios.get(`https://${ipfsGateways[i]}/ipfs/${hash}`, {
+        timeout: 8000
+      })
       if (ipfsData?.data) {
         break
       }
