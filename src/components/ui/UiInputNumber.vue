@@ -37,7 +37,8 @@ const format = (value: number | null | undefined): string => {
 watch(
   () => props.modelValue,
   (value) => {
-    if (!focused.value) text.value = format(value)
+    // while typing keep the user's text unless the parent changed the value to something else
+    if (!focused.value || parse(text.value) !== (value ?? null)) text.value = format(value)
   },
   { immediate: true }
 )
@@ -51,7 +52,7 @@ const clamp = (value: number): number => {
   return value
 }
 
-const parse = (raw: string): number | null => {
+function parse(raw: string): number | null {
   let cleaned = raw
     .replace(props.prefix ?? '', '')
     .replace(props.suffix ?? '', '')
@@ -63,6 +64,15 @@ const parse = (raw: string): number | null => {
   if (cleaned === '' || cleaned === '-' || cleaned === '.') return null
   const value = Number(cleaned)
   return Number.isFinite(value) ? value : null
+}
+
+const onFocus = () => {
+  focused.value = true
+  text.value = format(props.modelValue)
+}
+const onBlur = () => {
+  focused.value = false
+  commit()
 }
 
 const commit = () => {
@@ -80,7 +90,7 @@ const onInput = (e: Event) => {
 
 const stepBy = (direction: 1 | -1) => {
   const base = props.modelValue ?? 0
-  const decimals = (String(props.step).split('.')[1] ?? '').length
+  const decimals = Math.min(20, (props.step.toFixed(20).replace(/0+$/, '').split('.')[1] ?? '').length)
   const next = round(clamp(Number((base + direction * props.step).toFixed(decimals))))
   text.value = format(next)
   emit('update:modelValue', next)
@@ -102,14 +112,8 @@ const shown = computed(() =>
       :value="shown"
       :placeholder="placeholder"
       :disabled="disabled"
-      @focus="
-        focused = true
-        text = format(modelValue)
-      "
-      @blur="
-        focused = false
-        commit()
-      "
+      @focus="onFocus"
+      @blur="onBlur"
       @input="onInput"
       @keydown.up.prevent="stepBy(1)"
       @keydown.down.prevent="stepBy(-1)"

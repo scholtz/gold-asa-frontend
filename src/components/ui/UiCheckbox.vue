@@ -1,6 +1,13 @@
 <script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+
 defineOptions({ inheritAttrs: false })
 defineProps<{ modelValue?: boolean; inputId?: string; binary?: boolean; disabled?: boolean }>()
+const attrs = useAttrs()
+const inputAttrs = computed(() => {
+  const { class: _c, style: _s, ...rest } = attrs
+  return rest
+})
 const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 </script>
 
@@ -9,6 +16,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
     <input
       :id="inputId"
       type="checkbox"
+      v-bind="inputAttrs"
       :checked="modelValue"
       :disabled="disabled"
       @change="emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
