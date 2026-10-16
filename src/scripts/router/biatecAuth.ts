@@ -6,8 +6,6 @@ export const BIATEC_ROUTER_REALM = 'BiatecRouter'
 
 /** The auth transaction is valid for ~1000 rounds (~45 minutes); refresh well before that. */
 const HEADER_TTL_MS = 30 * 60 * 1000
-/** A header younger than this cannot have expired, so a late rejection of an older one must not drop it. */
-const FRESH_MS = 10 * 1000
 
 export interface IBiatecAuthDeps {
   /** Suggested params of the Algorand mainnet node */
@@ -30,12 +28,17 @@ export interface IBiatecAuthDeps {
 export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
   const now = deps.now ?? Date.now
   const generate = deps.generateAccount ?? (() => algosdk.generateAccount())
-  let session: algosdk.Account | null = null
-  let cached: { scope: string; header: string; created: number; expires: number } | null = null
+  // one throwaway account per scope (router host), so a host cannot correlate sessions of another host
+  const sessions = new Map<string, algosdk.Account>()
+  let cached: { scope: string; header: string; expires: number } | null = null
   let pending: { scope: string; promise: Promise<string> } | null = null
 
-  const create = async (): Promise<string> => {
-    session ??= generate()
+  const create = async (scope: string): Promise<string> => {
+    let session = sessions.get(scope)
+    if (!session) {
+      session = generate()
+      sessions.set(scope, session)
+    }
     const params = await deps.getParams()
     const txn = arc14(BIATEC_ROUTER_REALM, session.addr.toString(), params)
     return arc14Header(txn.signTxn(session.sk))
@@ -47,9 +50,9 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
       if (cached && cached.scope === scope && cached.expires > now()) return cached.header
       // parallel quote requests share one header creation
       if (pending && pending.scope === scope) return pending.promise
-      const promise = create()
+      const promise = create(scope)
         .then((header) => {
-          cached = { scope, header, created: now(), expires: now() + HEADER_TTL_MS }
+          cached = { scope, header, expires: now() + HEADER_TTL_MS }
           return header
         })
         .finally(() => {
@@ -59,16 +62,17 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
       return promise
     },
     /**
-     * Drops the cached header after the router rejected it (e.g. it expired). A header created moments ago is kept:
-     * parallel requests that were rejected with the old header must not throw away the fresh one.
+     * Drops the cached header after the router rejected it (e.g. it expired). Pass the header that was rejected:
+     * when parallel requests were rejected with the same old header only the first one drops it, the others find
+     * a fresh header already in place and must not throw it away.
      */
-    invalidate() {
-      if (cached && now() - cached.created < FRESH_MS) return
+    invalidate(rejected?: string) {
+      if (rejected !== undefined && cached?.header !== rejected) return
       cached = null
     },
-    /** Address of the throwaway session account (for diagnostics and tests) */
+    /** Address of the throwaway session account of the current scope (for diagnostics and tests) */
     get sessionAddress(): string | null {
-      return session?.addr.toString() ?? null
+      return sessions.get(deps.getScope?.() ?? '')?.addr.toString() ?? null
     }
   }
 }

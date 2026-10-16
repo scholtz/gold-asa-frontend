@@ -3,11 +3,13 @@ import { createPublicKey, verify } from 'node:crypto'
 import algosdk from 'algosdk'
 import { createBiatecAuth } from '../biatecAuth'
 
+let round = 1000n
+/** every call returns a later round, like algod does, so a recreated header differs from the old one */
 const params = (): algosdk.SuggestedParams => ({
   fee: 0n,
   flatFee: true,
-  firstValid: 1000n,
-  lastValid: 2000n,
+  firstValid: round++,
+  lastValid: round + 1000n,
   genesisID: 'mainnet-v1.0',
   genesisHash: new Uint8Array(32).fill(1),
   minFee: 1000n
@@ -91,24 +93,26 @@ describe('createBiatecAuth (random session account)', () => {
     expect(getParams).toHaveBeenCalledTimes(2)
   })
 
-  it('drops a rejected header, but keeps one that was just created', async () => {
-    const { auth, getParams, advance } = setup()
-    await auth.getHeader()
-    auth.invalidate() // late rejection of an older header: ignored
-    await auth.getHeader()
-    expect(getParams).toHaveBeenCalledTimes(1)
-    advance(11 * 1000)
-    auth.invalidate()
-    await auth.getHeader()
+  it('drops a rejected header immediately, but keeps a newer one when an old rejection arrives late', async () => {
+    const { auth, getParams } = setup()
+    const first = await auth.getHeader()
+    auth.invalidate(first)
+    const second = await auth.getHeader()
+    expect(second).not.toBe(first)
+    expect(getParams).toHaveBeenCalledTimes(2)
+    auth.invalidate(first) // a parallel request that was rejected with the old header
+    expect(await auth.getHeader()).toBe(second)
     expect(getParams).toHaveBeenCalledTimes(2)
   })
 
-  it('does not reuse a header for another scope (router host)', async () => {
+  it('does not reuse a header or the session account for another scope (router host)', async () => {
     const { auth, getParams, state } = setup()
-    await auth.getHeader()
+    const a = decode(await auth.getHeader()).txn.sender.toString()
     state.scope = 'https://other.example.com'
-    await auth.getHeader()
+    const b = decode(await auth.getHeader()).txn.sender.toString()
     expect(getParams).toHaveBeenCalledTimes(2)
+    expect(b).not.toBe(a)
+    expect(auth.sessionAddress).toBe(b)
   })
 
   it('retries after a failed creation (e.g. algod down)', async () => {

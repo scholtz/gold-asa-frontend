@@ -35,11 +35,12 @@ const biatecApi = (): IBiatecApi => {
 
   // an expired/rejected header is dropped and the call retried once with a new one
   const withReauth = async <T>(call: () => Promise<T>): Promise<T> => {
+    const used = await getAuth().getHeader()
     try {
       return await call()
     } catch (e: any) {
       if (e?.status !== 401 && e?.status !== 403) throw e
-      getAuth().invalidate()
+      getAuth().invalidate(used)
       return await call()
     }
   }

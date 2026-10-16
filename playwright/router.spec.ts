@@ -352,6 +352,9 @@ test.describe('swap router on the trading page', () => {
       page.getByText('Facilitated by Algorand blockchain and the Folks Router')
     ).toBeVisible()
     await expect(row(page, 'USDC').getByRole('button', { name: /Sell/ })).toBeVisible()
+    // the selector shows what is really used and cannot pick an unavailable router
+    await expect(routerChoice(page, 'Folks Router')).toBeChecked()
+    await expect(routerChoice(page, 'Biatec Router')).toBeDisabled()
     expect(mocks.folks.length).toBeGreaterThan(0)
     expect(mocks.biatec).toHaveLength(0)
     expect(mocks.algodParams).toHaveLength(0)

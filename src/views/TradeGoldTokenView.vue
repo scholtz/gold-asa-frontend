@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
 import { getSwapRouter, effectiveRouterKind, routerLabel, routerUrl } from '@/scripts/router'
-import type { ISwapQuote, SwapMode } from '@/scripts/router'
+import type { ISwapQuote, RouterKind, SwapMode } from '@/scripts/router'
 import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
@@ -497,7 +497,9 @@ function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
           <div class="toolbar__field toolbar__field--router">
             <span id="router-label" class="toolbar__label">Swap router</span>
             <SelectButton
-              v-model="store.state.router"
+              :modelValue="routerKind"
+              :disabled="routerFallback || store.state.env !== 'mainnet-v1.0'"
+              @update:modelValue="store.state.router = $event as RouterKind"
               data-testid="router-select"
               :options="routerOptions"
               optionLabel="name"
@@ -505,7 +507,7 @@ function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
               aria-labelledby="router-label"
             />
           </div>
-          <Button class="toolbar__btn" severity="secondary" @click="fetchQuotes"
+          <Button class="toolbar__btn" severity="secondary" @click="fetchQuotes()"
             >Refresh quotes</Button
           >
         </div>
