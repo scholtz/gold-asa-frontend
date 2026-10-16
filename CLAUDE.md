@@ -4,7 +4,7 @@ Guidance for AI coding assistants working in this repository.
 
 ## Project
 
-ASA.Gold frontend: a Vue 3 single-page app for buying, selling and swapping a gold-backed token on Algorand, plus an e-shop for physical gold coins (ARC-3 NFTs) with a secondary marketplace. The repo also contains the e-shop smart contract in [asa-gold-smartcontract/](asa-gold-smartcontract/) (published to npm as `algorand-asa-gold`, which the frontend consumes at a pinned version in `package.json`; contract changes only reach the frontend after a new package release and a dependency bump).
+ASA.Gold frontend: a Vue 3 single-page app for buying, selling and swapping a gold-backed token on Algorand, plus an e-shop for physical gold coins (ARC-3 NFTs) with a secondary marketplace. The repo also contains the e-shop smart contract in [asa-gold-smartcontract/](asa-gold-smartcontract/) (published to npm as `algorand-asa-gold`, which the frontend consumes as a versioned dependency (`^` range in `package.json`); contract changes only reach the frontend after a new package release and a dependency/lockfile bump).
 
 Related repos (not here): BFF backend (`scholtz/AsaGoldBff`), repository API (`AsaGoldRepository`), `algorand-authentication-component-vue`.
 
@@ -52,7 +52,7 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 
 The app fetches `/config.json` at startup (top of `src/stores/app.ts`) to set env (`mainnet-v1.0` / `testnet-v1.0` / `sandnet-v1`), BFF URL, algod endpoint, app ID, token IDs and fee collector. Config per environment lives in `k8s/<env>/conf`. The fetch is not validated: a failed fetch falls back to hardcoded defaults, and a non-JSON response (e.g. SPA index.html) is not rejected.
 
-State is also persisted to `localStorage` key `state`. At startup the config wins for token IDs, app ID, BFF and fee collector; only the stored `env`/algod host/port/token (when the stored `env` matches) override the config. Without a config, stored values are used. Read `useAppStore` before debugging "wrong network", token ID or fee collector issues rather than assuming which source wins.
+State is also persisted to `localStorage` key `state`. At startup the config wins for token IDs, app ID, BFF and fee collector; only the stored `env`/algod host/port/token (when the stored `env` matches) override the config. Stored state is ignored entirely when its `env` differs from the current `env`. Read `useAppStore` before debugging "wrong network", token ID or fee collector issues rather than assuming which source wins; the store's hardcoded defaults are testnet-era fallbacks, not mainnet values.
 
 ## Things to be careful about
 
@@ -60,4 +60,4 @@ State is also persisted to `localStorage` key `state`. At startup the config win
 - Mainnet and testnet use different asset/app IDs; do not add new hardcoded environment-specific asset/app IDs in views, components or scripts. They belong in `k8s/<env>/conf` (served as `/config.json`). Existing exceptions (store fallback defaults, mainnet token IDs in prose in `AboutUsView.vue`) are legacy; leave them unless asked.
 - Pushing to `main` triggers a production deploy. Work on a branch and open a PR.
 - `dist/`, `node_modules/` and the contract's `contracts/artifacts` are generated; do not edit by hand.
-- Test coverage is minimal (only the placeholder `src/components/__tests__/HelloWorld.spec.ts` exists). Add Vitest specs for new pure logic as `*.spec.ts` in a `__tests__/` folder next to the code (e.g. `src/scripts/common/__tests__/`); `vitest.config.ts` uses jsdom and excludes only `e2e/*` (Cypress specs are `*.cy.ts` under `cypress/`; keep that suffix so Vitest does not pick them up).
+- Test coverage is minimal (only the placeholder `src/components/__tests__/HelloWorld.spec.ts` exists). Add Vitest specs for new pure logic as `*.spec.ts` in a `__tests__/` folder next to the code (e.g. `src/scripts/common/__tests__/`); `vitest.config.ts` uses jsdom and excludes only `e2e/*` (Cypress specs are `*.cy.ts` under `cypress/`; the `.cy.ts` suffix, not the `e2e/*` exclude, keeps Vitest from picking them up; never name Cypress specs `*.spec.ts`).
