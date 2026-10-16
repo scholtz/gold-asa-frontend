@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import InputNumber from 'primevue/inputnumber'
-import Button from 'primevue/button'
+import InputNumber from '@/components/ui/UiInputNumber.vue'
+import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
-import { useToast } from 'primevue/usetoast'
-import Image from 'primevue/image'
-import SelectButton from 'primevue/selectbutton'
-import ProgressSpinner from 'primevue/progressspinner'
+import { useToast } from '@/components/ui/useToast'
+import Image from '@/components/ui/UiImage.vue'
+import SelectButton from '@/components/ui/UiSelectButton.vue'
+import ProgressSpinner from '@/components/ui/UiSpinner.vue'
 const toast = useToast()
 const store = useAppStore()
 import { computed, reactive, ref } from 'vue'

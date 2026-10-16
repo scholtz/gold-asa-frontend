@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type IEshopItem from '@/types/IEshopItem'
 import formatAssetPrice from '../scripts/algo/formatAssetPrice'
-import Button from 'primevue/button'
+import Button from '@/components/ui/UiButton.vue'
 import { clientBuyNFTTxs, getBoxReferenceNFT, getClient } from 'algorand-asa-gold'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import { useAppStore } from '@/stores/app'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from '@/components/ui/useToast'
 import delay from '@/scripts/common/delay'
 import { reactive } from 'vue'
 import type algosdk from 'algosdk2'
 import getTransactionSignerAccount from '@/scripts/algo/getTransactionSignerAccount'
-import ProgressSpinner from 'primevue/progressspinner'
+import ProgressSpinner from '@/components/ui/UiSpinner.vue'
 import clearBoxCache from '@/scripts/algo/clearBoxCache'
 
 const toast = useToast()

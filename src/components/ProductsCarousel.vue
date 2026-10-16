@@ -28,10 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import Carousel from 'primevue/carousel'
+import Carousel from '@/components/ui/UiCarousel.vue'
 import ProductBox from './ProductBox.vue'
 import { ref, onMounted } from 'vue'
-import ProgressSpinner from 'primevue/progressspinner'
+import ProgressSpinner from '@/components/ui/UiSpinner.vue'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
 import { useI18n } from 'vue-i18n'

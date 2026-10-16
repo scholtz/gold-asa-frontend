@@ -4,9 +4,9 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
 import { useRoute } from 'vue-router'
-import Galleria from 'primevue/galleria'
-import Button from 'primevue/button'
-import Tag from 'primevue/tag'
+import Galleria from '@/components/ui/UiGallery.vue'
+import Button from '@/components/ui/UiButton.vue'
+import Tag from '@/components/ui/UiTag.vue'
 import IPFSImage from '../components/IPFSImage.vue'
 import CoinState from '../components/CoinState.vue'
 import BuyButton from '../components/BuyButton.vue'
@@ -14,7 +14,7 @@ import SaleCoin from '../components/SaleCoin.vue'
 import StopSale from '../components/StopSale.vue'
 import RequestDelivery from '../components/RequestDelivery.vue'
 
-import Skeleton from 'primevue/skeleton'
+import Skeleton from '@/components/ui/UiSkeleton.vue'
 import { useAppStore } from '@/stores/app'
 import getARC0003Details from '@/scripts/algo/getARC0003Details'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
@@ -182,7 +182,7 @@ async function resetView() {
               <template #footer>
                 <div class="flex align-items-center bg-black-alpha-90 text-300">
                   <Button
-                    icon="pi pi-list"
+                    icon="list"
                     @click="onThumbnailButtonClick"
                     :pt="{
                       root: {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import Panel from 'primevue/panel'
+import Panel from '@/components/ui/UiPanel.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

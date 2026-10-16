@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useRouter, RouterLink } from 'vue-router'
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import Menubar from 'primevue/menubar'
-import Button from 'primevue/button'
-import Badge from 'primevue/badge'
+import { useRouter, useRoute, RouterLink } from 'vue-router'
+import { ref, computed, watch } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { useI18n } from 'vue-i18n'
+import UiIcon from '@/components/ui/UiIcon.vue'
+import UiTag from '@/components/ui/UiTag.vue'
+import UiButton from '@/components/ui/UiButton.vue'
 
 const props = defineProps<{
   hideTopMenu: boolean
@@ -13,38 +13,42 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const store = useAppStore()
 
 const items = computed(() => [
-  {
-    label: t('navigation.home'),
-    icon: 'pi pi-fw pi-home',
-    route: '/'
-  },
-  {
-    label: t('trading.dexTrading'),
-    icon: 'pi pi-fw pi-bitcoin',
-    route: '/trade-gold'
-  },
-  {
-    label: t('navigation.buyGoldCoins'),
-    icon: 'pi pi-fw pi-shopping-cart',
-    route: '/buy-gold-coins'
-  },
-  {
-    label: t('navigation.proofOfReserves'),
-    icon: 'pi pi-fw pi-verified',
-    route: '/proof-of-reserve'
-  }
+  { label: t('navigation.home'), icon: 'home', route: '/' },
+  { label: t('trading.dexTrading'), icon: 'coins', route: '/trade-gold' },
+  { label: t('navigation.buyGoldCoins'), icon: 'cart', route: '/buy-gold-coins' },
+  { label: t('navigation.proofOfReserves'), icon: 'shield', route: '/proof-of-reserve' }
 ])
-// window.addEventListener("scroll", handleScroll);
+
+const network = computed(() => {
+  switch (store.state.env) {
+    case 'mainnet-v1.0':
+      return { label: 'Mainnet', severity: 'success' as const }
+    case 'testnet-v1.0':
+      return { label: 'Testnet', severity: 'warning' as const }
+    case 'sandnet-v1':
+      return { label: 'Sandbox', severity: 'warning' as const }
+    default:
+      return { label: store.state.algodHost, severity: 'warning' as const }
+  }
+})
+
+const menuOpen = ref(false)
+watch(
+  () => route.fullPath,
+  () => (menuOpen.value = false)
+)
+
+const isActive = (path: string) => (path === '/' ? route.path === '/' : route.path.startsWith(path))
 
 async function logout() {
   if (!store.state.authComponent) {
     console.error('Unable to logout, authcomponent not initialized', store.state.authComponent)
     return
   }
-  console.log('sending logout')
   try {
     await store.state.authComponent?.logout()
   } catch (e: any) {
@@ -52,120 +56,184 @@ async function logout() {
   }
   // authState is mirrored from the auth library (see AuthLayout), so it is cleared by the library logout
   router.push('/')
-  console.log('logout sent')
 }
-
-const showScrollMessage = ref(false)
-const dynamicClass = ref(false)
-
-const handleScroll = () => {
-  const scrollPosition = window.scrollY || window.pageYOffset
-  showScrollMessage.value = scrollPosition > 0
-
-  if (scrollPosition >= 0) {
-    dynamicClass.value = true
-  } else {
-    dynamicClass.value = false
-  }
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 <template>
-  <header>
-    <Menubar
-      v-if="!props.hideTopMenu"
-      :model="items"
-      class="border-0 lg:m-4 m-1"
-      breakpoint="1420px"
-    >
-      <template #start>
-        <div class="block md:hidden">
-          <img
-            class="logo-small m-1"
-            src="/images/logo.png"
-            style="width: 60px"
-            alt="logo"
-            @click="router.push('/')"
-          />
-        </div>
-        <div class="hidden md:block lg:block xl:block">
-          <img
-            class="logo m-1"
-            src="/images/logo.png"
-            style="width: 80px"
-            alt="logo"
-            @click="router.push('/')"
-          />
-        </div>
-      </template>
-      <template #item="{ item, props }">
-        <RouterLink v-if="item.route" :to="item.route">
-          <Button link class="align-items-center flex flex-row" v-bind="props.action">
-            <i class="text" :class="item.icon" />
-            <div class="text ml-2">{{ item.label }}</div>
-          </Button>
+  <header class="site-header">
+    <div class="container site-header__bar">
+      <RouterLink to="/" class="brand" aria-label="ASA.Gold home">
+        <img src="/images/logo.png" alt="" class="brand__logo" width="44" height="44" />
+        <span class="brand__name">ASA<span>.Gold</span></span>
+      </RouterLink>
+
+      <nav v-if="!props.hideTopMenu" class="nav" :class="{ 'is-open': menuOpen }" aria-label="Main">
+        <RouterLink
+          v-for="item in items"
+          :key="item.route"
+          :to="item.route"
+          class="nav__link"
+          :class="{ 'is-active': isActive(item.route) }"
+        >
+          <UiIcon :name="item.icon" />
+          <span>{{ item.label }}</span>
         </RouterLink>
-      </template>
-      <template #end>
-        <div class="flex align-items-center gap-2 allitems">
-          <Badge
-            class="align-self-center mr-3"
-            v-if="store.state.env == 'testnet-v1.0'"
-            value="Testnet"
-            severity="warn"
-          ></Badge>
-          <Badge
-            class="align-self-center mr-3"
-            v-else-if="store.state.env == 'mainnet-v1.0'"
-            value="Mainnet"
-            severity="success"
-          ></Badge>
-          <Badge
-            class="align-self-center mr-3"
-            v-else-if="store.state.env == 'sandnet-v1'"
-            value="Sandbox"
-            severity="warn"
-          ></Badge>
-          <Badge
-            class="align-self-center mr-3"
-            v-else
-            :value="store.state.algodHost"
-            severity="warn"
-          ></Badge>
-          <Badge class="align-self-center mr-3" value="Stable Beta" severity="secondary"></Badge>
-          <Button
-            class="Icon-button"
-            icon="pi pi-user"
-            severity="info"
-            rounded
-            outlined
-            aria-label="User"
-            @click="store.state.authComponent?.auth()"
-            v-if="!store.state.authState.isAuthenticated"
-          >
-            <span class="pi pi-user"></span>
-          </Button>
-          <Button
-            icon="pi pi-sign-out"
-            severity="info"
-            rounded
-            outlined
-            aria-label="User"
-            @click="logout"
-            v-if="store.state.authState.isAuthenticated"
-          >
-            <span class="pi pi-sign-out"></span>
-          </Button>
-        </div>
-      </template>
-    </Menubar>
+      </nav>
+
+      <div class="site-header__actions">
+        <UiTag class="hide-sm" :severity="network.severity" rounded>{{ network.label }}</UiTag>
+        <UiButton
+          v-if="!store.state.authState.isAuthenticated"
+          icon="user"
+          size="small"
+          rounded
+          aria-label="Log in"
+          @click="store.state.authComponent?.auth()"
+        >
+          <span class="hide-sm">Log in</span>
+        </UiButton>
+        <UiButton
+          v-else
+          icon="logout"
+          size="small"
+          rounded
+          outlined
+          severity="secondary"
+          aria-label="Log out"
+          @click="logout"
+        >
+          <span class="hide-sm">Log out</span>
+        </UiButton>
+        <button
+          v-if="!props.hideTopMenu"
+          type="button"
+          class="burger"
+          :aria-expanded="menuOpen"
+          aria-label="Toggle menu"
+          @click="menuOpen = !menuOpen"
+        >
+          <UiIcon :name="menuOpen ? 'close' : 'menu'" size="1.5em" />
+        </button>
+      </div>
+    </div>
   </header>
 </template>
+
+<style scoped>
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(18, 26, 38, 0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  height: var(--header-height);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--on-dark);
+  text-decoration: none;
+}
+.brand:hover {
+  color: var(--on-dark);
+  text-decoration: none;
+}
+.brand__logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.brand__name span {
+  color: var(--gold-300);
+}
+.nav {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.25rem;
+}
+.nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--on-dark-muted);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+.nav__link:hover {
+  color: var(--on-dark);
+  background: rgba(255, 255, 255, 0.07);
+  text-decoration: none;
+}
+.nav__link.is-active {
+  color: var(--gold-300);
+  background: rgba(201, 162, 39, 0.14);
+}
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+.burger {
+  display: none;
+  padding: 0.35rem;
+  color: var(--on-dark);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+@media (max-width: 991px) {
+  .burger {
+    display: inline-flex;
+  }
+  .nav {
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.75rem 1.25rem 1rem;
+    background: var(--dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-lg);
+  }
+  .nav.is-open {
+    display: flex;
+  }
+  .nav__link {
+    padding: 0.8rem 0.9rem;
+  }
+}
+@media (max-width: 575px) {
+  .hide-sm {
+    display: none;
+  }
+  .site-header__bar {
+    gap: 0.75rem;
+  }
+}
+</style>

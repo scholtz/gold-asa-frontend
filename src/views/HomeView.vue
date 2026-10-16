@@ -3,7 +3,7 @@ import Layout from '@/layouts/AuthLayout.vue'
 import ProductsCarousel from '@/components/ProductsCarousel.vue'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-import Button from 'primevue/button'
+import Button from '@/components/ui/UiButton.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type IEshopItem from '@/types/IEshopItem'
-import Tag from 'primevue/tag'
+import Tag from '@/components/ui/UiTag.vue'
 const props = defineProps<{
   item: IEshopItem
 }>()

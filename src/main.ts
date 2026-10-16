@@ -1,8 +1,10 @@
 import './polyfills'
 import 'algorand-authentication-component-vue/style.css'
 
-import 'primeflex/primeflex.scss'
-import './assets/main.css'
+import './assets/tokens.css'
+import './assets/base.css'
+import './assets/utilities.css'
+import './assets/layout.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -18,10 +20,6 @@ import { exodus } from '@txnlab/use-wallet-exodus'
 import { biatec } from 'biatec-wallet-use-wallet-client'
 import { runtimeConfig } from './stores/app'
 
-import PrimeVue from 'primevue/config'
-import ToastService from 'primevue/toastservice'
-import Toast from 'primevue/toast'
-import 'primeicons/primeicons.css'
 
 const walletNetwork = (() => {
   let env: string | undefined = runtimeConfig?.env
@@ -47,11 +45,8 @@ app.use(WalletManagerPlugin, {
   defaultNetwork: walletNetwork
 })
 
-app.use(PrimeVue, { ripple: true })
-app.use(ToastService)
 app.use(i18n)
 
 app.use(createPinia())
 app.use(router)
-app.component('Toast', Toast)
 app.mount('#app')

@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
+import Button from '@/components/ui/UiButton.vue'
 import { reactive } from 'vue'
 import { useAppStore } from '@/stores/app'
 import type IEshopItem from '@/types/IEshopItem'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from '@/components/ui/useToast'
 import delay from '@/scripts/common/delay'
 import { clientNotForSaleTxs, getBoxReferenceNFT, getClient } from 'algorand-asa-gold'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import getTransactionSignerAccount from '@/scripts/algo/getTransactionSignerAccount'
 import type algosdk from 'algosdk2'
 import * as algokit from '@algorandfoundation/algokit-utils'
-import ProgressSpinner from 'primevue/progressspinner'
+import ProgressSpinner from '@/components/ui/UiSpinner.vue'
 import clearBoxCache from '@/scripts/algo/clearBoxCache'
 
 const emit = defineEmits(['onChange', 'onCancel'])

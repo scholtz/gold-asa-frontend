@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import Panel from 'primevue/panel'
-import Button from 'primevue/button'
+import Panel from '@/components/ui/UiPanel.vue'
+import Button from '@/components/ui/UiButton.vue'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore, resetConfiguration, useMainnet, useTestnet, useSandnet } from '@/stores/app'
 import { useI18n } from 'vue-i18n'

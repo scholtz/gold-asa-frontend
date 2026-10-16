@@ -3,8 +3,8 @@ import { bffAccount } from '@/scripts/axios/BFF'
 import { useAppStore } from '@/stores/app'
 import { onMounted, reactive, watch } from 'vue'
 import EmailValidationComponent from '@/components/EmailValidationComponent.vue'
-import ProgressSpinner from 'primevue/progressspinner'
-import Message from 'primevue/message'
+import ProgressSpinner from '@/components/ui/UiSpinner.vue'
+import Message from '@/components/ui/UiMessage.vue'
 const store = useAppStore()
 
 async function getAccount() {

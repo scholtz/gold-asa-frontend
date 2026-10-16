@@ -10,7 +10,7 @@
   >
     <template #value="slotProps">
       <div class="flex align-items-center" v-if="slotProps.value">
-        <span>{{ getLocaleName(slotProps.value) }}</span>
+        <span>{{ getLocaleName(String(slotProps.value)) }}</span>
       </div>
     </template>
     <template #option="slotProps">
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import Dropdown from 'primevue/dropdown'
+import Dropdown from '@/components/ui/UiDropdown.vue'
 import { getCurrentLocale, setLocale, LOCALE_NAMES, SUPPORTED_LOCALES } from '@/i18n'
 
 const selectedLocale = ref('')

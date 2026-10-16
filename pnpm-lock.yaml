@@ -56,15 +56,6 @@ importers:
       pinia:
         specifier: ^2.3.1
         version: 2.3.1(typescript@5.2.2)(vue@3.5.22(typescript@5.2.2))
-      primeflex:
-        specifier: ^3.3.1
-        version: 3.3.1
-      primeicons:
-        specifier: ^6.0.1
-        version: 6.0.1
-      primevue:
-        specifier: ^3.53.0
-        version: 3.53.0(vue@3.5.22(typescript@5.2.2))
       vue:
         specifier: ^3.5.22
         version: 3.5.22(typescript@5.2.2)
@@ -80,9 +71,6 @@ importers:
       vue-slick-carousel:
         specifier: ^1.0.6
         version: 1.0.6
-      whatamesh:
-        specifier: ^0.2.0
-        version: 0.2.0
     devDependencies:
       '@playwright/test':
         specifier: ^1.60.0
@@ -1500,9 +1488,6 @@ packages:
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
-
-  color-schemes-generator@1.0.1:
-    resolution: {integrity: sha512-pmXbEO84zprScjQR2C2wJ980VX0uk2FjUYvjOox91YnX5xgzeNvnCEhANgC7q3RLQE8GnKdJTAzpmbkJsa3LRg==}
 
   color-string@1.9.1:
     resolution: {integrity: sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==}
@@ -2935,17 +2920,6 @@ packages:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
-  primeflex@3.3.1:
-    resolution: {integrity: sha512-zaOq3YvcOYytbAmKv3zYc+0VNS9Wg5d37dfxZnveKBFPr7vEIwfV5ydrpiouTft8MVW6qNjfkaQphHSnvgQbpQ==}
-
-  primeicons@6.0.1:
-    resolution: {integrity: sha512-KDeO94CbWI4pKsPnYpA1FPjo79EsY9I+M8ywoPBSf9XMXoe/0crjbUK7jcQEDHuc0ZMRIZsxH3TYLv4TUtHmAA==}
-
-  primevue@3.53.0:
-    resolution: {integrity: sha512-mRqTPGGZX+3AQokaCCjxLVSNEjGEA7LaPdBT4qSpGEdMstK6vhUBCxgLH7IPjHudbaSi4Xo3CIO62pXQxbz8dQ==}
-    peerDependencies:
-      vue: ^3.0.0
-
   process-warning@5.1.1:
     resolution: {integrity: sha512-oCkNVj4OKnKEcocVBcDfiIugN1/cE6rgfT3nCtzeqZPA8+rIxMaQ0xXzIkGP8Gj2qUaP1UR7uhJ1VD8lUCpzCg==}
 
@@ -3744,9 +3718,6 @@ packages:
     peerDependenciesMeta:
       webpack-cli:
         optional: true
-
-  whatamesh@0.2.0:
-    resolution: {integrity: sha512-p+ZK+IPbW+38UyNvrdxKNC1OFevlxf7xgiyKxYGCkuNrWFjxiY0yrugdry0c2vEC0RQseov+DDSrsQmp7eoLcg==}
 
   whatwg-encoding@2.0.0:
     resolution: {integrity: sha512-p41ogyeMUrw3jWclHWTQg1k05DSVXPLcVxRTYsXUk+ZooOCZLcoYgPZ/HL/D/N+uQPOtcp1me1WhBEaX02mhWg==}
@@ -5508,8 +5479,6 @@ snapshots:
 
   color-name@1.1.4: {}
 
-  color-schemes-generator@1.0.1: {}
-
   color-string@1.9.1:
     dependencies:
       color-name: 1.1.4
@@ -7089,14 +7058,6 @@ snapshots:
       ansi-styles: 5.2.0
       react-is: 18.2.0
 
-  primeflex@3.3.1: {}
-
-  primeicons@6.0.1: {}
-
-  primevue@3.53.0(vue@3.5.22(typescript@5.2.2)):
-    dependencies:
-      vue: 3.5.22(typescript@5.2.2)
-
   process-warning@5.1.1: {}
 
   process@0.11.10: {}
@@ -7895,10 +7856,6 @@ snapshots:
       - '@swc/core'
       - esbuild
       - uglify-js
-
-  whatamesh@0.2.0:
-    dependencies:
-      color-schemes-generator: 1.0.1
 
   whatwg-encoding@2.0.0:
     dependencies:

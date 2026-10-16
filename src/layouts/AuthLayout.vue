@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import TopHeader from '@/components/TopHeader.vue'
+import UiToast from '@/components/ui/UiToast.vue'
 import PageFooter from '@/components/PageFooter.vue'
 import ForcedEmailVerification from '@/components/ForcedEmailVerification.vue'
 
 import { watch, onBeforeUnmount, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { useToast } from 'primevue/usetoast'
+import { useToast } from '@/components/ui/useToast'
 import { useAppStore } from '@/stores/app'
 import type { IAuthBridge } from '@/stores/app'
 
@@ -80,8 +81,8 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-column justify-content-center min-h-full p-0 m-0">
-    <Toast />
+  <div class="layout">
+    <UiToast />
     <TopHeader :hideTopMenu="props.hideTopMenu" />
     <AlgorandAuthentication
       arc14Realm="ASA.Gold"
@@ -93,11 +94,23 @@ watch(
       :algodToken="store.state.algodToken"
     >
       <ForcedEmailVerification>
-        <div class="flex-grow-1">
+        <main class="layout__main">
           <slot />
-        </div>
+        </main>
       </ForcedEmailVerification>
     </AlgorandAuthentication>
     <PageFooter />
   </div>
 </template>
+
+<style scoped>
+.layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.layout__main {
+  flex: 1;
+}
+</style>

@@ -1,6 +1,5 @@
 import { reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { usePrimeVue } from 'primevue/config'
 import axios from 'axios'
 
 import type { IAuthenticationStore } from 'algorand-authentication-component-vue'
@@ -45,8 +44,6 @@ export interface IState {
   algodHost: string
   algodPort: number
   algodToken: string
-  theme: string
-  currentTheme: string
   authState: IAuthenticationStore
   authComponent: IAuthBridge | null
   env: 'mainnet-v1.0' | 'testnet-v1.0' | 'sandnet-v1'
@@ -78,8 +75,6 @@ const defaultState: IState = {
   algodHost: 'https://testnet-api.algonode.cloud',
   algodPort: 443,
   algodToken: '',
-  theme: 'lara-light-teal',
-  currentTheme: '_empty',
   authState: createAuthState(),
   tokens: tokens,
   customToken: null,
@@ -129,7 +124,6 @@ try {
 console.log('configData', configData)
 export const runtimeConfig = configData
 export const useAppStore = defineStore('app', () => {
-  const PrimeVue = usePrimeVue()
   let storageState: IState | null = null
   try {
     const stateFromStorage = localStorage.getItem('state')
@@ -145,7 +139,6 @@ export const useAppStore = defineStore('app', () => {
         if (istate.algodHost) initState.algodHost = istate.algodHost
         if (istate.algodPort) initState.algodPort = istate.algodPort
         if (istate.algodToken) initState.algodToken = istate.algodToken
-        if (istate.theme) initState.theme = istate.theme
         if (istate.tokens) initState.tokens = istate.tokens
         if (istate.env) initState.env = istate.env
         if (istate.customToken) initState.customToken = istate.customToken
@@ -156,15 +149,6 @@ export const useAppStore = defineStore('app', () => {
   } catch (e: any) {
     console.error(e)
   }
-  if (initState.theme != 'lara-light-teal') initState.theme = 'lara-light-teal'
-  if (initState.currentTheme != initState.theme) {
-    console.log('setting theme:', initState.theme)
-    console.log(`setting theme from ${initState.currentTheme} to ${initState.theme}`)
-    PrimeVue.changeTheme(initState.currentTheme, initState.theme, 'theme-link')
-    PrimeVue.changeTheme(initState.currentTheme, initState.theme, 'theme-link-custom')
-    initState.currentTheme = initState.theme
-  }
-
   if (configData) {
     initState.appId = configData.appId
     initState.bff = configData.bff
@@ -198,13 +182,6 @@ export const useAppStore = defineStore('app', () => {
           key === 'authState' || key === 'authComponent' ? undefined : value
         )
       )
-      if (state.theme != 'lara-light-teal') state.theme = 'lara-light-teal'
-      if (state.currentTheme != state.theme) {
-        console.log(`setting theme from ${state.currentTheme} to ${state.theme}`)
-        PrimeVue.changeTheme(state.currentTheme, state.theme, 'theme-link')
-        PrimeVue.changeTheme(state.currentTheme, state.theme, 'theme-link-custom')
-        state.currentTheme = state.theme
-      }
       if (configData) {
         state.bff = configData.bff
         state.appId = configData.appId

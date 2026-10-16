@@ -2,7 +2,7 @@
 import type IEshopItem from '@/types/IEshopItem'
 import IPFSImage from './IPFSImage.vue'
 import CoinState from './CoinState.vue'
-import Button from 'primevue/button'
+import Button from '@/components/ui/UiButton.vue'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 const props = defineProps<{
   item: IEshopItem

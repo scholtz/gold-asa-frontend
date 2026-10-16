@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import Panel from 'primevue/panel'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
+import Panel from '@/components/ui/UiPanel.vue'
+import Button from '@/components/ui/UiButton.vue'
+import InputText from '@/components/ui/UiInputText.vue'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore } from '@/stores/app'
-import SelectButton from 'primevue/selectbutton'
+import SelectButton from '@/components/ui/UiSelectButton.vue'
 import { onMounted, reactive, watch, computed } from 'vue'
-import Dropdown from 'primevue/dropdown'
+import Dropdown from '@/components/ui/UiDropdown.vue'
 import countries from '../../scripts/common/countries'
 import { bffGetProfile, bffUpdateProfile } from '@/scripts/axios/BFF'
 import type IProfile from '@/types/IProfile'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from '@/components/ui/useToast'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
