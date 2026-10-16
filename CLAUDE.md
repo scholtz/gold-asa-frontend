@@ -22,7 +22,7 @@ Related repos (not here): BFF backend (`scholtz/AsaGoldBff`), repository API (`A
 - `npm run type-check` - `vue-tsc` against `tsconfig.app.json`
 - `npm run build` - outputs to `dist/`. It runs `type-check` and `vite build` in parallel (`run-p`). A `dist/` directory does not prove types passed; check the exit code and type errors.
 - `npm run test:unit` - Vitest in watch mode (blocks); agents and CI should use `npx vitest run`
-- `npm run test:e2e` - Cypress against `vite preview` (does not build; run `npm run build` first and confirm type-check passed, or use `npm run test:e2e:dev` for the dev server variant)
+- `npm run test:e2e` - Cypress against `vite preview` (does not build; run `npm run build` first and confirm type-check passed)
 - `npm run lint` - ESLint with `--fix` over the whole repo, including `asa-gold-smartcontract/` (can touch unrelated files; review the diff). For check-only: `npx eslint <files>`
 - `npm run format` - `prettier --write src/` (whole `src/`). To format only your changes: `npx prettier --write <files>`
 
@@ -50,9 +50,9 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 
 ## Runtime configuration
 
-The app fetches `/config.json` at startup (top of `src/stores/app.ts`) to set env (`mainnet-v1.0` / `testnet-v1.0` / `sandnet-v1`), BFF URL, algod endpoint, app ID, token IDs and fee collector. Config per environment lives in `k8s/<env>/conf`. If the fetch fails the error is only logged and the app runs on hardcoded defaults.
+The app fetches `/config.json` at startup (top of `src/stores/app.ts`) to set env (`mainnet-v1.0` / `testnet-v1.0` / `sandnet-v1`), BFF URL, algod endpoint, app ID, token IDs and fee collector. Config per environment lives in `k8s/<env>/conf`. The fetch is not validated: a failed fetch falls back to hardcoded defaults, and a non-JSON response (e.g. SPA index.html) is not rejected.
 
-State is also persisted to `localStorage` key `state`. It is only read back when its `env` equals the configured `env`, and then the stored algod host/port/token can override the config's. A watcher persists the state and then re-applies (in memory) `bff`, `appId` and the token IDs from the config on every state change. Read `useAppStore` before debugging "wrong network", token ID or fee collector issues rather than assuming which source wins. If the config fetch fails, stored values (including tokens and fee collector) are used instead of defaults, so stale storage can then win.
+State is also persisted to `localStorage` key `state`. At startup the config wins for token IDs, app ID, BFF and fee collector; only the stored `env`/algod host/port/token (when the stored `env` matches) override the config. Without a config, stored values are used. Read `useAppStore` before debugging "wrong network", token ID or fee collector issues rather than assuming which source wins.
 
 ## Things to be careful about
 
@@ -60,4 +60,4 @@ State is also persisted to `localStorage` key `state`. It is only read back when
 - Mainnet and testnet use different asset/app IDs; do not add new hardcoded environment-specific asset/app IDs in views, components or scripts. They belong in `k8s/<env>/conf` (served as `/config.json`). Existing exceptions (store fallback defaults, mainnet token IDs in prose in `AboutUsView.vue`) are legacy; leave them unless asked.
 - Pushing to `main` triggers a production deploy. Work on a branch and open a PR.
 - `dist/`, `node_modules/` and the contract's `contracts/artifacts` are generated; do not edit by hand.
-- Test coverage is minimal (only the placeholder `src/components/__tests__/HelloWorld.spec.ts` exists). Add Vitest specs for new pure logic as `*.spec.ts` in a `__tests__/` folder next to the code (e.g. `src/scripts/common/__tests__/`); `vitest.config.ts` uses jsdom and excludes only `e2e/*` (Cypress specs in `cypress/e2e/*.cy.ts` are not matched by Vitest's default include).
+- Test coverage is minimal (only the placeholder `src/components/__tests__/HelloWorld.spec.ts` exists). Add Vitest specs for new pure logic as `*.spec.ts` in a `__tests__/` folder next to the code (e.g. `src/scripts/common/__tests__/`); `vitest.config.ts` uses jsdom and excludes only `e2e/*` (Cypress specs are `*.cy.ts` under `cypress/`; keep that suffix so Vitest does not pick them up).
