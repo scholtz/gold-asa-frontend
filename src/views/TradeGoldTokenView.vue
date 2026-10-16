@@ -120,6 +120,7 @@ async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
   if (routerKind.value === 'biatec' && !store.state.authState.isAuthenticated) {
     throw new RouterAuthRequiredError()
   }
+  if (!(state.quantity > 0)) throw new Error('Enter an amount of gold greater than zero')
   const router = getSwapRouter()
   const goldAsa = await getAsa({
     client: getAlgodClient(store.state),
@@ -246,7 +247,7 @@ watch(
     store.state.authState.isAuthenticated,
     store.state.authState.account
   ],
-  () => fetchQuotes()
+  () => fetchQuotes(true) // a login or setting change is a fresh start: forget a previous declined signature
 )
 let unmounted = false
 onMounted(async () => {

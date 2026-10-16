@@ -44,6 +44,7 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
     try {
       ;[signed] = await deps.sign([txn.toByte()])
     } catch (e: any) {
+      if (e instanceof RouterAuthRequiredError) throw e // e.g. auth component not ready: no cooldown
       throw new SignError(e?.message ?? 'cancelled')
     }
     if (!signed) throw new Error('Wallet did not return the signed authentication transaction')

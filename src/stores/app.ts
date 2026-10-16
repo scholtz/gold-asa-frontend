@@ -148,6 +148,9 @@ export const useAppStore = defineStore('app', () => {
         delete (istate as any).authState
         localStorage.setItem('state', JSON.stringify(istate))
       }
+      // the router is a user preference, so it wins over the config default (whatever the network)
+      if (istate.router === 'biatec' || istate.router === 'folks') initState.router = istate.router
+      if (istate.routerHost) initState.routerHost = istate.routerHost
       if (istate.env == initState.env) {
         // if network has been changed make sure we do not load bad data from localstorage
         if (istate.algodHost) initState.algodHost = istate.algodHost
@@ -157,10 +160,6 @@ export const useAppStore = defineStore('app', () => {
         if (istate.env) initState.env = istate.env
         if (istate.customToken) initState.customToken = istate.customToken
         if (istate.feeCollector) initState.feeCollector = istate.feeCollector
-        // the router is a user preference, so it wins over the config default
-        if (istate.router === 'biatec' || istate.router === 'folks')
-          initState.router = istate.router
-        if (istate.routerHost) initState.routerHost = istate.routerHost
         storageState = istate
       }
     }
