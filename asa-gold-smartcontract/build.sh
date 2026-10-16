@@ -1,4 +1,4 @@
-npx tealscript contracts/asa-gold-smartcontract.algo.ts contracts/artifacts/  || error_code=$?
+pnpm exec tealscript contracts/asa-gold-smartcontract.algo.ts contracts/artifacts/  || error_code=$?
 error_code_int=$(($error_code + 0))
 if [ $error_code_int -ne 0 ]; then
   echo "failed to create artifacts";

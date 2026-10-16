@@ -5,7 +5,7 @@ RUN apt update \
   && apt-get clean autoclean \
   && apt-get autoremove --yes \
   && rm -rf /var/lib/{apt,dpkg,cache,log}/ \
-  && corepack enable
+  && corepack enable \n  && corepack prepare pnpm@11.10.0 --activate
 COPY package.json package.json
 COPY pnpm-lock.yaml pnpm-lock.yaml
 COPY pnpm-workspace.yaml pnpm-workspace.yaml
