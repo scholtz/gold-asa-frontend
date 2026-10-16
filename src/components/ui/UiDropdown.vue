@@ -99,7 +99,7 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', onDocClick))
       :aria-controls="listId"
       @click="toggle"
     >
-      <span class="ui-dropdown__value" :class="{ 'is-placeholder': !selected }">
+      <span class="ui-dropdown__value" :class="{ 'is-placeholder': selected === undefined }">
         <slot name="value" :value="modelValue" :placeholder="placeholder">
           {{ selected !== undefined ? labelOf(selected) : (placeholder ?? '') }}
         </slot>

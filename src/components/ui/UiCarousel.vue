@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import UiIcon from './UiIcon.vue'
 
 const props = withDefaults(
@@ -41,6 +41,11 @@ const start = () => {
   stop()
   if (props.autoplayInterval && props.value.length > visible.value) timer = setInterval(next, props.autoplayInterval)
 }
+
+watch(maxIndex, (max) => {
+  if (index.value > max) index.value = max
+})
+watch([visible, () => props.value.length, () => props.autoplayInterval], start)
 
 onMounted(() => {
   if (track.value) {

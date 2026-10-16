@@ -21,12 +21,12 @@ defineProps<{ header?: string }>()
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  overflow: hidden;
 }
 .ui-panel__header {
   padding: 1.1rem 1.5rem;
   border-bottom: 1px solid var(--line);
   background: var(--surface-alt);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 .ui-panel__title {
   margin: 0;

@@ -19,6 +19,9 @@ watch(
   }
 )
 const count = computed(() => props.value.length)
+watch(count, (n) => {
+  if (current.value >= n) current.value = Math.max(0, n - 1)
+})
 const go = (index: number) => {
   if (!count.value) return
   current.value = (index + count.value) % count.value

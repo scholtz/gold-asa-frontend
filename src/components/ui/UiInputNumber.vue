@@ -42,6 +42,9 @@ watch(
   { immediate: true }
 )
 
+const round = (value: number): number =>
+  props.maxFractionDigits === undefined ? value : Number(value.toFixed(props.maxFractionDigits))
+
 const clamp = (value: number): number => {
   if (props.min !== undefined && value < props.min) return props.min
   if (props.max !== undefined && value > props.max) return props.max
@@ -49,7 +52,9 @@ const clamp = (value: number): number => {
 }
 
 const parse = (raw: string): number | null => {
-  const cleaned = raw.replace(props.prefix ?? '', '').replace(props.suffix ?? '', '').replace(/\s/g, '').replace(',', '.')
+  let cleaned = raw.replace(props.prefix ?? '', '').replace(props.suffix ?? '', '').replace(/\s/g, '')
+  // "1,000.5" -> thousands separators; "1,5" -> decimal comma
+  cleaned = cleaned.includes('.') ? cleaned.replace(/,/g, '') : cleaned.replace(',', '.')
   if (cleaned === '' || cleaned === '-' || cleaned === '.') return null
   const value = Number(cleaned)
   return Number.isFinite(value) ? value : null
@@ -57,7 +62,7 @@ const parse = (raw: string): number | null => {
 
 const commit = () => {
   const value = parse(text.value)
-  const next = value === null ? null : clamp(value)
+  const next = value === null ? null : round(clamp(value))
   text.value = format(next)
   if (next !== props.modelValue) emit('update:modelValue', next)
 }
@@ -65,7 +70,7 @@ const commit = () => {
 const onInput = (e: Event) => {
   text.value = (e.target as HTMLInputElement).value
   const value = parse(text.value)
-  if (value !== null) emit('update:modelValue', value)
+  if (value !== null) emit('update:modelValue', round(clamp(value)))
 }
 
 const stepBy = (direction: 1 | -1) => {

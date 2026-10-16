@@ -129,6 +129,9 @@ export const useAppStore = defineStore('app', () => {
     const stateFromStorage = localStorage.getItem('state')
     if (stateFromStorage) {
       const istate = JSON.parse(stateFromStorage) as IState
+      // drop fields of older versions (PrimeVue theme)
+      delete (istate as any).theme
+      delete (istate as any).currentTheme
       if ((istate as any).authState) {
         // older versions persisted the auth session; remove it
         delete (istate as any).authState
