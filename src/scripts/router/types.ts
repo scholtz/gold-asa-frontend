@@ -36,13 +36,5 @@ export interface ISwapRouter {
   prepareTransactions(quote: ISwapQuote, sender: string): Promise<string[]>
 }
 
-/** Thrown when a router needs the user to be logged in (e.g. to sign the ARC-14 header). */
-export class RouterAuthRequiredError extends Error {
-  constructor(message = 'Please log in to load quotes from this router') {
-    super(message)
-    this.name = 'RouterAuthRequiredError'
-  }
-}
-
 /** Slippage used when executing, in basis points (10 = 0.1%). */
 export const SLIPPAGE_BPS = 10

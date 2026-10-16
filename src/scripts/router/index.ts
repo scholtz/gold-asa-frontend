@@ -17,13 +17,7 @@ let auth: ReturnType<typeof createBiatecAuth> | null = null
 const getAuth = () => {
   if (!auth) {
     auth = createBiatecAuth({
-      getAccount: () => useAppStore().state.authState.account,
       getScope: () => safeRouterHost(useAppStore().state.routerHost),
-      sign: async (encoded) => {
-        const bridge = useAppStore().state.authComponent
-        if (!bridge) throw new Error('Authentication component is not ready')
-        return bridge.sign(encoded)
-      },
       getParams: () => {
         const { algodHost, algodPort, algodToken } = useAppStore().state
         return new algosdk.Algodv2(algodToken, algodHost, algodPort).getTransactionParams().do()
@@ -61,8 +55,6 @@ const biatecApi = (): IBiatecApi => {
     }
   }
 }
-
-export const resetRouterAuth = () => auth?.reset()
 
 /** Router currently selected in the settings (falls back to Folks on unsupported networks). */
 export const getSwapRouter = (): ISwapRouter => {

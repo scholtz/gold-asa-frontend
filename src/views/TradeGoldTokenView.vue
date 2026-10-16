@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import {
-  getSwapRouter,
-  effectiveRouterKind,
-  routerLabel,
-  routerUrl,
-  resetRouterAuth,
-  RouterAuthRequiredError
-} from '@/scripts/router'
+import { getSwapRouter, effectiveRouterKind, routerLabel, routerUrl } from '@/scripts/router'
 import type { ISwapQuote, SwapMode } from '@/scripts/router'
 import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
@@ -16,6 +9,7 @@ import InputNumber from '@/components/ui/UiInputNumber.vue'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useToast } from '@/components/ui/useToast'
 import { Buffer } from 'buffer'
+import SelectButton from '@/components/ui/UiSelectButton.vue'
 import Message from '@/components/ui/UiMessage.vue'
 import getAsa from '@/scripts/algo/getAsa'
 import algosdk from 'algosdk2'
@@ -40,9 +34,6 @@ interface IState {
   quoteCustomGold: ISwapQuote | null
   quoteGoldCustom: ISwapQuote | null
   lastError: string
-  /** the selected router needs the user to log in before it can return quotes */
-  authRequired: boolean
-  authMessage: string
   accountInformation: IAccountInfo | null
   interval: NodeJS.Timeout | null
 }
@@ -70,8 +61,6 @@ const defaultState: IState = {
   quoteCustomGold: null,
   quoteGoldCustom: null,
   lastError: '',
-  authRequired: false,
-  authMessage: '',
   accountInformation: null,
   interval: null
 }
@@ -80,6 +69,10 @@ const refreshCount = ref(1)
 
 const store = useAppStore()
 
+const routerOptions = [
+  { name: 'Biatec Router', value: 'biatec' },
+  { name: 'Folks Router', value: 'folks' }
+]
 const routerKind = computed(() => effectiveRouterKind(store.state.router, store.state.env))
 const routerName = computed(() => routerLabel(routerKind.value))
 const routerFallback = computed(
@@ -117,9 +110,6 @@ const emptyQuotes = (): QuoteResult => ({
 
 /** Fetches all quotes for the current amount; returns null when a newer refresh superseded this one. */
 async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
-  if (routerKind.value === 'biatec' && !store.state.authState.isAuthenticated) {
-    throw new RouterAuthRequiredError()
-  }
   if (!(state.quantity > 0)) throw new Error('Enter an amount of gold greater than zero')
   const router = getSwapRouter()
   const goldAsa = await getAsa({
@@ -134,7 +124,6 @@ async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
     try {
       return await router.fetchQuote({ mode, fromAsset, toAsset, amount })
     } catch (e: any) {
-      if (e instanceof RouterAuthRequiredError) throw e
       console.error(`failed fetch ${fromAsset} to ${toAsset}`, e)
       return null
     }
@@ -166,29 +155,19 @@ async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
 
 let quoteRun = 0
 let refreshing = false
-async function fetchQuotes(manual = false) {
+async function fetchQuotes() {
   const run = ++quoteRun
   refreshing = true
-  if (manual) resetRouterAuth()
   try {
     const result = await loadQuotes(() => run !== quoteRun)
     if (!result) return
-    state.authRequired = false
     Object.assign(state, result)
     const any = Object.entries(result).some(([key, value]) => key !== 'quantityQuote' && value)
     state.lastError = any ? '' : `No quotes were returned by ${routerName.value} right now.`
   } catch (e: any) {
     if (run !== quoteRun) return
     Object.assign(state, emptyQuotes())
-    if (e instanceof RouterAuthRequiredError) {
-      // the router needs the user to log in, or the user declined to sign
-      state.authRequired = true
-      state.authMessage = e.message
-      state.lastError = ''
-    } else {
-      state.authRequired = false
-      state.lastError = e.message
-    }
+    state.lastError = e.message
   } finally {
     // only the newest run owns the flag; an older run must not re-enable the interval refresh early
     if (run === quoteRun) {
@@ -240,14 +219,8 @@ async function loadTokens() {
   refreshCount.value++
 }
 watch(
-  () => [
-    store.state.router,
-    store.state.env,
-    store.state.routerHost,
-    store.state.authState.isAuthenticated,
-    store.state.authState.account
-  ],
-  () => fetchQuotes(true) // a login or setting change is a fresh start: forget a previous declined signature
+  () => [store.state.router, store.state.env, store.state.routerHost],
+  () => fetchQuotes()
 )
 let unmounted = false
 onMounted(async () => {
@@ -257,7 +230,7 @@ onMounted(async () => {
   if (unmounted) return
 
   state.interval = setInterval(async () => {
-    // do not pile up refreshes (and wallet prompts) when the previous one is still running
+    // do not pile up refreshes when the previous one is still running
     if (refreshing) return
     await fetchQuotes()
     await loadAccount()
@@ -521,7 +494,18 @@ function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
               suffix=" g"
             />
           </div>
-          <Button class="toolbar__btn" severity="secondary" @click="fetchQuotes(true)"
+          <div class="toolbar__field toolbar__field--router">
+            <span id="router-label" class="toolbar__label">Swap router</span>
+            <SelectButton
+              v-model="store.state.router"
+              data-testid="router-select"
+              :options="routerOptions"
+              optionLabel="name"
+              optionValue="value"
+              aria-labelledby="router-label"
+            />
+          </div>
+          <Button class="toolbar__btn" severity="secondary" @click="fetchQuotes"
             >Refresh quotes</Button
           >
         </div>
@@ -529,19 +513,6 @@ function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
         <Panel :header="t('trading.dexTrading')">
           <Message v-if="routerFallback" class="trading-error" severity="info">
             Biatec Router is available on Algorand mainnet only. Using Folks Router on this network.
-          </Message>
-          <Message v-if="state.authRequired" class="trading-error" severity="info">
-            <template v-if="!store.state.authState.isAuthenticated">
-              {{ routerName }} needs you to log in to provide quotes (you sign a free authentication
-              message, nothing is sent to the network).
-            </template>
-            <template v-else>{{ state.authMessage }}</template>
-            <Button
-              class="trading-login"
-              size="small"
-              label="Log in"
-              @click="store.state.authComponent?.auth()"
-            />
           </Message>
           <Message
             v-if="state.lastError"
