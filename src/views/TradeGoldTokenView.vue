@@ -222,7 +222,13 @@ async function loadTokens() {
   refreshCount.value++
 }
 watch(
-  () => [store.state.router, store.state.env, store.state.routerHost],
+  () => [
+    store.state.router,
+    store.state.env,
+    store.state.routerHost,
+    store.state.algodHost,
+    store.state.algodPort
+  ],
   () => fetchQuotes()
 )
 let unmounted = false

@@ -50,7 +50,8 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
       if (pending && pending.scope === scope) return pending.promise
       const promise = create(scope)
         .then((header) => {
-          cached = { scope, header, expires: now() + HEADER_TTL_MS }
+          // a creation that was overtaken by a scope change must not overwrite the newer scope's header
+          if (session?.scope === scope) cached = { scope, header, expires: now() + HEADER_TTL_MS }
           return header
         })
         .finally(() => {
@@ -67,6 +68,8 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
     invalidate(rejected?: string) {
       if (rejected !== undefined && cached?.header !== rejected) return
       cached = null
+      // the router may reject the account itself (rate limit): the next header comes from a new throwaway account
+      session = null
     },
     /** Address of the throwaway session account of the current scope (for diagnostics and tests) */
     get sessionAddress(): string | null {

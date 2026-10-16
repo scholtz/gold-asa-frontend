@@ -45,13 +45,7 @@ const biatecApi = (): IBiatecApi => {
     } catch (e: any) {
       if (e?.status !== 401 && e?.status !== 403) throw e
       getAuth().invalidate(used)
-      try {
-        return await call()
-      } catch (retryError: any) {
-        // still rejected: forget whatever is cached so the next refresh starts clean
-        if (retryError?.status === 401 || retryError?.status === 403) getAuth().invalidate()
-        throw retryError
-      }
+      return await call()
     }
   }
 
