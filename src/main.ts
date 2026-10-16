@@ -3,7 +3,6 @@ import 'algorand-authentication-component-vue/dist/style.css'
 import 'primeflex/primeflex.scss'
 import './assets/main.css'
 
-import { Buffer } from 'buffer'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
@@ -22,10 +21,6 @@ import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import Toast from 'primevue/toast'
 import 'primeicons/primeicons.css'
-
-// Pera/Defly/WalletConnect based wallets expect Node globals
-;(globalThis as any).Buffer = (globalThis as any).Buffer ?? Buffer
-;(globalThis as any).process = (globalThis as any).process ?? { env: {} }
 
 const walletNetwork = (() => {
   let env: string | undefined = runtimeConfig?.env

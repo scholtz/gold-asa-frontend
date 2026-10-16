@@ -186,7 +186,13 @@ export const useAppStore = defineStore('app', () => {
     state,
     async (newState, oldState) => {
       console.log('state update', oldState, newState)
-      localStorage.setItem('state', JSON.stringify(newState))
+      // never persist the auth session (ARC-14 header) or the auth bridge
+      localStorage.setItem(
+        'state',
+        JSON.stringify(newState, (key, value) =>
+          key === 'authState' || key === 'authComponent' ? undefined : value
+        )
+      )
       if (state.theme != 'lara-light-teal') state.theme = 'lara-light-teal'
       if (state.currentTheme != state.theme) {
         console.log(`setting theme from ${state.currentTheme} to ${state.theme}`)
