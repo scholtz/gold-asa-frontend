@@ -91,16 +91,14 @@ const sum = () => {
     ' g'
   )
 }
+
 </script>
 <template>
   <div class="table-wrap">
     <table class="table">
       <thead>
         <tr>
-          <th
-            scope="col"
-            :aria-sort="sortKey === 'name' ? (sortAsc ? 'ascending' : 'descending') : 'none'"
-          >
+          <th scope="col" :aria-sort="sortKey === 'name' ? (sortAsc ? 'ascending' : 'descending') : 'none'">
             <button type="button" class="sort" @click="sortBy('name')">
               Name <UiIcon name="sort" size="1em" />
             </button>

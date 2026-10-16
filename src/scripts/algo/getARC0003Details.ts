@@ -12,8 +12,11 @@ interface IInput {
   assetId: number
 }
 
+/**
+ * Returns null for assets that are not gold coins or have permanently unusable data.
+ * Throws when loading failed for a possibly temporary reason (network, IPFS), so callers can retry.
+ */
 const getARC0003Details = async (input: IInput): Promise<INFTDetail | null> => {
-  // returns null for assets that are not gold coins; throws when the data could not be loaded
   const { client, assetId } = input
   const token = await getAsa({ client, assetId })
   console.log('token', token)
@@ -33,13 +36,29 @@ const getARC0003Details = async (input: IInput): Promise<INFTDetail | null> => {
 
   const store = useAppStore()
 
-  const box = await getBoxFromCache({
-    client,
-    index: store.state.appId,
-    boxName: getBoxReferenceNFT({ nftAsset: assetId })
-  })
+  let box
+  try {
+    box = await getBoxFromCache({
+      client,
+      index: store.state.appId,
+      boxName: getBoxReferenceNFT({ nftAsset: assetId })
+    })
+  } catch (e: any) {
+    // a box that does not exist will not appear by retrying
+    if ((e?.status ?? e?.response?.status) === 404) {
+      console.error(`Box of asset ${assetId} not found`)
+      return null
+    }
+    throw e
+  }
   console.log('box', box)
-  const state = parseAsaData(box.value)
+  let state
+  try {
+    state = parseAsaData(box.value)
+  } catch (e: any) {
+    console.error(`Invalid box data of asset ${assetId}: ${e?.message ?? e}`)
+    return null
+  }
 
   console.log('box', state, box)
   return {

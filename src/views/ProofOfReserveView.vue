@@ -138,6 +138,7 @@ const loadMintedTokens = async () => {
 }
 </script>
 
+
 <template>
   <Layout :hideTopMenu="false">
     <template v-if="products">

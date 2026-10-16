@@ -10,6 +10,8 @@ interface IInput<T> {
   load: () => Promise<ILoadResult<T>>
   onData: (data: T) => void
   retryMs?: number
+  /** how often an incomplete (but not failed) result is retried; failures retry indefinitely */
+  maxIncompleteRetries?: number
 }
 
 /**
@@ -18,23 +20,32 @@ interface IInput<T> {
  * Returns a function that stops all further attempts (call it when the component unmounts).
  */
 const retryingLoad = <T>(input: IInput<T>): (() => void) => {
-  const { load, onData, retryMs = RETRY_DELAY_MS } = input
+  const { load, onData, retryMs = RETRY_DELAY_MS, maxIncompleteRetries = 6 } = input
   let stopped = false
+  let incompleteRetries = 0
   let timer: ReturnType<typeof setTimeout> | undefined
 
   const schedule = () => {
     if (!stopped) timer = setTimeout(run, retryMs)
   }
   const run = async () => {
+    let result: ILoadResult<T>
     try {
-      const result = await load()
-      if (stopped) return
-      onData(result.data)
-      if (!result.complete) schedule()
+      result = await load()
     } catch (e: any) {
       console.error(`Loading failed, retrying in ${retryMs} ms: ${e?.message ?? e}`)
       schedule()
+      return
     }
+    if (stopped) return
+    // a consumer error must not turn a finished load into an endless reload loop
+    try {
+      onData(result.data)
+    } catch (e: any) {
+      console.error(`Unable to use loaded data: ${e?.message ?? e}`)
+      return
+    }
+    if (!result.complete && incompleteRetries++ < maxIncompleteRetries) schedule()
   }
 
   run()

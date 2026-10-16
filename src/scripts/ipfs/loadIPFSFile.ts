@@ -1,4 +1,5 @@
 import axios from 'axios'
+import safeSetItem from '@/scripts/common/safeSetItem'
 interface ICache {
   time: string
   data: any
@@ -50,7 +51,7 @@ export const loadIPFSFile = async (hash: string) => {
 
   if (ipfsData?.data) {
     const cacheValue: ICache = { time: new Date().toISOString(), data: ipfsData?.data }
-    localStorage.setItem(cacheKey, JSON.stringify(cacheValue))
+    safeSetItem(cacheKey, JSON.stringify(cacheValue))
     return ipfsData?.data
   }
   return null

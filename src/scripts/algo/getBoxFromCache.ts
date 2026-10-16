@@ -1,4 +1,5 @@
 import type algosdk from 'algosdk2'
+import safeSetItem from '@/scripts/common/safeSetItem'
 import { Buffer } from 'buffer'
 
 interface ICache {
@@ -33,7 +34,7 @@ const getBoxFromCache = async (input: IInput): Promise<algosdk.modelsv2.Box> => 
   const box = await client.getApplicationBoxByName(index, boxName).do()
 
   const cacheValue: ICache = { time: new Date().toISOString(), data: box }
-  localStorage.setItem(cacheKey, JSON.stringify(cacheValue))
+  safeSetItem(cacheKey, JSON.stringify(cacheValue))
   return box
 }
 export default getBoxFromCache

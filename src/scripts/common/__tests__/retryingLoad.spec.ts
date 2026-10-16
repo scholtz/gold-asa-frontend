@@ -63,4 +63,28 @@ describe('retryingLoad', () => {
     expect(onData).not.toHaveBeenCalled()
     expect(load).toHaveBeenCalledTimes(1)
   })
+
+  it('does not reload when the consumer throws on a complete result', async () => {
+    const load = vi.fn().mockResolvedValue({ data: 1, complete: true })
+    retryingLoad({
+      load,
+      onData: () => {
+        throw new Error('consumer bug')
+      }
+    })
+    await vi.advanceTimersByTimeAsync(60_000)
+    expect(load).toHaveBeenCalledTimes(1)
+  })
+
+  it('gives up on incomplete results after the retry cap but keeps retrying failures', async () => {
+    const incomplete = vi.fn().mockResolvedValue({ data: 1, complete: false })
+    retryingLoad({ load: incomplete, onData: vi.fn(), maxIncompleteRetries: 2 })
+    await vi.advanceTimersByTimeAsync(100_000)
+    expect(incomplete).toHaveBeenCalledTimes(3)
+
+    const failing = vi.fn().mockRejectedValue(new Error('down'))
+    retryingLoad({ load: failing, onData: vi.fn(), maxIncompleteRetries: 2 })
+    await vi.advanceTimersByTimeAsync(100_000)
+    expect(failing.mock.calls.length).toBeGreaterThan(5)
+  })
 })
