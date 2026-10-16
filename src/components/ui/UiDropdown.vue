@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useAttrs, useId } from 'vue'
 import UiIcon from './UiIcon.vue'
 
 defineOptions({ inheritAttrs: false })
@@ -23,6 +23,7 @@ defineSlots<{
   option(props: { option: any; index: number }): unknown
 }>()
 
+const attrs = useAttrs()
 const root = ref<HTMLElement>()
 const search = ref<HTMLInputElement>()
 const open = ref(false)
@@ -30,8 +31,15 @@ const query = ref('')
 const active = ref(0)
 const listId = useId()
 
-const labelOf = (o: any) => (props.optionLabel && o && typeof o === 'object' ? o[props.optionLabel] : o)
-const valueOf = (o: any) => (props.optionValue && o && typeof o === 'object' ? o[props.optionValue] : o)
+const triggerAttrs = computed(() => {
+  const { class: _c, style: _s, id: _i, ...rest } = attrs
+  return rest
+})
+
+const labelOf = (o: any) =>
+  props.optionLabel && o && typeof o === 'object' ? o[props.optionLabel] : o
+const valueOf = (o: any) =>
+  props.optionValue && o && typeof o === 'object' ? o[props.optionValue] : o
 
 const items = computed(() => {
   const all = props.options ?? []
@@ -67,13 +75,15 @@ const onKey = (e: KeyboardEvent) => {
   if (e.key === 'ArrowDown') {
     e.preventDefault()
     if (!open.value) return void toggle()
-    active.value = Math.min(items.value.length - 1, active.value + 1)
+    active.value = Math.max(0, Math.min(items.value.length - 1, active.value + 1))
   } else if (e.key === 'ArrowUp') {
     e.preventDefault()
     active.value = Math.max(0, active.value - 1)
   } else if (e.key === 'Enter' && open.value) {
     e.preventDefault()
     if (items.value[active.value] !== undefined) choose(items.value[active.value])
+  } else if (e.key === 'Tab') {
+    close()
   } else if (e.key === 'Escape') {
     close()
   }
@@ -86,7 +96,13 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', onDocClick))
 </script>
 
 <template>
-  <div ref="root" class="ui-dropdown" :class="[$attrs.class, { 'is-open': open }]" :style="$attrs.style as any" @keydown="onKey">
+  <div
+    ref="root"
+    class="ui-dropdown"
+    :class="[$attrs.class, { 'is-open': open }]"
+    :style="$attrs.style as any"
+    @keydown="onKey"
+  >
     <button
       type="button"
       class="ui-dropdown__trigger ui-control"
@@ -97,6 +113,7 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', onDocClick))
       aria-haspopup="listbox"
       :aria-expanded="open"
       :aria-controls="listId"
+      v-bind="triggerAttrs"
       @click="toggle"
     >
       <span class="ui-dropdown__value" :class="{ 'is-placeholder': selected === undefined }">

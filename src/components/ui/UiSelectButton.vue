@@ -16,8 +16,10 @@ const props = withDefaults(
 const emit = defineEmits<{ 'update:modelValue': [value: unknown]; change: [value: unknown] }>()
 const attrs = useAttrs()
 
-const label = (o: any) => (props.optionLabel && o && typeof o === 'object' ? o[props.optionLabel] : o)
-const value = (o: any) => (props.optionValue && o && typeof o === 'object' ? o[props.optionValue] : o)
+const label = (o: any) =>
+  props.optionLabel && o && typeof o === 'object' ? o[props.optionLabel] : o
+const value = (o: any) =>
+  props.optionValue && o && typeof o === 'object' ? o[props.optionValue] : o
 
 const select = (o: T) => {
   if (props.disabled) return

@@ -24,7 +24,14 @@ let timer: ReturnType<typeof setInterval> | undefined
 let observer: ResizeObserver | undefined
 
 const visible = computed(() =>
-  Math.max(1, Math.min(props.numVisible, props.value.length, Math.floor(width.value / props.minItemWidth) || 1))
+  Math.max(
+    1,
+    Math.min(
+      props.numVisible,
+      props.value.length,
+      Math.floor(width.value / props.minItemWidth) || 1
+    )
+  )
 )
 const maxIndex = computed(() => Math.max(0, props.value.length - visible.value))
 
@@ -39,7 +46,8 @@ const prev = () => go(index.value - 1)
 const stop = () => clearInterval(timer)
 const start = () => {
   stop()
-  if (props.autoplayInterval && props.value.length > visible.value) timer = setInterval(next, props.autoplayInterval)
+  if (props.autoplayInterval && props.value.length > visible.value)
+    timer = setInterval(next, props.autoplayInterval)
 }
 
 watch(maxIndex, (max) => {
@@ -62,7 +70,13 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="ui-carousel" @mouseenter="stop" @mouseleave="start" @focusin="stop" @focusout="start">
-    <button v-if="maxIndex > 0" type="button" class="ui-carousel__nav ui-carousel__nav--prev" aria-label="Previous" @click="prev">
+    <button
+      v-if="maxIndex > 0"
+      type="button"
+      class="ui-carousel__nav ui-carousel__nav--prev"
+      aria-label="Previous"
+      @click="prev"
+    >
       <UiIcon name="chevron-left" size="1.4em" />
     </button>
     <div ref="track" class="ui-carousel__viewport">
@@ -70,12 +84,23 @@ onBeforeUnmount(() => {
         class="ui-carousel__track"
         :style="{ transform: `translateX(calc(${index} * -100% / ${visible}))` }"
       >
-        <div v-for="(item, i) in value" :key="i" class="ui-carousel__item" :style="{ flexBasis: `${100 / visible}%` }">
+        <div
+          v-for="(item, i) in value"
+          :key="i"
+          class="ui-carousel__item"
+          :style="{ flexBasis: `${100 / visible}%` }"
+        >
           <slot name="item" :data="item" :index="i" />
         </div>
       </div>
     </div>
-    <button v-if="maxIndex > 0" type="button" class="ui-carousel__nav ui-carousel__nav--next" aria-label="Next" @click="next">
+    <button
+      v-if="maxIndex > 0"
+      type="button"
+      class="ui-carousel__nav ui-carousel__nav--next"
+      aria-label="Next"
+      @click="next"
+    >
       <UiIcon name="chevron-right" size="1.4em" />
     </button>
   </div>

@@ -9,7 +9,13 @@ const kind = (s?: string) => (s === 'warn' ? 'warning' : s === 'danger' ? 'error
 <template>
   <div class="ui-toasts" aria-live="polite" aria-atomic="false">
     <TransitionGroup name="ui-toast">
-      <div v-for="t in toasts" :key="t.id" class="ui-toast" :class="`ui-toast--${kind(t.severity)}`" role="status">
+      <div
+        v-for="t in toasts"
+        :key="t.id"
+        class="ui-toast"
+        :class="`ui-toast--${kind(t.severity)}`"
+        role="status"
+      >
         <UiIcon :name="kind(t.severity)" size="1.3em" />
         <div class="ui-toast__text">
           <strong v-if="t.summary">{{ t.summary }}</strong>

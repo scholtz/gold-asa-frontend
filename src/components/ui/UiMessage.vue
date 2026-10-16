@@ -20,7 +20,13 @@ const kind = computed(() =>
   <div class="ui-message" :class="`ui-message--${kind}`" role="alert">
     <UiIcon :name="kind" size="1.25em" />
     <div class="ui-message__text"><slot /></div>
-    <button v-if="closable" class="ui-message__close" type="button" aria-label="Close" @click="emit('close')">
+    <button
+      v-if="closable"
+      class="ui-message__close"
+      type="button"
+      aria-label="Close"
+      @click="emit('close')"
+    >
       <UiIcon name="close" />
     </button>
   </div>

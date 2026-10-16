@@ -32,11 +32,23 @@ const go = (index: number) => {
 <template>
   <div class="ui-gallery">
     <div class="ui-gallery__stage">
-      <button v-if="count > 1" type="button" class="ui-gallery__nav ui-gallery__nav--prev" aria-label="Previous image" @click="go(current - 1)">
+      <button
+        v-if="count > 1"
+        type="button"
+        class="ui-gallery__nav ui-gallery__nav--prev"
+        aria-label="Previous image"
+        @click="go(current - 1)"
+      >
         <UiIcon name="chevron-left" size="1.4em" />
       </button>
       <slot name="item" :item="value[current]" :index="current" />
-      <button v-if="count > 1" type="button" class="ui-gallery__nav ui-gallery__nav--next" aria-label="Next image" @click="go(current + 1)">
+      <button
+        v-if="count > 1"
+        type="button"
+        class="ui-gallery__nav ui-gallery__nav--next"
+        aria-label="Next image"
+        @click="go(current + 1)"
+      >
         <UiIcon name="chevron-right" size="1.4em" />
       </button>
     </div>

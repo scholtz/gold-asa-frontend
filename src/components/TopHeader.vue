@@ -81,7 +81,7 @@ async function logout() {
       </nav>
 
       <div class="site-header__actions">
-        <UiTag class="hide-sm" :severity="network.severity" rounded>{{ network.label }}</UiTag>
+        <UiTag class="network-tag" :severity="network.severity" rounded>{{ network.label }}</UiTag>
         <UiButton
           v-if="!store.state.authState.isAuthenticated"
           icon="user"

@@ -52,10 +52,14 @@ const clamp = (value: number): number => {
 }
 
 const parse = (raw: string): number | null => {
-  let cleaned = raw.replace(props.prefix ?? '', '').replace(props.suffix ?? '', '').replace(/\s/g, '')
+  let cleaned = raw
+    .replace(props.prefix ?? '', '')
+    .replace(props.suffix ?? '', '')
+    .replace(/\s/g, '')
   // "1,000.5" -> thousands separators; "1,5" -> decimal comma
   const thousands = /^-?\d{1,3}(,\d{3})+$/.test(cleaned)
-  cleaned = cleaned.includes('.') || thousands ? cleaned.replace(/,/g, '') : cleaned.replace(',', '.')
+  cleaned =
+    cleaned.includes('.') || thousands ? cleaned.replace(/,/g, '') : cleaned.replace(',', '.')
   if (cleaned === '' || cleaned === '-' || cleaned === '.') return null
   const value = Number(cleaned)
   return Number.isFinite(value) ? value : null
@@ -71,19 +75,21 @@ const commit = () => {
 const onInput = (e: Event) => {
   text.value = (e.target as HTMLInputElement).value
   const value = parse(text.value)
-  if (value !== null) emit('update:modelValue', round(clamp(value)))
+  if (value !== null) emit('update:modelValue', round(value)) // clamped on blur, which always runs before a click
 }
 
 const stepBy = (direction: 1 | -1) => {
   const base = props.modelValue ?? 0
   const decimals = (String(props.step).split('.')[1] ?? '').length
-  const next = clamp(Number((base + direction * props.step).toFixed(decimals)))
+  const next = round(clamp(Number((base + direction * props.step).toFixed(decimals))))
   text.value = format(next)
   emit('update:modelValue', next)
 }
 
 const shown = computed(() =>
-  focused.value || text.value === '' ? text.value : `${props.prefix ?? ''}${text.value}${props.suffix ?? ''}`
+  focused.value || text.value === ''
+    ? text.value
+    : `${props.prefix ?? ''}${text.value}${props.suffix ?? ''}`
 )
 </script>
 
@@ -96,17 +102,35 @@ const shown = computed(() =>
       :value="shown"
       :placeholder="placeholder"
       :disabled="disabled"
-      @focus="focused = true; text = format(modelValue)"
-      @blur="focused = false; commit()"
+      @focus="
+        focused = true
+        text = format(modelValue)
+      "
+      @blur="
+        focused = false
+        commit()
+      "
       @input="onInput"
       @keydown.up.prevent="stepBy(1)"
       @keydown.down.prevent="stepBy(-1)"
     />
     <span v-if="showButtons" class="ui-number__buttons">
-      <button type="button" tabindex="-1" aria-label="Increase" :disabled="disabled" @click="stepBy(1)">
+      <button
+        type="button"
+        tabindex="-1"
+        aria-label="Increase"
+        :disabled="disabled"
+        @click="stepBy(1)"
+      >
         <UiIcon name="chevron-up" size="0.9em" />
       </button>
-      <button type="button" tabindex="-1" aria-label="Decrease" :disabled="disabled" @click="stepBy(-1)">
+      <button
+        type="button"
+        tabindex="-1"
+        aria-label="Decrease"
+        :disabled="disabled"
+        @click="stepBy(-1)"
+      >
         <UiIcon name="chevron-down" size="0.9em" />
       </button>
     </span>
