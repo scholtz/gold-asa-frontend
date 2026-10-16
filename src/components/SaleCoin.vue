@@ -245,13 +245,13 @@ const executeSale = async () => {
 </script>
 <template>
   <div>
-    <table v-if="!state.inReview">
-      <tr>
-        <th>Token</th>
-        <th>Price</th>
-      </tr>
-      <tr>
-        <td>
+    <div v-if="!state.inReview" class="sale-form">
+      <div class="sale-form__head" aria-hidden="true">
+        <span>Token</span>
+        <span>Price</span>
+      </div>
+      <div class="sale-form__row">
+        <div>
           <Dropdown
             v-model="state.asset1"
             :options="assets"
@@ -260,8 +260,8 @@ const executeSale = async () => {
             placeholder="Select a token to receive"
             class="w-full"
           />
-        </td>
-        <td>
+        </div>
+        <div>
           <InputNumber
             v-if="parseInt(state.asset1) > 0"
             v-model="state.asset1Amount"
@@ -269,10 +269,10 @@ const executeSale = async () => {
             :minFractionDigits="getDecimals(parseInt(state.asset1))"
             :maxFractionDigits="getDecimals(parseInt(state.asset1))"
           />
-        </td>
-      </tr>
-      <tr>
-        <td>
+        </div>
+      </div>
+      <div class="sale-form__row">
+        <div>
           <Dropdown
             v-model="state.asset2"
             :options="assets2"
@@ -281,8 +281,8 @@ const executeSale = async () => {
             placeholder="Select a token to receive"
             class="w-full"
           />
-        </td>
-        <td>
+        </div>
+        <div>
           <InputNumber
             v-if="parseInt(state.asset2) > 0"
             v-model="state.asset2Amount"
@@ -290,10 +290,10 @@ const executeSale = async () => {
             :minFractionDigits="getDecimals(parseInt(state.asset2))"
             :maxFractionDigits="getDecimals(parseInt(state.asset2))"
           />
-        </td>
-      </tr>
-      <tr>
-        <td>
+        </div>
+      </div>
+      <div class="sale-form__row">
+        <div>
           <Dropdown
             v-model="state.asset3"
             :options="assets3"
@@ -302,8 +302,8 @@ const executeSale = async () => {
             placeholder="Select a token to receive"
             class="w-full"
           />
-        </td>
-        <td>
+        </div>
+        <div>
           <InputNumber
             v-if="parseInt(state.asset3) > 0"
             v-model="state.asset3Amount"
@@ -311,19 +311,16 @@ const executeSale = async () => {
             :minFractionDigits="getDecimals(parseInt(state.asset3))"
             :maxFractionDigits="getDecimals(parseInt(state.asset3))"
           />
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>
-          <Button :disabled="!anyPriceIsSet()" @click="state.inReview = true" class="m-2">
-            Review sale
-          </Button>
-          <Button severity="secondary" @click="handleOnCancel" class="m-2">Cancel</Button>
-        </td>
-      </tr>
-    </table>
-    <div v-else>
+        </div>
+      </div>
+      <div class="sale-form__actions">
+        <Button :disabled="!anyPriceIsSet()" @click="state.inReview = true">
+          Review sale
+        </Button>
+        <Button severity="secondary" @click="handleOnCancel">Cancel</Button>
+      </div>
+    </div>
+    <div v-else class="sale-review">
       <div v-if="onlyOnePriceIsSet()">
         You are setting the sale of this gold coin for
         <span v-if="asset1Active()">{{
@@ -399,23 +396,75 @@ const executeSale = async () => {
         >
       </div>
 
+      <div class="sale-review__actions">
       <Button
         :disabled="state.sending || state.sent"
         :severity="state.sent ? 'success' : 'primary'"
         @click="executeSale()"
-        class="m-3"
       >
-        <ProgressSpinner
-          v-if="state.sending || state.sent"
-          style="width: 1em; height: 1em"
-          strokeWidth="8"
-          animationDuration=".5s"
-          class="mx-1"
-        />
+        <ProgressSpinner v-if="state.sending || state.sent" class="inline-spinner" />
         Set on sale
       </Button>
 
-      <Button severity="secondary" @click="state.inReview = false" class="m-3">Go back</Button>
+      <Button severity="secondary" @click="state.inReview = false">Go back</Button>
+      </div>
     </div>
   </div>
 </template>
+<style scoped>
+.inline-spinner {
+  width: 1em;
+  height: 1em;
+}
+.sale-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.sale-form__head {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sale-form__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.sale-form__actions,
+.sale-review__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.sale-review {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  color: var(--ink-soft);
+}
+.sale-review span {
+  font-weight: 600;
+  color: var(--gold-700);
+}
+@media (min-width: 768px) {
+  .sale-form__head,
+  .sale-form__row {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .sale-form__head {
+    display: grid;
+    padding: 0 1rem;
+  }
+}
+</style>

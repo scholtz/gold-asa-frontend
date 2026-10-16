@@ -14,7 +14,9 @@ import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import getAsa from '@/scripts/algo/getAsa'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 import Button from '@/components/ui/UiButton.vue'
+import UiIcon from '@/components/ui/UiIcon.vue'
 import { useI18n } from 'vue-i18n'
+import coinsImg from '@/assets/all-coins-2.jpg'
 
 const { t } = useI18n()
 const store = useAppStore()
@@ -44,20 +46,28 @@ const sum = () => {
     .map((a) => a.state.weight)
     .reduce(function (a, b) {
       return a + b
-    })
+    }, 0)
   return formatAssetPrice({
     assetId: store.state.tokens.gold,
     value: ret
   })
 }
 const products = ref<IEshopItem[]>()
-const events = ref()
+interface IReserveEvent {
+  status: string
+  date: string
+  icon: string
+  color: string
+  subtitle?: string
+  description: string[]
+}
+const events = ref<IReserveEvent[]>([])
 const makeEventTexts = () => {
   events.value = [
     {
       status: t('proofOfReserves.title'),
       date: '15/10/2020 10:30',
-      icon: 'pi pi-comment',
+      icon: 'info',
       color: '#9C27B0',
       description: [
         t('proofOfReserves.description', { reserves: sum(), minted: state.mintedTokens })
@@ -66,7 +76,7 @@ const makeEventTexts = () => {
     {
       status: t('proofOfReserves.disadvantagesTitle'),
       date: '15/10/2020 10:30',
-      icon: 'pi pi-comment',
+      icon: 'info',
       color: '#9C27B0',
       description: [
         t('proofOfReserves.disadvantage1'),
@@ -79,7 +89,7 @@ const makeEventTexts = () => {
     {
       status: t('proofOfReserves.tokenizedGoldTitle'),
       date: '15/10/2020 14:00',
-      icon: 'pi pi-comment',
+      icon: 'info',
       subtitle: t('proofOfReserves.algorandFeaturesSubtitle'),
       color: '#673AB7',
       description: [
@@ -124,160 +134,167 @@ const loadMintedTokens = async () => {
 }
 </script>
 
+
 <template>
   <Layout :hideTopMenu="false">
-    <div v-if="products" class="allbackground">
-      <div class="Dextrading-about-background">
-        <div
-          class="col-md-12 col-sm-12 text-secondary welcome-banner text-center nav-text text-center"
-        >
-          <div class="welcome-content">
-            <h1 class="title" data-aos="fade-down">{{ t('reserves.weBringRevolutionToGoldMarket') }}</h1>
-          </div>
+    <template v-if="products">
+      <header class="page-hero">
+        <div class="container">
+          <h1 data-aos="fade-down">{{ t('reserves.weBringRevolutionToGoldMarket') }}</h1>
         </div>
-      </div>
-      <div class="timeline-display">
-        <div class="card card-backgroundimage">
-          <Timeline
-            :value="events"
-            align="alternate"
-            class="customized-timeline"
-            data-aos="fade-in"
-          >
-            <template #marker="slotProps">
-              <span
-                class="flex w-2rem h-2rem align-items-center justify-content-center text-secondary border-circle z-1 shadow-1"
-              >
-                <i :class="slotProps.item.icon"></i>
-              </span>
-            </template>
-            <template #content="slotProps">
-              <Card class="mt-5">
-                <template #title>
-                  {{ slotProps.item.status }}
-                  {{ slotProps.item.subtitle }}
-                </template>
-                <template #content>
-                  <ul>
-                    <li v-for="desc in slotProps.item.description" :key="desc">
-                      {{ desc }}
-                    </li>
-                  </ul>
-                </template>
-              </Card>
-            </template>
-          </Timeline>
-        </div>
-      </div>
-      <div class="container">
-        <div class="row row--15 card-display text-center">
-          <div class="lg:col-4 md:col-6 sm:col-6 col-12">
-            <div class="rn-address card">
-              <div class="icon">
-                <i
-                  data-name="map-pin"
-                  data-tags="location,navigation,travel,marker"
-                  data-type="map-pin"
-                  class="vue-feather vue-feather--map-pin"
-                  ><svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="feather feather-map-pin vue-feather__content"
-                  >
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                </i>
-              </div>
-              <div class="inner">
-                <h4 class="title text-primary">{{ t('reserves.reserves') }}</h4>
-                <div>
-                  <h3 class="title text-primary">{{ t('reserves.asaGoldTokenId') }}</h3>
-                  <a class="text-300" :href="explorerLink()" target="_blank">
-                    <Button secondary>{{ store.state.tokens.gold }}</Button>
-                  </a>
-                </div>
-                <div>
-                  <h3 class="title text-primary">{{ t('reserves.mintedTokens') }}</h3>
-                  <span v-if="state.mintedTokens" class="text-primary">{{
-                    state.mintedTokens
-                  }}</span>
-                </div>
-              </div>
+      </header>
+
+      <section class="section">
+        <div class="container">
+          <div class="stats">
+            <div class="stat">
+              <p class="stat__label">{{ t('reserves.asaGoldTokenId') }}</p>
+              <a :href="explorerLink()" target="_blank" rel="noopener" class="stat__link">
+                <Button severity="secondary" outlined>{{ store.state.tokens.gold }}</Button>
+              </a>
+            </div>
+            <div class="stat">
+              <p class="stat__label">{{ t('reserves.mintedTokens') }}</p>
+              <p class="stat__value">
+                <template v-if="state.mintedTokens">{{ state.mintedTokens }}</template>
+                <ProgressSpinner v-else style="width: 1.25em; height: 1.25em" />
+              </p>
             </div>
           </div>
-        </div>
-        <!-- <div class="data-table ptb--120">
-          <h2 class="mb-7">List Of Gold Coins In Reserves</h2>
-          <div class="grid grid-nogutter surface-section text-800">
-            <div
-              class="col-12 md:col-6 pl-6 text-center md:text-center flex align-items-center"
-            >
-              <section>
-                <ReservesList />
-              </section>
-            </div>
-            <div class="col-12 md:col-6 overflow-hidden pr-6">
-              <Image src="dexdradingcompany.jpg" alt="Image" />
-            </div>
+
+          <div class="timeline-wrap" data-aos="fade-in">
+            <Timeline :value="events" align="alternate">
+              <template #marker="slotProps">
+                <span class="marker" aria-hidden="true">
+                  <UiIcon :name="slotProps.item.icon" />
+                </span>
+              </template>
+              <template #content="slotProps">
+                <Card class="event-card">
+                  <template #title>
+                    {{ slotProps.item.status }}
+                    {{ slotProps.item.subtitle }}
+                  </template>
+                  <template #content>
+                    <ul>
+                      <li v-for="desc in slotProps.item.description" :key="desc">
+                        {{ desc }}
+                      </li>
+                    </ul>
+                  </template>
+                </Card>
+              </template>
+            </Timeline>
           </div>
-        </div> -->
-      </div>
-      <div class="container">
-        <div class="section-title">
-          <h2 class="title">{{ t('reserves.learnAboutProofOfReserves') }}</h2>
-          <div class="bar"></div>
-          <p>{{ t('reserves.weBringRevolutionToGoldMarket') }}</p>
         </div>
-        <div class="row row--15">
-          <div class="lg:col-6 md:col-6 sm:col-6 col-12">
-            <div class="background rn-address">
-              <div class="reservesimage"></div>
-            </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-head">
+            <h2>{{ t('reserves.learnAboutProofOfReserves') }}</h2>
+            <p>{{ t('reserves.weBringRevolutionToGoldMarket') }}</p>
           </div>
-          <div class="lg:col-6 md:col-6 sm:col-6 col-12">
-            <div class="background rn-address">
+          <div class="reserves-grid">
+            <img
+              class="reserves-img"
+              :src="coinsImg"
+              alt="Gold coins held in the ASA.Gold reserves"
+              loading="lazy"
+            />
+            <div>
               <ReservesList />
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div v-else style="margin-top: 200px; height: 500px">
-      <div class="m-2 text-center">
-        <ProgressSpinner
-          style="width: 100px; height: 100px; margin-top: 100px"
-          strokeWidth="8"
-          fill="var(--surface-ground)"
-          animationDuration=".5s"
-          aria-label="Custom ProgressSpinner"
-        />
-      </div>
+      </section>
+    </template>
+    <div v-else class="loading" role="status">
+      <ProgressSpinner style="width: 3rem; height: 3rem" strokeWidth="6" aria-label="Loading" />
     </div>
   </Layout>
 </template>
 
-<style lang="scss" scoped>
-@media screen and (max-width: 960px) {
-  ::v-deep(.customized-timeline) {
-    .p-timeline-event:nth-child(even) {
-      flex-direction: row !important;
-
-      .p-timeline-event-content {
-        text-align: left !important;
-      }
-    }
-
-    .p-timeline-event-opposite {
-      flex: 0;
-    }
+<style scoped>
+.stats {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  margin-bottom: 3rem;
+}
+.stat {
+  padding: 1.25rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.stat__label {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.stat__value {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--gold-700);
+  overflow-wrap: anywhere;
+}
+.stat__link {
+  text-decoration: none;
+}
+.marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--gold-50);
+  border: 2px solid var(--gold-500);
+  color: var(--gold-700);
+  box-shadow: var(--shadow-sm);
+  z-index: 1;
+}
+.event-card {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+.event-card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--ink-soft);
+}
+.event-card li {
+  margin-bottom: 0.5rem;
+}
+.reserves-grid {
+  display: grid;
+  gap: 1.5rem;
+  align-items: start;
+}
+.reserves-img {
+  width: 100%;
+  height: 100%;
+  min-height: 16rem;
+  max-height: 32rem;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 8rem 1rem;
+  color: var(--gold-600);
+}
+@media (min-width: 992px) {
+  .reserves-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }
 </style>

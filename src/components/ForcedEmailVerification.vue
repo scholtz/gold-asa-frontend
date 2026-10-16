@@ -43,16 +43,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex-grow-1">
+  <div class="forced">
     <div v-if="store.state.authState?.account">
-      <div v-if="status.loadingState">
+      <div v-if="status.loadingState" class="container forced__msg">
         <Message
           >We are loading your account information
           <ProgressSpinner
             style="width: 1em; height: 1em"
             strokeWidth="8"
             animationDuration=".5s"
-            class="mx-1"
+            class="forced__spinner"
           />
         </Message>
       </div>
@@ -64,3 +64,16 @@ onMounted(async () => {
     <slot v-else></slot>
   </div>
 </template>
+
+<style scoped>
+.forced {
+  flex: 1 1 auto;
+}
+.forced__msg {
+  padding-top: 2rem;
+}
+.forced__spinner {
+  margin: 0 0.25rem;
+  vertical-align: middle;
+}
+</style>

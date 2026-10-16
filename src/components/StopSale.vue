@@ -86,24 +86,34 @@ const executeStopSale = async () => {
 }
 </script>
 <template>
-  <div>By clicking the button you will set your gold coin not to be on sale.</div>
-  <div>
-    <Button
-      :disabled="state.sending || state.sent"
-      :severity="state.sent ? 'success' : 'primary'"
-      @click="executeStopSale"
-      class="m-3"
-    >
-      <ProgressSpinner
-        v-if="state.sending || state.sent"
-        style="width: 1em; height: 1em"
-        strokeWidth="8"
-        animationDuration=".5s"
-        class="mx-1"
-      />
-      Set not for sale
-    </Button>
+  <div class="stop-sale">
+    <p>By clicking the button you will set your gold coin not to be on sale.</p>
+    <div class="stop-sale__actions">
+      <Button
+        :disabled="state.sending || state.sent"
+        :severity="state.sent ? 'success' : 'primary'"
+        @click="executeStopSale"
+      >
+        <ProgressSpinner v-if="state.sending || state.sent" class="inline-spinner" />
+        Set not for sale
+      </Button>
 
-    <Button severity="secondary" @click="handleOnCancel" class="m-3">Go back</Button>
+      <Button severity="secondary" @click="handleOnCancel">Go back</Button>
+    </div>
   </div>
 </template>
+<style scoped>
+.stop-sale p {
+  margin: 0 0 1rem;
+  color: var(--ink-soft);
+}
+.stop-sale__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.inline-spinner {
+  width: 1em;
+  height: 1em;
+}
+</style>

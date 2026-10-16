@@ -90,17 +90,11 @@ function getPrice() {
   <Button
     :disabled="state.sending || state.sent"
     :severity="state.sent ? 'success' : 'primary'"
+    size="large"
     v-if="props.assetId && getPrice() > 0"
-    class="mb-2"
     @click="buy(props.item.state.asset1)"
   >
-    <ProgressSpinner
-      v-if="state.sending"
-      style="width: 1em; height: 1em"
-      strokeWidth="8"
-      animationDuration=".5s"
-      class="mx-1"
-    />
+    <ProgressSpinner v-if="state.sending" class="inline-spinner" />
     Buy @
     {{
       formatAssetPrice({
@@ -110,3 +104,9 @@ function getPrice() {
     }}</Button
   >
 </template>
+<style scoped>
+.inline-spinner {
+  width: 1em;
+  height: 1em;
+}
+</style>

@@ -11,7 +11,7 @@ Related repos (not here): BFF backend (`scholtz/AsaGoldBff`), repository API (`A
 ## Stack
 
 - Vue 3 (`<script setup lang="ts">`), Vite 4, TypeScript ~5.2, Pinia, Vue Router 4
-- PrimeVue 3 + PrimeFlex + PrimeIcons (theme `lara-light-teal`)
+- Custom design system (no UI framework): tokens in `src/assets/tokens.css`, primitives in `layout.css`, generated utility classes in `utilities.css` (`node scripts/generate-utilities.mjs`), components in `src/components/ui/` (`UiButton`, `UiInputText`, `UiDropdown`, `UiToast` + `useToast`, `UiIcon`, ...)
 - algosdk 2, `@thencc/any-wallet` and wallet connectors (Pera, Defly, MyAlgo, WalletConnect), Folks Router for swaps
 - Tests: Vitest + jsdom + @vue/test-utils (unit), Cypress (e2e)
 
@@ -30,7 +30,7 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 
 ## Layout
 
-- `src/main.ts` - app bootstrap (PrimeVue, Toast, Pinia, router)
+- `src/main.ts` - app bootstrap (wallet manager, Pinia, router, i18n)
 - `src/router/index.ts` - routes; most views are lazy-loaded
 - `src/views/` - page-level components (`Settings/`, `Tokens/`, `GDPR/`, `Terms/` subfolders)
 - `src/components/` - reusable components; `src/layouts/` - `PublicLayout` / `AuthLayout`
@@ -46,7 +46,7 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 - Use the Composition API with `<script setup lang="ts">`; type props and emits. (Only the template-only icon components in `src/components/icons/` lack it; don't convert existing files without reason.)
 - Put chain/IPFS/HTTP logic in `src/scripts/` (or `src/service/ProductService.ts` for e-shop product loading) and keep views thin. Reuse existing helpers before writing new ones; they are default exports, e.g. `import getAlgodClient from '@/scripts/algo/getAlgodClient'`, `getAsaFromCache` (`scripts/algo/`), `formatPrice` (`scripts/common/`).
 - Shared state goes through `useAppStore`; do not add new global singletons.
-- UI components come from PrimeVue; use PrimeFlex utility classes before adding custom CSS.
+- Build UI from `src/components/ui/*` and the CSS variables in `tokens.css`; do not add PrimeVue/PrimeFlex/PrimeIcons or hardcode colours. Use `UiIcon` for icons (add new SVG paths there). Scoped CSS per component; shared primitives (`.container`, `.section`, `.page-hero`, `.table`) in `layout.css`.
 
 ## Runtime configuration
 

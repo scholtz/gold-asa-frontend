@@ -11,5 +11,5 @@ function getPicture() {
 }
 </script>
 <template>
-  <img :src="getPicture()" :alt="props.alt" :class="props.class" :style="props.style" />
+  <img :src="getPicture()" :alt="props.alt" :class="props.class" :style="props.style" loading="lazy" />
 </template>

@@ -82,7 +82,7 @@ const sum = () => {
       .map((a) => a.state.weight)
       .reduce(function (a, b) {
         return a + b
-      }) /
+      }, 0) /
       10 ** 6 +
     ' g'
   )

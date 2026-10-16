@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import Penel from '@/components/ui/UiPanel.vue'
 import Layout from '@/layouts/AuthLayout.vue'
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <Penel header="Privacy Policy" class="m-4">
+    <header class="page-hero">
+      <div class="container">
+        <h1>Privacy Policy</h1>
+        <p>Valid from 12.11.2023</p>
+      </div>
+    </header>
+    <div class="section">
+      <div class="container prose">
       <p>
         This Privacy Policy describes how we collect, use, and handle your personal information when
         you use our services. It applies to the personal data we collect when you visit our website
@@ -133,6 +139,7 @@ import Layout from '@/layouts/AuthLayout.vue'
       </p>
       <p>This Privacy Policy is valid from 12.11.2023.</p>
       <p>This Privacy Policy is effective from 12.11.2023.</p>
-    </Penel></Layout
-  >
+      </div>
+    </div>
+  </Layout>
 </template>
