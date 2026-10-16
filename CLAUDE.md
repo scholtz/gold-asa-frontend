@@ -20,11 +20,11 @@ Related repos (not here): BFF backend (`scholtz/AsaGoldBff`), repository API (`A
 - `npm ci` - install
 - `npm run dev` - Vite dev server
 - `npm run type-check` - `vue-tsc` against `tsconfig.app.json`
-- `npm run build` - type-check then `vite build` (output `dist/`)
-- `npm run test:unit` - Vitest (use `npx vitest run` for a single non-watch run)
+- `npm run build` - runs `type-check` and `vite build` in parallel (`run-p`), so a produced `dist/` does not prove types passed; check the exit code / type errors (output `dist/`)
+- `npm run test:unit` - Vitest in watch mode (blocks); agents and CI should use `npx vitest run`
 - `npm run test:e2e` - Cypress against the preview build
-- `npm run lint` - ESLint with `--fix`
-- `npm run format` - Prettier on `src/`
+- `npm run lint` - ESLint with `--fix` over the whole repo (can touch unrelated files; review the diff). For check-only: `npx eslint <files>`
+- `npm run format` - `prettier --write src/` (whole `src/`). To format only your changes: `npx prettier --write <files>`
 
 Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`): `npm run build` (TealScript compile + client generation), `npm test` (Jest, needs an Algorand sandbox). Do not touch it unless the task is about the contract.
 
@@ -41,9 +41,9 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 
 ## Conventions
 
-- Prettier: no semicolons, single quotes, 2-space indent, 100 columns, no trailing commas. Run `npm run format` on files you change.
+- Prettier: no semicolons, single quotes, 2-space indent, 100 columns, no trailing commas. Format only the files you change with `npx prettier --write <files>`.
 - Use the Composition API with `<script setup lang="ts">`; type props and emits.
-- Put chain/IPFS/HTTP logic in `src/scripts/` and keep views thin. Reuse existing helpers (`getAlgodClient`, `getAsaFromCache`, `formatPrice`, etc.) before writing new ones.
+- Put chain/IPFS/HTTP logic in `src/scripts/` and keep views thin. Reuse existing helpers before writing new ones; they are default exports, e.g. `import getAlgodClient from '@/scripts/algo/getAlgodClient'`, `getAsaFromCache` (`scripts/algo/`), `formatPrice` (`scripts/common/`).
 - Shared state goes through `useAppStore`; do not add new global singletons.
 - UI components come from PrimeVue; use PrimeFlex utility classes before adding custom CSS.
 
@@ -54,7 +54,7 @@ The app fetches `/config.json` at startup (see top of `src/stores/app.ts`) to se
 ## Things to be careful about
 
 - This handles real money and wallet signing. Never log or persist secrets/mnemonics, and do not change transaction construction, asset IDs, fee collector addresses or network defaults without being asked.
-- Mainnet and testnet use different asset/app IDs; never hardcode one environment's IDs outside the config/store defaults.
+- Mainnet and testnet use different asset/app IDs; never hardcode one environment's asset/app IDs in views, components or scripts. Environment-specific values belong only in `k8s/<env>/conf` (served as `/config.json`); the store defaults in `src/stores/app.ts` are fallbacks, so do not add new ones there.
 - Pushing to `main` triggers a production deploy. Work on a branch and open a PR.
 - `dist/`, `node_modules/` and the contract's `contracts/artifacts` are generated; do not edit by hand.
 - Test coverage is minimal (only a placeholder spec exists); add Vitest tests for new pure logic in `src/scripts/`.
