@@ -1,6 +1,7 @@
 import { onMounted, onUnmounted } from 'vue'
 
 export const RETRY_DELAY_MS = 10_000
+export const SLOW_RETRY_DELAY_MS = 60_000
 
 export interface ILoadResult<T> {
   data: T
@@ -12,8 +13,8 @@ export interface IRetryingLoadInput<T> {
   load: () => Promise<ILoadResult<T>>
   onData: (data: T) => void
   retryMs?: number
-  /** how often an incomplete (but not failed) result is retried; failures retry indefinitely */
-  maxIncompleteRetries?: number
+  /** after this many retries of an incomplete (but not failed) result, retry only every minute */
+  fastIncompleteRetries?: number
 }
 
 /**
@@ -22,13 +23,13 @@ export interface IRetryingLoadInput<T> {
  * Returns a function that stops all further attempts (call it when the component unmounts).
  */
 const retryingLoad = <T>(input: IRetryingLoadInput<T>): (() => void) => {
-  const { load, onData, retryMs = RETRY_DELAY_MS, maxIncompleteRetries = 6 } = input
+  const { load, onData, retryMs = RETRY_DELAY_MS, fastIncompleteRetries = 6 } = input
   let stopped = false
   let incompleteRetries = 0
   let timer: ReturnType<typeof setTimeout> | undefined
 
-  const schedule = () => {
-    if (!stopped) timer = setTimeout(run, retryMs)
+  const schedule = (delayMs = retryMs) => {
+    if (!stopped) timer = setTimeout(run, delayMs)
   }
   const run = async () => {
     let result: ILoadResult<T>
@@ -47,7 +48,10 @@ const retryingLoad = <T>(input: IRetryingLoadInput<T>): (() => void) => {
       console.error(`Unable to use loaded data: ${e?.message ?? e}`)
       return
     }
-    if (!result.complete && incompleteRetries++ < maxIncompleteRetries) schedule()
+    // a coin that can never load must not keep hammering algod and IPFS every 10 s
+    if (!result.complete) {
+      schedule(incompleteRetries++ < fastIncompleteRetries ? retryMs : SLOW_RETRY_DELAY_MS)
+    }
   }
 
   run()

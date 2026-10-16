@@ -76,15 +76,15 @@ describe('retryingLoad', () => {
     expect(load).toHaveBeenCalledTimes(1)
   })
 
-  it('gives up on incomplete results after the retry cap but keeps retrying failures', async () => {
+  it('slows down retries of incomplete results after the fast retries', async () => {
     const incomplete = vi.fn().mockResolvedValue({ data: 1, complete: false })
-    retryingLoad({ load: incomplete, onData: vi.fn(), maxIncompleteRetries: 2 })
-    await vi.advanceTimersByTimeAsync(100_000)
+    const stop = retryingLoad({ load: incomplete, onData: vi.fn(), fastIncompleteRetries: 2 })
+    await vi.advanceTimersByTimeAsync(20_000)
     expect(incomplete).toHaveBeenCalledTimes(3)
-
-    const failing = vi.fn().mockRejectedValue(new Error('down'))
-    retryingLoad({ load: failing, onData: vi.fn(), maxIncompleteRetries: 2 })
-    await vi.advanceTimersByTimeAsync(100_000)
-    expect(failing.mock.calls.length).toBeGreaterThan(5)
+    await vi.advanceTimersByTimeAsync(59_999)
+    expect(incomplete).toHaveBeenCalledTimes(3)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(incomplete).toHaveBeenCalledTimes(4)
+    stop()
   })
 })

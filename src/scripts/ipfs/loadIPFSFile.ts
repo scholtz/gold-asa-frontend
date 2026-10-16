@@ -6,6 +6,8 @@ interface ICache {
   data: any
 }
 
+const isMetadata = (data: unknown) => !!data && typeof data === 'object' && !Array.isArray(data)
+
 export const loadIPFSFile = async (hash: string) => {
   const cacheKey = `ipfs-${hash}`
   const ipfsGateways = [
@@ -25,7 +27,7 @@ export const loadIPFSFile = async (hash: string) => {
       compareTime.setDate(new Date().getDate() - 30) // cache for 30 days
       console.log('cacheTime > compareTime', cacheTime > compareTime, cacheTime, compareTime)
       // ignore entries cached by older versions that are not metadata objects
-      if (cacheTime > compareTime && typeof cacheObj.data === 'object') {
+      if (cacheTime > compareTime && isMetadata(cacheObj.data)) {
         return cacheObj.data
       }
     } catch (e: any) {
@@ -44,7 +46,7 @@ export const loadIPFSFile = async (hash: string) => {
         timeout: 8000
       })
       // an HTML error page or other non-JSON body from a gateway is not metadata
-      if (ipfsData?.data && typeof ipfsData.data === 'object') {
+      if (ipfsData?.data && isMetadata(ipfsData.data)) {
         break
       }
     } catch (e) {
@@ -52,7 +54,7 @@ export const loadIPFSFile = async (hash: string) => {
     }
   }
 
-  if (ipfsData?.data && typeof ipfsData.data === 'object') {
+  if (ipfsData?.data && isMetadata(ipfsData.data)) {
     const cacheValue: ICache = { time: new Date().toISOString(), data: ipfsData?.data }
     safeSetItem(cacheKey, JSON.stringify(cacheValue))
     return ipfsData?.data
