@@ -1,4 +1,4 @@
-import type algosdk from 'algosdk'
+import type algosdk from 'algosdk2'
 
 export interface AsaData {
   state: number

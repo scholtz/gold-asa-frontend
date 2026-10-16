@@ -1,5 +1,5 @@
 import type { IState } from '../../stores/app'
-import algosdk from 'algosdk'
+import algosdk from 'algosdk2'
 const getAlgodClient = (state: IState): algosdk.Algodv2 => {
   return new algosdk.Algodv2(state.algodToken, state.algodHost, state.algodPort)
 }

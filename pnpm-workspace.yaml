@@ -1,4 +1,5 @@
 allowBuilds:
+  cbor-extract: false
   cypress: true
   esbuild: true
   protobufjs: false

@@ -12,7 +12,7 @@ import { useToast } from 'primevue/usetoast'
 import { Buffer } from 'buffer'
 import Message from 'primevue/message'
 import getAsa from '@/scripts/algo/getAsa'
-import algosdk from 'algosdk'
+import algosdk from 'algosdk2'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import AlgorandAddress from '@/components/AlgorandAddress.vue'
 import { useI18n } from 'vue-i18n'
@@ -272,7 +272,7 @@ async function executeQuote(quote: SwapQuote) {
       grouped.map((tx) => tx.txID())
     )
     const groupedEncoded = grouped.map((tx) => tx.toByte())
-    const txs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
+    const txs = (await store.state.authComponent!.sign(groupedEncoded)) as Uint8Array[]
     console.log(
       'txs',
       txs,
@@ -338,7 +338,7 @@ async function optIn(assetId: number) {
 
     console.log('tosign', grouped)
     const groupedEncoded = grouped.map((tx) => tx.toByte())
-    const txs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
+    const txs = (await store.state.authComponent!.sign(groupedEncoded)) as Uint8Array[]
     console.log('txs', txs)
     if (txs.length != grouped.length) {
       throw new Error(

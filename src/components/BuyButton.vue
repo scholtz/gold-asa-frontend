@@ -8,7 +8,7 @@ import { useAppStore } from '@/stores/app'
 import { useToast } from 'primevue/usetoast'
 import delay from '@/scripts/common/delay'
 import { reactive } from 'vue'
-import type algosdk from 'algosdk'
+import type algosdk from 'algosdk2'
 import getTransactionSignerAccount from '@/scripts/algo/getTransactionSignerAccount'
 import ProgressSpinner from 'primevue/progressspinner'
 import clearBoxCache from '@/scripts/algo/clearBoxCache'
@@ -56,7 +56,7 @@ async function buy(asset: number) {
     })
     console.log('grouped', grouped)
     const groupedEncoded = grouped.map((tx) => tx.toByte())
-    const signedTxs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
+    const signedTxs = (await store.state.authComponent!.sign(groupedEncoded)) as Uint8Array[]
     state.sending = true
     console.log('grouped', grouped)
     clearBoxCache({

@@ -1,4 +1,4 @@
-import algosdk from 'algosdk'
+import algosdk from 'algosdk2'
 interface IGetBoxReferenceReservesInput {
   app: number | bigint
   goldToken: number

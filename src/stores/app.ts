@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { usePrimeVue } from 'primevue/config'
 import axios from 'axios'
 
-import { AuthenticationStore } from 'algorand-authentication-component-vue'
+import type { IAuthenticationStore } from 'algorand-authentication-component-vue'
 export interface IAccount {
   email: string
   termsAndConditions: string
@@ -12,6 +12,34 @@ export interface IAccount {
   gdpr: string
   funded: number
 }
+/** Thin wrapper over useAVMAuthentication() so views can log in, log out and sign without importing the library. */
+export interface IAuthBridge {
+  auth: (email?: string) => void // email is accepted for backwards compatibility; the library asks for it itself
+  logout: () => Promise<void>
+  /** Signs encoded unsigned transactions (algosdk 2 or 3 bytes) with the connected wallet or ARC-76 account. */
+  sign: (encodedTxns: Uint8Array[]) => Promise<Uint8Array[]>
+}
+const createAuthState = (): IAuthenticationStore => ({
+  inAuthentication: false,
+  isAuthenticated: false,
+  arc14Header: '',
+  wallet: '',
+  account: '',
+  count: 0,
+  arc76email: '',
+  m: '',
+  password: '',
+  password2: '',
+  name: '',
+  emailIsValid: false,
+  inRegistration: false,
+  inRegistrationToSign: false,
+  usignedTxs: [],
+  dataToSign: '',
+  inArc76Signature: false,
+  inWalletSignature: false,
+  signaturePromise: null
+})
 export interface IState {
   bff: string
   algodHost: string
@@ -19,8 +47,8 @@ export interface IState {
   algodToken: string
   theme: string
   currentTheme: string
-  authState: AuthenticationStore
-  authComponent: any
+  authState: IAuthenticationStore
+  authComponent: IAuthBridge | null
   env: 'mainnet-v1.0' | 'testnet-v1.0' | 'sandnet-v1'
   tokens: {
     gold: number
@@ -52,7 +80,7 @@ const defaultState: IState = {
   algodToken: '',
   theme: 'lara-light-teal',
   currentTheme: '_empty',
-  authState: new AuthenticationStore(),
+  authState: createAuthState(),
   tokens: tokens,
   customToken: null,
   authComponent: null,
@@ -99,6 +127,7 @@ try {
   console.error(e.message)
 }
 console.log('configData', configData)
+export const runtimeConfig = configData
 export const useAppStore = defineStore('app', () => {
   const PrimeVue = usePrimeVue()
   let storageState: IState | null = null
@@ -106,6 +135,11 @@ export const useAppStore = defineStore('app', () => {
     const stateFromStorage = localStorage.getItem('state')
     if (stateFromStorage) {
       const istate = JSON.parse(stateFromStorage) as IState
+      if ((istate as any).authState) {
+        // older versions persisted the auth session; remove it
+        delete (istate as any).authState
+        localStorage.setItem('state', JSON.stringify(istate))
+      }
       if (istate.env == initState.env) {
         // if network has been changed make sure we do not load bad data from localstorage
         if (istate.algodHost) initState.algodHost = istate.algodHost
@@ -157,7 +191,13 @@ export const useAppStore = defineStore('app', () => {
     state,
     async (newState, oldState) => {
       console.log('state update', oldState, newState)
-      localStorage.setItem('state', JSON.stringify(newState))
+      // never persist the auth session (ARC-14 header) or the auth bridge
+      localStorage.setItem(
+        'state',
+        JSON.stringify(newState, (key, value) =>
+          key === 'authState' || key === 'authComponent' ? undefined : value
+        )
+      )
       if (state.theme != 'lara-light-teal') state.theme = 'lara-light-teal'
       if (state.currentTheme != state.theme) {
         console.log(`setting theme from ${state.currentTheme} to ${state.theme}`)

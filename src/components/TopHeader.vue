@@ -39,17 +39,18 @@ const items = computed(() => [
 ])
 // window.addEventListener("scroll", handleScroll);
 
-function logout() {
+async function logout() {
   if (!store.state.authComponent) {
     console.error('Unable to logout, authcomponent not initialized', store.state.authComponent)
     return
   }
   console.log('sending logout')
-  store.state.authComponent?.logout()
-  store.state.authState.isAuthenticated = false
-  store.state.authState.arc76email = ''
-  store.state.authState.arc14Header = ''
-  store.state.authState.account = ''
+  try {
+    await store.state.authComponent?.logout()
+  } catch (e: any) {
+    console.error(e.message)
+  }
+  // authState is mirrored from the auth library (see AuthLayout), so it is cleared by the library logout
   router.push('/')
   console.log('logout sent')
 }

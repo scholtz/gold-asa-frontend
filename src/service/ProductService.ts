@@ -1,4 +1,4 @@
-import algosdk from 'algosdk'
+import algosdk from 'algosdk2'
 
 import type INFTDetail from '@/types/INFTDetail'
 

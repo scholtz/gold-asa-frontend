@@ -1,4 +1,4 @@
-import type algosdk from 'algosdk'
+import type algosdk from 'algosdk2'
 import getAsa from './getAsa'
 import type INFTDetail from '@/types/INFTDetail'
 import loadIPFSFile from '../ipfs/loadIPFSFile'

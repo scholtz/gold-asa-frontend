@@ -8,7 +8,7 @@ import delay from '@/scripts/common/delay'
 import { clientNotForSaleTxs, getBoxReferenceNFT, getClient } from 'algorand-asa-gold'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import getTransactionSignerAccount from '@/scripts/algo/getTransactionSignerAccount'
-import type algosdk from 'algosdk'
+import type algosdk from 'algosdk2'
 import * as algokit from '@algorandfoundation/algokit-utils'
 import ProgressSpinner from 'primevue/progressspinner'
 import clearBoxCache from '@/scripts/algo/clearBoxCache'
@@ -59,7 +59,7 @@ const executeStopSale = async () => {
     })
     console.log('grouped', grouped)
     const groupedEncoded = grouped.map((tx) => tx.toByte())
-    const signedTxs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
+    const signedTxs = (await store.state.authComponent!.sign(groupedEncoded)) as Uint8Array[]
     state.sending = true
     console.log('grouped', grouped)
     clearBoxCache({
