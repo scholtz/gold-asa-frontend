@@ -50,10 +50,7 @@ async function logout() {
   } catch (e: any) {
     console.error(e.message)
   }
-  store.state.authState.isAuthenticated = false
-  store.state.authState.arc76email = ''
-  store.state.authState.arc14Header = ''
-  store.state.authState.account = ''
+  // authState is mirrored from the auth library (see AuthLayout), so it is cleared by the library logout
   router.push('/')
   console.log('logout sent')
 }
