@@ -36,7 +36,15 @@ const loadProducts = async (key: string): Promise<ILoadResult<IEshopItem[]>> => 
     client.getApplicationBoxes(store.state.appId).do(),
     BOX_LIST_TIMEOUT_MS
   )
-  const assets = boxes.boxes.map((n) => algosdk.decodeUint64(n.name.subarray(1), 'safe'))
+  const assets: number[] = []
+  for (const box of boxes.boxes) {
+    try {
+      assets.push(algosdk.decodeUint64(box.name.subarray(1), 'safe') as number)
+    } catch (e: any) {
+      // not an NFT box (e.g. added by a contract upgrade); it will not become one by retrying
+      console.error(`Skipping box with unexpected name: ${e?.message ?? e}`)
+    }
+  }
   if (known?.key !== key) known = { key, details: new Map() }
   const loaded = known.details
   const details: INFTDetail[] = []
@@ -72,7 +80,8 @@ const loadProducts = async (key: string): Promise<ILoadResult<IEshopItem[]>> => 
   }
 }
 
-// every caller gets its own item and state objects, so one view changing a state cannot affect another
+// every caller gets its own item and state objects, so one view changing an item's state cannot
+// affect another (nft metadata is shared and treated as read-only)
 const copy = (items: IEshopItem[]): IEshopItem[] =>
   items.map((item) => ({ ...item, state: { ...item.state } }))
 

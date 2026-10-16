@@ -13,8 +13,8 @@ export interface IRetryingLoadInput<T> {
   load: () => Promise<ILoadResult<T>>
   onData: (data: T) => void
   retryMs?: number
-  /** after this many retries of an incomplete (but not failed) result, retry only every minute */
-  fastIncompleteRetries?: number
+  /** after this many retries, retry only every SLOW_RETRY_DELAY_MS */
+  fastRetries?: number
 }
 
 /**
@@ -23,35 +23,34 @@ export interface IRetryingLoadInput<T> {
  * Returns a function that stops all further attempts (call it when the component unmounts).
  */
 const retryingLoad = <T>(input: IRetryingLoadInput<T>): (() => void) => {
-  const { load, onData, retryMs = RETRY_DELAY_MS, fastIncompleteRetries = 6 } = input
+  const { load, onData, retryMs = RETRY_DELAY_MS, fastRetries = 6 } = input
   let stopped = false
-  let incompleteRetries = 0
+  let retries = 0
   let timer: ReturnType<typeof setTimeout> | undefined
 
-  const schedule = (delayMs = retryMs) => {
-    if (!stopped) timer = setTimeout(run, delayMs)
+  // retry quickly a few times, then only once a minute so a permanent problem does not hammer algod
+  const schedule = () => {
+    if (stopped) return
+    timer = setTimeout(run, retries++ < fastRetries ? retryMs : SLOW_RETRY_DELAY_MS)
   }
   const run = async () => {
     let result: ILoadResult<T>
     try {
       result = await load()
     } catch (e: any) {
-      console.error(`Loading failed, retrying in ${retryMs} ms: ${e?.message ?? e}`)
+      console.error(`Loading failed, retrying: ${e?.message ?? e}`)
       schedule()
       return
     }
     if (stopped) return
-    // a consumer error must not turn a finished load into an endless reload loop
     try {
       onData(result.data)
     } catch (e: any) {
       console.error(`Unable to use loaded data: ${e?.message ?? e}`)
-      return
+      // a consumer error must not turn a finished load into an endless reload loop
+      if (result.complete) return
     }
-    // a coin that can never load must not keep hammering algod and IPFS every 10 s
-    if (!result.complete) {
-      schedule(incompleteRetries++ < fastIncompleteRetries ? retryMs : SLOW_RETRY_DELAY_MS)
-    }
+    if (!result.complete) schedule()
   }
 
   run()

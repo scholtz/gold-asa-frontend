@@ -76,15 +76,32 @@ describe('retryingLoad', () => {
     expect(load).toHaveBeenCalledTimes(1)
   })
 
-  it('slows down retries of incomplete results after the fast retries', async () => {
-    const incomplete = vi.fn().mockResolvedValue({ data: 1, complete: false })
-    const stop = retryingLoad({ load: incomplete, onData: vi.fn(), fastIncompleteRetries: 2 })
-    await vi.advanceTimersByTimeAsync(20_000)
-    expect(incomplete).toHaveBeenCalledTimes(3)
-    await vi.advanceTimersByTimeAsync(59_999)
-    expect(incomplete).toHaveBeenCalledTimes(3)
-    await vi.advanceTimersByTimeAsync(1)
-    expect(incomplete).toHaveBeenCalledTimes(4)
+  it('slows down retries after the fast retries, for failures as well as incomplete results', async () => {
+    for (const load of [
+      vi.fn().mockResolvedValue({ data: 1, complete: false }),
+      vi.fn().mockRejectedValue(new Error('down'))
+    ]) {
+      const stop = retryingLoad({ load, onData: vi.fn(), fastRetries: 2 })
+      await vi.advanceTimersByTimeAsync(20_000)
+      expect(load).toHaveBeenCalledTimes(3)
+      await vi.advanceTimersByTimeAsync(59_999)
+      expect(load).toHaveBeenCalledTimes(3)
+      await vi.advanceTimersByTimeAsync(1)
+      expect(load).toHaveBeenCalledTimes(4)
+      stop()
+    }
+  })
+
+  it('keeps retrying when the consumer throws on an incomplete result', async () => {
+    const load = vi.fn().mockResolvedValue({ data: 1, complete: false })
+    const stop = retryingLoad({
+      load,
+      onData: () => {
+        throw new Error('consumer bug')
+      }
+    })
+    await vi.advanceTimersByTimeAsync(10_000)
+    expect(load).toHaveBeenCalledTimes(2)
     stop()
   })
 })
