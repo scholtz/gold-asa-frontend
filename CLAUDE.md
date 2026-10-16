@@ -22,7 +22,7 @@ Related repos (not here): BFF backend (`scholtz/AsaGoldBff`), repository API (`A
 - `npm run type-check` - `vue-tsc` against `tsconfig.app.json`
 - `npm run build` - outputs to `dist/`. It runs `type-check` and `vite build` in parallel (`run-p`). A `dist/` directory does not prove types passed; check the exit code and type errors.
 - `npm run test:unit` - Vitest in watch mode (blocks); agents and CI should use `npx vitest run`
-- `npm run test:e2e` - Cypress against `vite preview` (does not build; run `npm run build` first)
+- `npm run test:e2e` - Cypress against `vite preview` (does not build; run `npm run build` first and confirm type-check passed)
 - `npm run lint` - ESLint with `--fix` over the whole repo (can touch unrelated files; review the diff). For check-only: `npx eslint <files>`
 - `npm run format` - `prettier --write src/` (whole `src/`). To format only your changes: `npx prettier --write <files>`
 
@@ -35,7 +35,7 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 - `src/views/` - page-level components (`Settings/`, `Tokens/`, `GDPR/`, `Terms/` subfolders)
 - `src/components/` - reusable components; `src/layouts/` - `PublicLayout` / `AuthLayout`
 - `src/stores/app.ts` - the single Pinia store (`useAppStore`): network/env, token IDs, algod settings, auth state, account
-- `src/service/ProductService.ts` - loads e-shop products from the contract's boxes (uses the store and `scripts/`); extend it for product data rather than creating a parallel service
+- `src/service/ProductService.ts` - loads e-shop products from the contract's boxes (uses the store and `scripts/`); extend it for product data rather than creating a parallel service; new generic helpers still go in `scripts/`
 - `src/scripts/` - non-UI helpers grouped by domain: `algo/` (algod client, ASA parsing, caches), `boxes/` (smart-contract box reads), `ipfs/`, `axios/BFF.ts`, `common/`
 - `src/types/` - shared TS interfaces
 - `k8s/{mainnet,testnet,sandbox}`, `docker/` - deployment; CI (`.github/workflows/main.yml`) deploys on push to `main` via SSH to a server running `deploy.sh`
@@ -44,13 +44,15 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 
 - Prettier: no semicolons, single quotes, 2-space indent, 100 columns, no trailing commas. Format only the files you change with `npx prettier --write <files>`.
 - Use the Composition API with `<script setup lang="ts">`; type props and emits. (Only the template-only icon components in `src/components/icons/` lack it; don't convert existing files without reason.)
-- Put chain/IPFS/HTTP logic in `src/scripts/` and keep views thin. Reuse existing helpers before writing new ones; they are default exports, e.g. `import getAlgodClient from '@/scripts/algo/getAlgodClient'`, `getAsaFromCache` (`scripts/algo/`), `formatPrice` (`scripts/common/`).
+- Put chain/IPFS/HTTP logic in `src/scripts/` (or `src/service/ProductService.ts` for e-shop product loading) and keep views thin. Reuse existing helpers before writing new ones; they are default exports, e.g. `import getAlgodClient from '@/scripts/algo/getAlgodClient'`, `getAsaFromCache` (`scripts/algo/`), `formatPrice` (`scripts/common/`).
 - Shared state goes through `useAppStore`; do not add new global singletons.
 - UI components come from PrimeVue; use PrimeFlex utility classes before adding custom CSS.
 
 ## Runtime configuration
 
-The app fetches `/config.json` at startup (see top of `src/stores/app.ts`) to set env (`mainnet-v1.0` / `testnet-v1.0` / `sandnet-v1`), BFF URL, algod endpoint, app ID, token IDs and fee collector. Config per environment lives in `k8s/<env>/conf`. Precedence in `useAppStore`: defaults < `localStorage` key `state` < `/config.json` < (if a stored `env` exists) stored `env`, `algodHost`, `algodPort`, `algodToken`, which override the config. A watcher persists state on every change and re-forces `bff`, `appId` and the token IDs from the config. `feeCollector` comes from the config, not storage. So "wrong network" symptoms usually come from stored algod/env values (clear them with `resetConfiguration()`, which calls `localStorage.clear()`), while wrong token IDs or fee collector point at the config in `k8s/<env>/conf`.
+The app fetches `/config.json` at startup (top of `src/stores/app.ts`) to set env (`mainnet-v1.0` / `testnet-v1.0` / `sandnet-v1`), BFF URL, algod endpoint, app ID, token IDs and fee collector. Config per environment lives in `k8s/<env>/conf`. If the fetch fails the error is only logged and the app runs on hardcoded defaults.
+
+State is also persisted to `localStorage` key `state`. It is only read back when its `env` equals the configured `env`, and then the stored algod host/port/token can override the config's. A watcher re-applies `bff`, `appId` and the token IDs from the config on every state change. Read `useAppStore` before debugging "wrong network", token ID or fee collector issues rather than assuming which source wins. `resetConfiguration()` clears storage but the watcher immediately rewrites it with default state, so reload after calling it.
 
 ## Things to be careful about
 
