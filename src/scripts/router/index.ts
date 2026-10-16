@@ -18,6 +18,7 @@ const getAuth = () => {
   if (!auth) {
     auth = createBiatecAuth({
       getAccount: () => useAppStore().state.authState.account,
+      getScope: () => safeRouterHost(useAppStore().state.routerHost),
       sign: async (encoded) => {
         const bridge = useAppStore().state.authComponent
         if (!bridge) throw new Error('Authentication component is not ready')

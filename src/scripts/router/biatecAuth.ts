@@ -9,6 +9,8 @@ export const BIATEC_ROUTER_REALM = 'BiatecRouter'
 const HEADER_TTL_MS = 30 * 60 * 1000
 /** After a failed/declined signature we do not ask again for this long (unless reset() is called). */
 const DECLINE_COOLDOWN_MS = 5 * 60 * 1000
+/** A header younger than this cannot have expired, so a rejection of an older one must not drop it. */
+const FRESH_MS = 10 * 1000
 
 export interface IBiatecAuthDeps {
   /** Currently authenticated account, empty when not logged in */
@@ -17,6 +19,8 @@ export interface IBiatecAuthDeps {
   sign(encodedTxns: Uint8Array[]): Promise<Uint8Array[]>
   /** Suggested params of the Algorand mainnet node */
   getParams(): Promise<algosdk.SuggestedParams>
+  /** Header scope, e.g. the router host: a header is not reused for another scope */
+  getScope?(): string
   now?: () => number
 }
 
@@ -26,9 +30,9 @@ export interface IBiatecAuthDeps {
  */
 export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
   const now = deps.now ?? Date.now
-  let cached: { account: string; header: string; expires: number } | null = null
-  let pending: { account: string; promise: Promise<string> } | null = null
-  let declined: { account: string; until: number; message: string } | null = null
+  let cached: { key: string; header: string; created: number; expires: number } | null = null
+  let pending: { key: string; promise: Promise<string> } | null = null
+  let declined: { key: string; until: number; message: string } | null = null
 
   /** the user (or wallet) refused / failed to sign, as opposed to e.g. a network error */
   class SignError extends Error {}
@@ -50,23 +54,24 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
     async getHeader(): Promise<string> {
       const account = deps.getAccount()
       if (!account) throw new RouterAuthRequiredError()
-      if (cached && cached.account === account && cached.expires > now()) return cached.header
-      if (declined && declined.account === account && declined.until > now()) {
+      const key = `${account}|${deps.getScope?.() ?? ''}`
+      if (cached && cached.key === key && cached.expires > now()) return cached.header
+      if (declined && declined.key === key && declined.until > now()) {
         throw new RouterAuthRequiredError(
           `Could not sign the router authentication (${declined.message}). Press "Refresh quotes" to try again.`
         )
       }
       // one wallet prompt even when several quotes are requested at once
-      if (pending && pending.account === account) return pending.promise
+      if (pending && pending.key === key) return pending.promise
       const promise = create(account)
         .then((header) => {
-          cached = { account, header, expires: now() + HEADER_TTL_MS }
+          cached = { key, header, created: now(), expires: now() + HEADER_TTL_MS }
           declined = null
           return header
         })
         .catch((e: any) => {
           if (!(e instanceof SignError)) throw e // e.g. network error: no cooldown, the next refresh retries
-          declined = { account, until: now() + DECLINE_COOLDOWN_MS, message: e.message }
+          declined = { key, until: now() + DECLINE_COOLDOWN_MS, message: e.message }
           throw new RouterAuthRequiredError(
             `Could not sign the router authentication (${e.message}). Press "Refresh quotes" to try again.`
           )
@@ -74,10 +79,15 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
         .finally(() => {
           if (pending?.promise === promise) pending = null
         })
-      pending = { account, promise }
+      pending = { key, promise }
       return promise
     },
+    /**
+     * Drops the cached header after the router rejected it. A header created moments ago is kept: parallel
+     * requests that were rejected with the old header must not throw away the fresh one.
+     */
     invalidate() {
+      if (cached && now() - cached.created < FRESH_MS) return
       cached = null
     },
     /** forget a previous decline, e.g. when the user explicitly asks for a refresh */

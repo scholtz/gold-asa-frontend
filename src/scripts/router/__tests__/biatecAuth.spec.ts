@@ -61,9 +61,18 @@ describe('createBiatecAuth', () => {
     advance(31 * 60 * 1000)
     await auth.getHeader()
     expect(sign).toHaveBeenCalledTimes(2)
+    advance(11 * 1000) // a fresh header survives a late rejection of an older one
     auth.invalidate()
     await auth.getHeader()
     expect(sign).toHaveBeenCalledTimes(3)
+  })
+
+  it('keeps a freshly created header when an older request is rejected', async () => {
+    const { auth, sign } = setup()
+    await auth.getHeader()
+    auth.invalidate()
+    await auth.getHeader()
+    expect(sign).toHaveBeenCalledTimes(1)
   })
 
   it('does not reuse a header for another account', async () => {

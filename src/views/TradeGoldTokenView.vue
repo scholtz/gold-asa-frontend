@@ -173,8 +173,9 @@ async function fetchQuotes(manual = false) {
     const result = await loadQuotes(() => run !== quoteRun)
     if (!result) return
     state.authRequired = false
-    state.lastError = ''
     Object.assign(state, result)
+    const any = Object.entries(result).some(([key, value]) => key !== 'quantityQuote' && value)
+    state.lastError = any ? '' : `No quotes were returned by ${routerName.value} right now.`
   } catch (e: any) {
     if (run !== quoteRun) return
     Object.assign(state, emptyQuotes())
@@ -182,13 +183,18 @@ async function fetchQuotes(manual = false) {
       // the router needs the user to log in, or the user declined to sign
       state.authRequired = true
       state.authMessage = e.message
+      state.lastError = ''
     } else {
       state.authRequired = false
       state.lastError = e.message
     }
+  } finally {
+    // only the newest run owns the flag; an older run must not re-enable the interval refresh early
+    if (run === quoteRun) {
+      refreshing = false
+      refreshCount.value++
+    }
   }
-  refreshing = false
-  refreshCount.value++
 }
 function format(number: number | undefined | bigint, assetId: number) {
   if (number === undefined) return '-'
