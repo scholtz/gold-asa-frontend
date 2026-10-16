@@ -28,20 +28,18 @@ export interface IBiatecAuthDeps {
 export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
   const now = deps.now ?? Date.now
   const generate = deps.generateAccount ?? (() => algosdk.generateAccount())
-  // one throwaway account per scope (router host), so a host cannot correlate sessions of another host
-  const sessions = new Map<string, algosdk.Account>()
+  // one throwaway account per scope (router host), so a host cannot correlate sessions of another host.
+  // Only the current scope's account is kept; switching scope drops (and so forgets) the previous key.
+  let session: { scope: string; account: algosdk.Account } | null = null
   let cached: { scope: string; header: string; expires: number } | null = null
   let pending: { scope: string; promise: Promise<string> } | null = null
 
   const create = async (scope: string): Promise<string> => {
-    let session = sessions.get(scope)
-    if (!session) {
-      session = generate()
-      sessions.set(scope, session)
-    }
+    if (session?.scope !== scope) session = { scope, account: generate() }
+    const { account } = session
     const params = await deps.getParams()
-    const txn = arc14(BIATEC_ROUTER_REALM, session.addr.toString(), params)
-    return arc14Header(txn.signTxn(session.sk))
+    const txn = arc14(BIATEC_ROUTER_REALM, account.addr.toString(), params)
+    return arc14Header(txn.signTxn(account.sk))
   }
 
   return {
@@ -72,7 +70,7 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
     },
     /** Address of the throwaway session account of the current scope (for diagnostics and tests) */
     get sessionAddress(): string | null {
-      return sessions.get(deps.getScope?.() ?? '')?.addr.toString() ?? null
+      return session?.scope === (deps.getScope?.() ?? '') ? session.account.addr.toString() : null
     }
   }
 }

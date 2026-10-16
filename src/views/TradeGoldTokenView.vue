@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
 import { getSwapRouter, effectiveRouterKind, routerLabel, routerUrl } from '@/scripts/router'
-import type { ISwapQuote, RouterKind, SwapMode } from '@/scripts/router'
+import type { ISwapQuote, SwapMode } from '@/scripts/router'
 import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
@@ -73,6 +73,9 @@ const routerOptions = [
   { name: 'Biatec Router', value: 'biatec' },
   { name: 'Folks Router', value: 'folks' }
 ]
+function chooseRouter(value: unknown) {
+  if (value === 'biatec' || value === 'folks') store.state.router = value
+}
 const routerKind = computed(() => effectiveRouterKind(store.state.router, store.state.env))
 const routerName = computed(() => routerLabel(routerKind.value))
 const routerFallback = computed(
@@ -498,8 +501,8 @@ function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
             <span id="router-label" class="toolbar__label">Swap router</span>
             <SelectButton
               :modelValue="routerKind"
-              :disabled="routerFallback || store.state.env !== 'mainnet-v1.0'"
-              @update:modelValue="store.state.router = $event as RouterKind"
+              :disabled="store.state.env !== 'mainnet-v1.0'"
+              @update:modelValue="chooseRouter"
               data-testid="router-select"
               :options="routerOptions"
               optionLabel="name"

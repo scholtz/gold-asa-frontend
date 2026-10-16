@@ -17,7 +17,11 @@ let auth: ReturnType<typeof createBiatecAuth> | null = null
 const getAuth = () => {
   if (!auth) {
     auth = createBiatecAuth({
-      getScope: () => safeRouterHost(useAppStore().state.routerHost),
+      // a header is bound to the router host and to the node (network) whose rounds it was built from
+      getScope: () => {
+        const { routerHost, algodHost, algodPort, env } = useAppStore().state
+        return `${safeRouterHost(routerHost)}|${env}|${algodHost}:${algodPort}`
+      },
       getParams: () => {
         const { algodHost, algodPort, algodToken } = useAppStore().state
         return new algosdk.Algodv2(algodToken, algodHost, algodPort).getTransactionParams().do()
@@ -41,7 +45,13 @@ const biatecApi = (): IBiatecApi => {
     } catch (e: any) {
       if (e?.status !== 401 && e?.status !== 403) throw e
       getAuth().invalidate(used)
-      return await call()
+      try {
+        return await call()
+      } catch (retryError: any) {
+        // still rejected: forget whatever is cached so the next refresh starts clean
+        if (retryError?.status === 401 || retryError?.status === 403) getAuth().invalidate()
+        throw retryError
+      }
     }
   }
 
