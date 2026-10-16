@@ -8,7 +8,7 @@ import delay from '@/scripts/common/delay'
 import { clientRequestParcelDeliveryTxs, getBoxReferenceNFT, getClient } from 'algorand-asa-gold'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import getTransactionSignerAccount from '@/scripts/algo/getTransactionSignerAccount'
-import algosdk from 'algosdk'
+import algosdk from 'algosdk2'
 import * as algokit from '@algorandfoundation/algokit-utils'
 import InputNumber from 'primevue/inputnumber'
 import { bffGetProfile, bffUpdateProfile } from '@/scripts/axios/BFF'
@@ -145,7 +145,7 @@ const executeRequestDelivery = async () => {
     const grouped = algosdk.assignGroupID(unsignedTxnsWithoutGroup)
     console.log('grouped', grouped)
     const groupedEncoded = grouped.map((tx) => tx.toByte())
-    const signedTxs = (await store.state.authComponent.sign(groupedEncoded)) as Uint8Array[]
+    const signedTxs = (await store.state.authComponent!.sign(groupedEncoded)) as Uint8Array[]
     state.sending = true
     console.log('grouped', grouped)
     clearBoxCache({

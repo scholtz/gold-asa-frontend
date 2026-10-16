@@ -1,5 +1,5 @@
 import type { AsaData } from '@/types/ASAData'
-import algosdk from 'algosdk'
+import algosdk from 'algosdk2'
 
 const parseAsaData = (input: Uint8Array) => {
   if (input.length != 192) {

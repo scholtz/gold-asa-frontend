@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { usePrimeVue } from 'primevue/config'
 import axios from 'axios'
 
-import { AuthenticationStore } from 'algorand-authentication-component-vue'
+import type { IAuthenticationStore } from 'algorand-authentication-component-vue'
 export interface IAccount {
   email: string
   termsAndConditions: string
@@ -12,6 +12,34 @@ export interface IAccount {
   gdpr: string
   funded: number
 }
+/** Thin wrapper over useAVMAuthentication() so views can log in, log out and sign without importing the library. */
+export interface IAuthBridge {
+  auth: (email?: string) => void
+  logout: () => Promise<void>
+  /** Signs encoded unsigned transactions (algosdk 2 or 3 bytes) with the connected wallet or ARC-76 account. */
+  sign: (encodedTxns: Uint8Array[]) => Promise<Uint8Array[]>
+}
+const createAuthState = (): IAuthenticationStore => ({
+  inAuthentication: false,
+  isAuthenticated: false,
+  arc14Header: '',
+  wallet: '',
+  account: '',
+  count: 0,
+  arc76email: '',
+  m: '',
+  password: '',
+  password2: '',
+  name: '',
+  emailIsValid: false,
+  inRegistration: false,
+  inRegistrationToSign: false,
+  usignedTxs: [],
+  dataToSign: '',
+  inArc76Signature: false,
+  inWalletSignature: false,
+  signaturePromise: null
+})
 export interface IState {
   bff: string
   algodHost: string
@@ -19,8 +47,8 @@ export interface IState {
   algodToken: string
   theme: string
   currentTheme: string
-  authState: AuthenticationStore
-  authComponent: any
+  authState: IAuthenticationStore
+  authComponent: IAuthBridge | null
   env: 'mainnet-v1.0' | 'testnet-v1.0' | 'sandnet-v1'
   tokens: {
     gold: number
@@ -52,7 +80,7 @@ const defaultState: IState = {
   algodToken: '',
   theme: 'lara-light-teal',
   currentTheme: '_empty',
-  authState: new AuthenticationStore(),
+  authState: createAuthState(),
   tokens: tokens,
   customToken: null,
   authComponent: null,
@@ -99,6 +127,7 @@ try {
   console.error(e.message)
 }
 console.log('configData', configData)
+export const runtimeConfig = configData
 export const useAppStore = defineStore('app', () => {
   const PrimeVue = usePrimeVue()
   let storageState: IState | null = null

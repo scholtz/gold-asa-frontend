@@ -1,4 +1,4 @@
-import type { Transaction } from 'algosdk'
+import type { Transaction } from 'algosdk2'
 import { type TransactionSignerAccount } from '@algorandfoundation/algokit-utils/types/account'
 
 const signer = async (txnGroup: Transaction[], indexesToSign: number[]): Promise<Uint8Array[]> => {
