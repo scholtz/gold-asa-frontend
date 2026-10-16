@@ -39,13 +39,17 @@ const items = computed(() => [
 ])
 // window.addEventListener("scroll", handleScroll);
 
-function logout() {
+async function logout() {
   if (!store.state.authComponent) {
     console.error('Unable to logout, authcomponent not initialized', store.state.authComponent)
     return
   }
   console.log('sending logout')
-  store.state.authComponent?.logout()
+  try {
+    await store.state.authComponent?.logout()
+  } catch (e: any) {
+    console.error(e.message)
+  }
   store.state.authState.isAuthenticated = false
   store.state.authState.arc76email = ''
   store.state.authState.arc14Header = ''

@@ -14,7 +14,7 @@ export interface IAccount {
 }
 /** Thin wrapper over useAVMAuthentication() so views can log in, log out and sign without importing the library. */
 export interface IAuthBridge {
-  auth: (email?: string) => void
+  auth: (email?: string) => void // email is accepted for backwards compatibility; the library asks for it itself
   logout: () => Promise<void>
   /** Signs encoded unsigned transactions (algosdk 2 or 3 bytes) with the connected wallet or ARC-76 account. */
   sign: (encodedTxns: Uint8Array[]) => Promise<Uint8Array[]>

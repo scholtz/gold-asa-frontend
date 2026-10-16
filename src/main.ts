@@ -1,4 +1,5 @@
-import 'algorand-authentication-component-vue/dist/style.css'
+import './polyfills'
+import 'algorand-authentication-component-vue/style.css'
 
 import 'primeflex/primeflex.scss'
 import './assets/main.css'
