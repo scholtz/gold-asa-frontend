@@ -31,6 +31,7 @@
     "algosdk2": "npm:algosdk@^2.7.0",
     "aos": "^2.3.4",
     "axios": "^1.12.2",
+    "biatec-router": "^1.0.1",
     "biatec-wallet-use-wallet-client": "^0.6.0",
     "buffer": "^6.0.3",
     "cross-fetch": "^4.0.0",

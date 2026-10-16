@@ -30,7 +30,7 @@ const { t } = useI18n()
             </li>
             <li>
               <span>{{ t('governance.priceDevelopment') }}</span>
-              <a href="https://vestige.fi/asset/1241945177" target="_blank" rel="noopener">by Vestige</a>
+              <a href="https://algorand.scan.biatec.io/asset/1241945177" target="_blank" rel="noopener">by Biatec Scan</a>
             </li>
             <li>
               <span>{{ t('tokens.downloadAsaGold') }}</span>

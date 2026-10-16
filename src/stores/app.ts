@@ -2,6 +2,7 @@ import { reactive, watch } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+import type { RouterKind } from '@/scripts/router/types'
 import type { IAuthenticationStore } from 'algorand-authentication-component-vue'
 export interface IAccount {
   email: string
@@ -58,6 +59,9 @@ export interface IState {
   account: IAccount | null
   appId: number
   feeCollector: string
+  /** swap router used on the trading page */
+  router: RouterKind
+  routerHost: string
   reloadAccount(): Promise<void>
 }
 const tokens = {
@@ -83,6 +87,8 @@ const defaultState: IState = {
   account: null,
   appId: 0,
   feeCollector: 'H27RABAZCD4AK2AFQQDO2JJYVACGVODA4ITJWBMCI3AGYGHO46JAAXO6LU',
+  router: 'biatec',
+  routerHost: 'https://router.api.biatec.io',
   reloadAccount: reloadAccount
 }
 interface IConfig {
@@ -98,6 +104,8 @@ interface IConfig {
   btcToken: number
   eurToken: number
   feeCollector: string
+  router?: RouterKind
+  routerHost?: string
 }
 
 const initState = { ...defaultState }
@@ -117,6 +125,9 @@ try {
     initState.tokens.btc = configData.btcToken
     initState.tokens.eur = configData.eurToken
     initState.feeCollector = configData.feeCollector
+    if (configData.router === 'biatec' || configData.router === 'folks')
+      initState.router = configData.router
+    if (configData.routerHost) initState.routerHost = configData.routerHost
   }
 } catch (e: any) {
   console.error(e.message)
@@ -137,6 +148,9 @@ export const useAppStore = defineStore('app', () => {
         delete (istate as any).authState
         localStorage.setItem('state', JSON.stringify(istate))
       }
+      // the router is a user preference, so it wins over the config default (whatever the network)
+      if (istate.router === 'biatec' || istate.router === 'folks') initState.router = istate.router
+      if (istate.routerHost) initState.routerHost = istate.routerHost
       if (istate.env == initState.env) {
         // if network has been changed make sure we do not load bad data from localstorage
         if (istate.algodHost) initState.algodHost = istate.algodHost
