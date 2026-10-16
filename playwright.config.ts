@@ -11,7 +11,11 @@ export default defineConfig({
   reporter: 'list',
   use: {
     baseURL: 'http://localhost:4173',
-    trace: 'on-first-retry'
+    trace: 'on-first-retry',
+    // optional: use an already installed Chromium instead of the one Playwright downloads (all projects are Chromium)
+    launchOptions: {
+      executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined
+    }
   },
   projects: [
     {

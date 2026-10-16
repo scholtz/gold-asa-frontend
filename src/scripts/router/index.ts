@@ -17,12 +17,10 @@ let auth: ReturnType<typeof createBiatecAuth> | null = null
 const getAuth = () => {
   if (!auth) {
     auth = createBiatecAuth({
-      getAccount: () => useAppStore().state.authState.account,
-      getScope: () => safeRouterHost(useAppStore().state.routerHost),
-      sign: async (encoded) => {
-        const bridge = useAppStore().state.authComponent
-        if (!bridge) throw new Error('Authentication component is not ready')
-        return bridge.sign(encoded)
+      // a header is bound to the router host and to the node (network) whose rounds it was built from
+      getScope: () => {
+        const { routerHost, algodHost, algodPort, env } = useAppStore().state
+        return `${safeRouterHost(routerHost)}|${env}|${algodHost}:${algodPort}`
       },
       getParams: () => {
         const { algodHost, algodPort, algodToken } = useAppStore().state
@@ -41,11 +39,12 @@ const biatecApi = (): IBiatecApi => {
 
   // an expired/rejected header is dropped and the call retried once with a new one
   const withReauth = async <T>(call: () => Promise<T>): Promise<T> => {
+    const used = await getAuth().getHeader()
     try {
       return await call()
     } catch (e: any) {
       if (e?.status !== 401 && e?.status !== 403) throw e
-      getAuth().invalidate()
+      getAuth().invalidate(used)
       return await call()
     }
   }
@@ -61,8 +60,6 @@ const biatecApi = (): IBiatecApi => {
     }
   }
 }
-
-export const resetRouterAuth = () => auth?.reset()
 
 /** Router currently selected in the settings (falls back to Folks on unsupported networks). */
 export const getSwapRouter = (): ISwapRouter => {

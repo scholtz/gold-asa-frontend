@@ -65,9 +65,9 @@ const routerOptions = [
                 aria-labelledby="routerLabel"
               />
               <p class="hint">
-                Biatec Router needs you to be logged in (a free signature authenticates the
-                requests) and works on Algorand mainnet only; on other networks Folks Router is used
-                automatically.
+                Biatec Router works on Algorand mainnet only (prices do not need a login or a wallet
+                signature); on other networks Folks Router is used automatically. Swaps are always
+                signed by your wallet.
               </p>
               <p
                 v-if="
