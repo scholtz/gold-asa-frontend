@@ -1,4 +1,5 @@
 import axios from 'axios'
+import safeGetItem from '@/scripts/common/safeGetItem'
 import safeSetItem from '@/scripts/common/safeSetItem'
 interface ICache {
   time: string
@@ -14,7 +15,7 @@ export const loadIPFSFile = async (hash: string) => {
     'ipfs.io',
     'dweb.link'
   ]
-  const cache = localStorage.getItem(cacheKey)
+  const cache = safeGetItem(cacheKey)
   if (cache) {
     try {
       const cacheObj = JSON.parse(cache) as ICache
@@ -23,7 +24,8 @@ export const loadIPFSFile = async (hash: string) => {
       const compareTime = new Date()
       compareTime.setDate(new Date().getDate() - 30) // cache for 30 days
       console.log('cacheTime > compareTime', cacheTime > compareTime, cacheTime, compareTime)
-      if (cacheTime > compareTime) {
+      // ignore entries cached by older versions that are not metadata objects
+      if (cacheTime > compareTime && typeof cacheObj.data === 'object') {
         return cacheObj.data
       }
     } catch (e: any) {

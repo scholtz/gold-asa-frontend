@@ -13,8 +13,9 @@ interface IInput {
 }
 
 /**
- * Returns null for assets that are not gold coins or have permanently unusable data.
- * Throws when loading failed for a possibly temporary reason (network, IPFS), so callers can retry.
+ * Returns null for assets that are not gold coins.
+ * Throws when the coin data could not be loaded or parsed, so callers can retry instead of
+ * silently dropping a coin.
  */
 const getARC0003Details = async (input: IInput): Promise<INFTDetail | null> => {
   const { client, assetId } = input
@@ -42,13 +43,7 @@ const getARC0003Details = async (input: IInput): Promise<INFTDetail | null> => {
     boxName: getBoxReferenceNFT({ nftAsset: assetId })
   })
   console.log('box', box)
-  let state
-  try {
-    state = parseAsaData(box.value)
-  } catch (e: any) {
-    console.error(`Invalid box data of asset ${assetId}: ${e?.message ?? e}`)
-    return null
-  }
+  const state = parseAsaData(box.value)
 
   console.log('box', state, box)
   return {

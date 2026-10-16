@@ -47,8 +47,8 @@ describe('getARC0003Details', () => {
     await expect(getARC0003Details(input)).rejects.toThrow('nf')
   })
 
-  it('returns null when the box data is invalid', async () => {
+  it('throws when the box data is invalid', async () => {
     // 10 bytes is not a valid 192 byte box
-    expect(await getARC0003Details(input)).toBeNull()
+    await expect(getARC0003Details(input)).rejects.toThrow('wrong length')
   })
 })

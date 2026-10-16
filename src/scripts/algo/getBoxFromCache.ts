@@ -1,4 +1,5 @@
 import type algosdk from 'algosdk2'
+import safeGetItem from '@/scripts/common/safeGetItem'
 import safeSetItem from '@/scripts/common/safeSetItem'
 import { Buffer } from 'buffer'
 
@@ -14,7 +15,7 @@ interface IInput {
 const getBoxFromCache = async (input: IInput): Promise<algosdk.modelsv2.Box> => {
   const { client, index, boxName } = input
   const cacheKey = `box-${index}-${Buffer.from(boxName).toString('hex')}`
-  const cache = localStorage.getItem(cacheKey)
+  const cache = safeGetItem(cacheKey)
   if (cache) {
     try {
       const cacheObj = JSON.parse(cache) as ICache
