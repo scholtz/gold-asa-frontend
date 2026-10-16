@@ -43,7 +43,7 @@ const biatecApi = (): IBiatecApi => {
     try {
       return await call()
     } catch (e: any) {
-      if (e?.status !== 401) throw e
+      if (e?.status !== 401 && e?.status !== 403) throw e
       getAuth().invalidate()
       return await call()
     }

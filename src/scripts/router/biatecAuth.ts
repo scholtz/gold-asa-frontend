@@ -57,8 +57,11 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
           return header
         })
         .catch((e: any) => {
-          declined = { until: now() + DECLINE_COOLDOWN_MS, message: e?.message ?? 'cancelled' }
-          throw e
+          const message = e?.message ?? 'cancelled'
+          declined = { until: now() + DECLINE_COOLDOWN_MS, message }
+          throw new RouterAuthRequiredError(
+            `Could not sign the router authentication (${message}). Press "Refresh quotes" to try again.`
+          )
         })
         .finally(() => {
           if (pending?.promise === promise) pending = null

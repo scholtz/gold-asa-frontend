@@ -42,6 +42,7 @@ interface IState {
   lastError: string
   /** the selected router needs the user to log in before it can return quotes */
   authRequired: boolean
+  authMessage: string
   accountInformation: IAccountInfo | null
   interval: NodeJS.Timeout | null
 }
@@ -70,6 +71,7 @@ const defaultState: IState = {
   quoteGoldCustom: null,
   lastError: '',
   authRequired: false,
+  authMessage: '',
   accountInformation: null,
   interval: null
 }
@@ -84,111 +86,107 @@ const routerFallback = computed(
   () => store.state.router === 'biatec' && routerKind.value === 'folks'
 )
 
-async function fetchQuote(swapMode: SwapMode, fromAssetId: number, toAssetId: number) {
-  try {
-    const algodClient = getAlgodClient(store.state)
-    const goldAsa = await getAsa({
-      client: algodClient,
-      assetId: store.state.tokens.gold
-    })
-    state.quantityQuote = state.quantity
-    const amount = Math.round(state.quantityQuote * 10 ** (goldAsa?.params?.decimals ?? 6))
-    return await getSwapRouter().fetchQuote({
-      mode: swapMode,
-      fromAsset: fromAssetId,
-      toAsset: toAssetId,
-      amount
-    })
-  } catch (e: any) {
-    if (e instanceof RouterAuthRequiredError) {
-      state.authRequired = true
-      throw e
-    }
-    console.error(`failed fetch ${fromAssetId} to ${toAssetId}`, e)
-    return null
+type QuoteResult = Pick<
+  IState,
+  | 'quantityQuote'
+  | 'quoteUsdcGold'
+  | 'quoteGoldUsdc'
+  | 'quoteEurGold'
+  | 'quoteGoldEur'
+  | 'quoteAlgoGold'
+  | 'quoteGoldAlgo'
+  | 'quoteBtcGold'
+  | 'quoteGoldBtc'
+  | 'quoteCustomGold'
+  | 'quoteGoldCustom'
+>
+
+const emptyQuotes = (): QuoteResult => ({
+  quantityQuote: state.quantityQuote,
+  quoteUsdcGold: null,
+  quoteGoldUsdc: null,
+  quoteEurGold: null,
+  quoteGoldEur: null,
+  quoteAlgoGold: null,
+  quoteGoldAlgo: null,
+  quoteBtcGold: null,
+  quoteGoldBtc: null,
+  quoteCustomGold: null,
+  quoteGoldCustom: null
+})
+
+/** Fetches all quotes for the current amount; returns null when a newer refresh superseded this one. */
+async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
+  if (routerKind.value === 'biatec' && !store.state.authState.isAuthenticated) {
+    throw new RouterAuthRequiredError()
   }
+  const router = getSwapRouter()
+  const goldAsa = await getAsa({
+    client: getAlgodClient(store.state),
+    assetId: store.state.tokens.gold
+  })
+  const gold = store.state.tokens.gold
+  const quantity = state.quantity
+  const amount = Math.round(quantity * 10 ** (goldAsa?.params?.decimals ?? 6))
+
+  const quote = async (mode: SwapMode, fromAsset: number, toAsset: number) => {
+    try {
+      return await router.fetchQuote({ mode, fromAsset, toAsset, amount })
+    } catch (e: any) {
+      if (e instanceof RouterAuthRequiredError) throw e
+      console.error(`failed fetch ${fromAsset} to ${toAsset}`, e)
+      return null
+    }
+  }
+
+  const result = emptyQuotes()
+  result.quantityQuote = quantity
+  const pairs: [number, 'Eur' | 'Usdc' | 'Algo' | 'Btc' | 'Custom'][] = [
+    [store.state.tokens.eur, 'Eur'],
+    [store.state.tokens.usdc, 'Usdc'],
+    [store.state.tokens.algo, 'Algo'],
+    [store.state.tokens.btc, 'Btc']
+  ]
+  if (store.state.customToken) pairs.push([store.state.customToken, 'Custom'])
+  for (const [asset, name] of pairs) {
+    if (isStale()) return null
+    result[`quote${name}Gold` as keyof QuoteResult] = (await quote(
+      'FIXED_OUTPUT',
+      asset,
+      gold
+    )) as never
+    if (isStale()) return null
+    result[`quoteGold${name}` as keyof QuoteResult] = (await quote(
+      'FIXED_INPUT',
+      gold,
+      asset
+    )) as never
+  }
+  return result
 }
+
+let quoteRun = 0
 async function fetchQuotes(manual = false) {
+  const run = ++quoteRun
   if (manual) resetRouterAuth()
-  state.authRequired = false
   try {
-    await loadQuotes()
+    const result = await loadQuotes(() => run !== quoteRun)
+    if (!result) return
+    state.authRequired = false
+    Object.assign(state, result)
   } catch (e: any) {
-    // a router that needs the user to log in (or the user declining to sign) stops the whole refresh
-    if (!(e instanceof RouterAuthRequiredError)) {
+    if (run !== quoteRun) return
+    Object.assign(state, emptyQuotes())
+    if (e instanceof RouterAuthRequiredError) {
+      // the router needs the user to log in, or the user declined to sign
+      state.authRequired = true
+      state.authMessage = e.message
+    } else {
+      state.authRequired = false
       state.lastError = e.message
     }
   }
   refreshCount.value++
-}
-async function loadQuotes() {
-  if (routerKind.value === 'biatec' && !store.state.authState.isAuthenticated) {
-    throw new RouterAuthRequiredError()
-  }
-  state.quoteUsdcGold = null
-  state.quoteGoldUsdc = null
-  state.quoteUsdcGold = (await fetchQuote(
-    'FIXED_OUTPUT',
-    store.state.tokens.usdc,
-    store.state.tokens.gold
-  )) as ISwapQuote
-  state.quoteGoldUsdc = (await fetchQuote(
-    'FIXED_INPUT',
-    store.state.tokens.gold,
-    store.state.tokens.usdc
-  )) as ISwapQuote
-
-  state.quoteEurGold = null
-  state.quoteGoldEur = null
-  state.quoteEurGold = (await fetchQuote(
-    'FIXED_OUTPUT',
-    store.state.tokens.eur,
-    store.state.tokens.gold
-  )) as ISwapQuote
-  state.quoteGoldEur = (await fetchQuote(
-    'FIXED_INPUT',
-    store.state.tokens.gold,
-    store.state.tokens.eur
-  )) as ISwapQuote
-
-  state.quoteAlgoGold = null
-  state.quoteGoldAlgo = null
-  state.quoteAlgoGold = (await fetchQuote(
-    'FIXED_OUTPUT',
-    store.state.tokens.algo,
-    store.state.tokens.gold
-  )) as ISwapQuote
-  state.quoteGoldAlgo = (await fetchQuote(
-    'FIXED_INPUT',
-    store.state.tokens.gold,
-    store.state.tokens.algo
-  )) as ISwapQuote
-  state.quoteBtcGold = null
-  state.quoteGoldBtc = null
-  state.quoteBtcGold = (await fetchQuote(
-    'FIXED_OUTPUT',
-    store.state.tokens.btc,
-    store.state.tokens.gold
-  )) as ISwapQuote
-  state.quoteGoldBtc = (await fetchQuote(
-    'FIXED_INPUT',
-    store.state.tokens.gold,
-    store.state.tokens.btc
-  )) as ISwapQuote
-  if (store.state.customToken) {
-    state.quoteCustomGold = null
-    state.quoteGoldCustom = null
-    state.quoteCustomGold = (await fetchQuote(
-      'FIXED_OUTPUT',
-      store.state.customToken,
-      store.state.tokens.gold
-    )) as ISwapQuote
-    state.quoteGoldCustom = (await fetchQuote(
-      'FIXED_INPUT',
-      store.state.tokens.gold,
-      store.state.customToken
-    )) as ISwapQuote
-  }
 }
 function format(number: number | undefined | bigint, assetId: number) {
   if (number === undefined) return '-'
@@ -250,7 +248,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   if (state.interval) {
     console.log('clearing timer')
-    clearTimeout(state.interval)
+    clearInterval(state.interval)
     state.interval = null
   }
 })
@@ -269,6 +267,9 @@ async function executeQuote(quote: ISwapQuote) {
       await delay(1000)
       store.state.authComponent?.auth()
       return
+    }
+    if (quote.router !== routerKind.value) {
+      throw new Error('The quotes are outdated (router changed), please refresh and try again')
     }
     const routerTxns = await getSwapRouter().prepareTransactions(
       quote,
@@ -509,8 +510,11 @@ function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
             Biatec Router is available on Algorand mainnet only. Using Folks Router on this network.
           </Message>
           <Message v-if="state.authRequired" class="trading-error" severity="info">
-            {{ routerName }} needs you to log in to provide quotes (you sign a free authentication
-            message, nothing is sent to the network).
+            <template v-if="!store.state.authState.isAuthenticated">
+              {{ routerName }} needs you to log in to provide quotes (you sign a free authentication
+              message, nothing is sent to the network).
+            </template>
+            <template v-else>{{ state.authMessage }}</template>
             <Button
               class="trading-login"
               size="small"

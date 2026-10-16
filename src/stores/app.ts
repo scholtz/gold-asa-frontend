@@ -160,6 +160,7 @@ export const useAppStore = defineStore('app', () => {
         // the router is a user preference, so it wins over the config default
         if (istate.router === 'biatec' || istate.router === 'folks')
           initState.router = istate.router
+        if (istate.routerHost) initState.routerHost = istate.routerHost
         storageState = istate
       }
     }

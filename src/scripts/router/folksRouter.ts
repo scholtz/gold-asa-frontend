@@ -7,7 +7,17 @@ const FEE_BPS = 10
 const REFERRER = 'AWALLETCPHQPJGCZ6AHLIFPHWBHUEHQ7VBYJVVGQRRY4MEIGWUBKCQYP4Y'
 const MAX_GROUP_SIZE = 15
 
+const cache = new Map<string, ISwapRouter>()
+
 export const createFolksRouter = (env: string): ISwapRouter => {
+  const cached = cache.get(env)
+  if (cached) return cached
+  const router = buildFolksRouter(env)
+  cache.set(env, router)
+  return router
+}
+
+const buildFolksRouter = (env: string): ISwapRouter => {
   const network =
     env === 'mainnet-v1.0' ? Network.MAINNET : env === 'testnet-v1.0' ? Network.TESTNET : null
   const client = network === null ? null : new FolksRouterClient(network)

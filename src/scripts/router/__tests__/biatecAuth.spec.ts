@@ -84,11 +84,11 @@ describe('createBiatecAuth', () => {
       sign,
       getParams: async () => params()
     })
-    await expect(auth.getHeader()).rejects.toThrow('User rejected')
     await expect(auth.getHeader()).rejects.toBeInstanceOf(RouterAuthRequiredError)
+    await expect(auth.getHeader()).rejects.toThrow('User rejected')
     expect(sign).toHaveBeenCalledTimes(1)
     auth.reset()
-    await expect(auth.getHeader()).rejects.toThrow('User rejected')
+    await expect(auth.getHeader()).rejects.toBeInstanceOf(RouterAuthRequiredError)
     expect(sign).toHaveBeenCalledTimes(2)
   })
 })
