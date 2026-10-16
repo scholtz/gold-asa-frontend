@@ -2,15 +2,14 @@
 import Layout from '@/layouts/AuthLayout.vue'
 import { FolksRouterClient, Network, SwapMode } from '@folks-router/js-sdk'
 import type { SwapQuote } from '@folks-router/js-sdk'
-import Panel from 'primevue/panel'
-import Image from 'primevue/image'
-import Button from 'primevue/button'
+import Panel from '@/components/ui/UiPanel.vue'
+import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
-import InputNumber from 'primevue/inputnumber'
+import InputNumber from '@/components/ui/UiInputNumber.vue'
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from '@/components/ui/useToast'
 import { Buffer } from 'buffer'
-import Message from 'primevue/message'
+import Message from '@/components/ui/UiMessage.vue'
 import getAsa from '@/scripts/algo/getAsa'
 import algosdk from 'algosdk2'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
@@ -378,412 +377,294 @@ async function optIn(assetId: number) {
     toast.add({ severity: 'error', detail: e.message, life: 5000 })
   }
 }
+
+interface IPairRow {
+  key: string
+  unit: string
+  assetId: number
+  decimals: number
+  optInLabel?: string
+  buy: SwapQuote | null
+  sell: SwapQuote | null
+}
+function pairRows(): IPairRow[] {
+  return [
+    {
+      key: 'eur',
+      unit: 'EURs',
+      assetId: store.state.tokens.eur,
+      decimals: 6,
+      optInLabel: 'Open Stasis EUR account',
+      buy: state.quoteEurGold,
+      sell: state.quoteGoldEur
+    },
+    {
+      key: 'usdc',
+      unit: 'USDC',
+      assetId: store.state.tokens.usdc,
+      decimals: 6,
+      optInLabel: 'Open USDC account',
+      buy: state.quoteUsdcGold,
+      sell: state.quoteGoldUsdc
+    },
+    {
+      key: 'algo',
+      unit: 'Algo',
+      assetId: store.state.tokens.algo,
+      decimals: 6,
+      buy: state.quoteAlgoGold,
+      sell: state.quoteGoldAlgo
+    },
+    {
+      key: 'btc',
+      unit: 'BTC',
+      assetId: store.state.tokens.btc,
+      decimals: 8,
+      optInLabel: 'Open BTC account',
+      buy: state.quoteBtcGold,
+      sell: state.quoteGoldBtc
+    }
+  ]
+}
+function hasAsset(assetId: number) {
+  return !!state.accountInformation?.assets.find((token) => token['asset-id'] == assetId)
+}
+function needsOptIn(assetId: number) {
+  return !!state.accountInformation && !hasAsset(assetId)
+}
+function balanceOf(row: IPairRow) {
+  if (row.key === 'algo') return format(state.accountInformation?.amount, row.assetId)
+  return format(
+    state.accountInformation?.assets?.find((token) => token['asset-id'] == row.assetId)?.amount,
+    row.assetId
+  )
+}
+function goldBalance() {
+  return format(
+    state.accountInformation?.assets?.find((token) => token['asset-id'] == store.state.tokens.gold)
+      ?.amount,
+    store.state.tokens.gold
+  )
+}
+function unitPrice(quote: SwapQuote | null, row: IPairRow) {
+  if (!quote?.quoteAmount) return ''
+  if (!state.quantityQuote) return ''
+  return (Number(quote.quoteAmount) / (state.quantityQuote * 10 ** row.decimals)).toFixed(4)
+}
+function totalAmount(quote: SwapQuote | null, row: IPairRow) {
+  return Number(quote?.quoteAmount) / 10 ** row.decimals
+}
 </script>
 <template>
-  <Layout :hideTopMenu="false" class="ChangeBackgroundcolor">
-    <div class="bg-0-2-10 bg-d1-0-2-20 dextrading-background">
-      <div class="title-0-2-11 title-d2-0-2-21">
-        <div class="bigTitle-0-2-12 bigTitle-d3-0-2-22 title">{{ t('trading.exploreDecentralizedTrading') }}</div>
-        <div class="subTitle-0-2-13 subTitle-d4-0-2-23 title">
-          facilitated by algorand blockchain and folks DEX aggregator
-        </div>
-        <div class="flex flex-row dextrading-inputstyle">
-          <InputNumber
-            class="flex-grow-1 mr-2"
-            v-model="state.quantity"
-            inputId="minmax-buttons"
-            showButtons
-            :min="0"
-            :max="100"
-            :step="0.1"
-            :minFractionDigits="6"
-            suffix=" g"
-          />
-          <Button class="hidden md:revert dextrading-button" @click="fetchQuotes"
+  <Layout :hideTopMenu="false">
+    <header class="page-hero">
+      <div class="container">
+        <h1>{{ t('trading.exploreDecentralizedTrading') }}</h1>
+        <p>Facilitated by Algorand blockchain and the Folks DEX aggregator.</p>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container stack">
+        <div class="toolbar">
+          <div class="toolbar__field">
+            <label for="minmax-buttons" class="toolbar__label">Amount of gold</label>
+            <InputNumber
+              class="toolbar__input"
+              v-model="state.quantity"
+              id="minmax-buttons"
+              showButtons
+              :min="0"
+              :max="100"
+              :step="0.1"
+              :minFractionDigits="6"
+              suffix=" g"
+            />
+          </div>
+          <Button class="toolbar__btn" severity="secondary" @click="fetchQuotes"
             >Refresh quotes</Button
           >
         </div>
-        <div class="mt-3">
-          <Button class="md:hidden dextrading-button" @click="fetchQuotes">Refresh quotes</Button>
-        </div>
-      </div>
-    </div>
-    <Panel
-      header="DEX TRADING"
-      class="m-4 flex flex-grow-1 flex-column card-0-2-27"
-      toggleableContent="text"
-    >
-      <div v-if="state.lastError">
-        <Message severity="error" @close="state.lastError = ''">{{ state.lastError }}</Message>
-      </div>
-      <table :class="refreshCount" id="tradingtable" class="text-center">
-        <tr id="tradingtable-tr">
-          <th class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            Your balance
-          </th>
-          <th class="text-center hidden md:revert">Action button</th>
-          <th class="text-center hidden xl:revert">Token</th>
-          <th class="hidden xl:revert"></th>
-          <th class="text-center hidden lg:revert">Price</th>
-          <th class="text-center hidden lg:revert">Price</th>
-          <th class="hidden xl:revert"></th>
-          <th class="text-center hidden xl:revert">Token</th>
-          <th class="text-center hidden md:revert">Action button</th>
-          <th class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            Your balance
-          </th>
-        </tr>
-        <tr
-          v-if="
-            state.accountInformation &&
-            !state.accountInformation.assets.find(
-              (token) => token['asset-id'] == store.state.tokens.gold
-            )
-          "
-        >
-          <td colspan="10" class="text-center">
-            <Button
-              @click="optIn(store.state.tokens.gold)"
-              :title="`Opt in to asset ${store.state.tokens.gold}`"
-              >Open Gold account</Button
-            >
-          </td>
-        </tr>
-        <tr
-          v-if="
-            state.accountInformation &&
-            !state.accountInformation.assets.find(
-              (token) => token['asset-id'] == store.state.tokens.eur
-            )
-          "
-        >
-          <td colspan="10" class="text-center">
-            <Button @click="optIn(store.state.tokens.eur)">Open Stasis EUR account</Button>
-          </td>
-        </tr>
-        <tr v-else>
-          <td class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            {{
-              format(
-                state.accountInformation?.assets?.find(
-                  (token) => token['asset-id'] == store.state.tokens.eur
-                )?.amount,
-                store.state.tokens.eur
-              )
-            }}
-          </td>
-          <td class="text-center">
-            <Button
-              v-if="state.quoteEurGold"
-              class="m-1 bid"
-              @click="executeQuote(state.quoteEurGold)"
-              >Buy {{ state.quantityQuote }} grams of gold <br />for
-              {{ Number(state.quoteEurGold?.quoteAmount) / 10 ** 6 }} EURs</Button
-            >
-          </td>
-          <td class="text-center hidden xl:revert">
-            <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
-              :title="store.state.tokens.eur.toString()"
-              >EURs</span
-            >
-          </td>
-          <td class="text-center hidden xl:revert">@</td>
-          <td v-if="state.quoteEurGold?.quoteAmount" class="hidden lg:revert">
-            {{
-              (Number(state.quoteEurGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
-            }}
-          </td>
-          <td v-else class="hidden lg:revert">No quote</td>
-          <td class="text-center hidden lg:revert" v-if="state.quoteGoldEur?.quoteAmount">
-            {{
-              (Number(state.quoteGoldEur?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(4)
-            }}
-          </td>
-          <td class="text-center hidden lg:revert" v-else>No quote</td>
-          <td class="hidden xl:revert">@</td>
-          <td class="hidden xl:revert">
-            <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
-              :title="store.state.tokens.eur.toString()"
-              >EURs</span
-            >
-          </td>
-          <td>
-            <Button
-              v-if="state.quoteGoldEur"
-              class="m-1 offer"
-              @click="executeQuote(state.quoteGoldEur)"
-              >Sell {{ state.quantityQuote }} grams of gold <br />for
-              {{ Number(state.quoteGoldEur?.quoteAmount) / 10 ** 6 }} EURs</Button
-            >
-          </td>
-          <td class="hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            {{
-              format(
-                state.accountInformation?.assets?.find(
-                  (token) => token['asset-id'] == store.state.tokens.gold
-                )?.amount,
-                store.state.tokens.gold
-              )
-            }}
-          </td>
-        </tr>
-        <tr
-          v-if="
-            state.accountInformation &&
-            !state.accountInformation.assets.find(
-              (token) => token['asset-id'] == store.state.tokens.usdc
-            )
-          "
-        >
-          <td colspan="10" class="text-center">
-            <Button @click="optIn(store.state.tokens.usdc)">Open USDC account</Button>
-          </td>
-        </tr>
-        <tr v-else>
-          <td class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            {{
-              format(
-                state.accountInformation?.assets?.find(
-                  (token) => token['asset-id'] == store.state.tokens.usdc
-                )?.amount,
-                store.state.tokens.usdc
-              )
-            }}
-          </td>
-          <td class="text-center">
-            <Button
-              v-if="state.quoteUsdcGold"
-              class="m-1 bid"
-              @click="executeQuote(state.quoteUsdcGold)"
-              >Buy {{ state.quantityQuote }} grams of gold <br />for
-              {{ Number(state.quoteUsdcGold?.quoteAmount) / 10 ** 6 }} USDC</Button
-            >
-          </td>
-          <td class="text-center hidden xl:revert">
-            <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
-              :title="store.state.tokens.usdc.toString()"
-              >USDC</span
-            >
-          </td>
-          <td class="text-center hidden xl:revert">@</td>
-          <td v-if="state.quoteUsdcGold?.quoteAmount" class="hidden lg:revert">
-            {{
-              (Number(state.quoteUsdcGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(
-                4
-              )
-            }}
-          </td>
-          <td v-else class="hidden lg:revert">No quote</td>
-          <td class="text-center hidden lg:revert" v-if="state.quoteGoldUsdc?.quoteAmount">
-            {{
-              (Number(state.quoteGoldUsdc?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(
-                4
-              )
-            }}
-          </td>
-          <td class="text-center hidden lg:revert" v-else>No quote</td>
-          <td class="hidden xl:revert">@</td>
-          <td class="hidden xl:revert">
-            <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
-              :title="store.state.tokens.usdc.toString()"
-              >USDC</span
-            >
-          </td>
-          <td>
-            <Button
-              v-if="state.quoteGoldUsdc"
-              class="m-1 offer"
-              @click="executeQuote(state.quoteGoldUsdc)"
-              >Sell {{ state.quantityQuote }} grams of gold <br />for
-              {{ Number(state.quoteGoldUsdc?.quoteAmount) / 10 ** 6 }} USDC</Button
-            >
-          </td>
-          <td class="hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            {{
-              format(
-                state.accountInformation?.assets?.find(
-                  (token) => token['asset-id'] == store.state.tokens.gold
-                )?.amount,
-                store.state.tokens.gold
-              )
-            }}
-          </td>
-        </tr>
 
-        <tr>
-          <td class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            {{ format(state.accountInformation?.amount, store.state.tokens.algo) }}
-          </td>
-          <td class="text-center">
-            <Button
-              v-if="state.quoteAlgoGold"
-              class="m-1 bid"
-              @click="executeQuote(state.quoteAlgoGold)"
-              >Buy {{ state.quantityQuote }} grams of gold <br />for
-              {{ Number(state.quoteAlgoGold?.quoteAmount) / 10 ** 6 }} Algo</Button
-            >
-          </td>
-          <td class="text-center hidden xl:revert">
-            <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
-              :title="store.state.tokens.algo.toString()"
-              >Algo</span
-            >
-          </td>
-          <td class="text-center hidden xl:revert">@</td>
-          <td v-if="state.quoteAlgoGold?.quoteAmount" class="hidden lg:revert">
-            {{
-              (Number(state.quoteAlgoGold?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(
-                4
-              )
-            }}
-          </td>
-          <td class="hidden lg:revert" v-else>No quote</td>
-          <td class="text-center hidden lg:revert" v-if="state.quoteGoldAlgo?.quoteAmount">
-            {{
-              (Number(state.quoteGoldAlgo?.quoteAmount) / (state.quantityQuote * 10 ** 6)).toFixed(
-                4
-              )
-            }}
-          </td>
-          <td class="text-center hidden lg:revert" v-else>No quote</td>
-          <td class="hidden xl:revert">@</td>
-          <td class="hidden xl:revert">
-            <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
-              :title="store.state.tokens.algo.toString()"
-              >Algo</span
-            >
-          </td>
-          <td>
-            <Button
-              v-if="state.quoteGoldAlgo"
-              class="m-1 offer"
-              @click="executeQuote(state.quoteGoldAlgo)"
-              >Sell {{ state.quantityQuote }} grams of gold <br />for
-              {{ Number(state.quoteGoldAlgo?.quoteAmount) / 10 ** 6 }} Algo</Button
-            >
-          </td>
-          <td class="hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            {{
-              format(
-                state.accountInformation?.assets?.find(
-                  (token) => token['asset-id'] == store.state.tokens.gold
-                )?.amount,
-                store.state.tokens.gold
-              )
-            }}
-          </td>
-        </tr>
-        <tr
-          v-if="
-            state.accountInformation &&
-            !state.accountInformation.assets.find(
-              (token) => token['asset-id'] == store.state.tokens.btc
-            )
-          "
-        >
-          <td colspan="10" class="text-center">
-            <Button @click="optIn(store.state.tokens.btc)">Open BTC account</Button>
-          </td>
-        </tr>
-        <tr v-else>
-          <td class="text-center hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            {{
-              format(
-                state.accountInformation?.assets?.find(
-                  (token) => token['asset-id'] == store.state.tokens.btc
-                )?.amount,
-                store.state.tokens.btc
-              )
-            }}
-          </td>
-          <td class="text-center">
-            <Button
-              v-if="state.quoteBtcGold"
-              class="m-1 bid"
-              @click="executeQuote(state.quoteBtcGold)"
-              >Buy {{ state.quantityQuote }} grams of gold <br />for
-              {{ Number(state.quoteBtcGold?.quoteAmount) / 10 ** 8 }} BTC</Button
-            >
-          </td>
-          <td class="text-center hidden xl:revert">
-            <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
-              :title="store.state.tokens.btc.toString()"
-              >BTC</span
-            >
-          </td>
-          <td class="text-center hidden xl:revert">@</td>
-          <td class="hidden lg:revert" v-if="state.quoteBtcGold?.quoteAmount">
-            {{
-              (Number(state.quoteBtcGold?.quoteAmount) / (state.quantityQuote * 10 ** 8)).toFixed(4)
-            }}
-          </td>
-          <td class="hidden lg:revert" v-else>No quote</td>
-          <td class="text-center hidden lg:revert" v-if="state.quoteGoldBtc?.quoteAmount">
-            {{
-              (Number(state.quoteGoldBtc?.quoteAmount) / (state.quantityQuote * 10 ** 8)).toFixed(4)
-            }}
-          </td>
-          <td class="text-center hidden lg:revert" v-else>No quote</td>
-          <td class="hidden xl:revert">@</td>
-          <td class="hidden xl:revert">
-            <span :title="store.state.tokens.gold.toString()">Gold (g)</span>/<span
-              :title="store.state.tokens.btc.toString()"
-              >BTC</span
-            >
-          </td>
-          <td>
-            <Button
-              v-if="state.quoteGoldBtc"
-              class="m-1 offer"
-              @click="executeQuote(state.quoteGoldBtc)"
-              >Sell {{ state.quantityQuote }} grams of gold <br />for
-              {{ Number(state.quoteGoldBtc?.quoteAmount) / 10 ** 8 }} BTC</Button
-            >
-          </td>
-          <td class="hidden md:revert" v-if="store.state.authState.isAuthenticated">
-            {{
-              format(
-                state.accountInformation?.assets?.find(
-                  (token) => token['asset-id'] == store.state.tokens.gold
-                )?.amount,
-                store.state.tokens.gold
-              )
-            }}
-          </td>
-        </tr>
-      </table>
-      <div class="bottom-data">
-        <Image src="Haha.jpg" alt="Image" class="css-1ek128f" style="margin-top: 100px" />
-        <p class="p-display">
+        <Panel :header="t('trading.dexTrading')">
+          <Message
+            v-if="state.lastError"
+            class="trading-error"
+            severity="error"
+            closable
+            @close="state.lastError = ''"
+            >{{ state.lastError }}</Message
+          >
+
+          <div class="table-wrap trading">
+            <table :class="refreshCount" id="tradingtable" class="table">
+              <thead>
+                <tr id="tradingtable-tr">
+                  <th v-if="store.state.authState.isAuthenticated" class="num col-balance">
+                    Your balance
+                  </th>
+                  <th class="col-action">Buy gold</th>
+                  <th class="col-pair">Pair</th>
+                  <th class="num col-price">Buy price</th>
+                  <th class="num col-price">Sell price</th>
+                  <th class="col-action">Sell gold</th>
+                  <th v-if="store.state.authState.isAuthenticated" class="num col-balance">
+                    Gold balance
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="needsOptIn(store.state.tokens.gold)">
+                  <td colspan="7" class="optin">
+                    <Button
+                      severity="secondary"
+                      @click="optIn(store.state.tokens.gold)"
+                      :title="`Opt in to asset ${store.state.tokens.gold}`"
+                      >Open Gold account</Button
+                    >
+                  </td>
+                </tr>
+                <template v-for="row in pairRows()" :key="row.key">
+                  <tr v-if="row.optInLabel && needsOptIn(row.assetId)">
+                    <td colspan="7" class="optin">
+                      <Button severity="secondary" @click="optIn(row.assetId)">{{
+                        row.optInLabel
+                      }}</Button>
+                    </td>
+                  </tr>
+                  <tr v-else>
+                    <td v-if="store.state.authState.isAuthenticated" class="num col-balance">
+                      {{ balanceOf(row) }}
+                    </td>
+                    <td class="col-action">
+                      <Button
+                        v-if="row.buy"
+                        class="trade-btn"
+                        severity="success"
+                        @click="executeQuote(row.buy)"
+                        >Buy {{ state.quantityQuote }} grams of gold <br />for
+                        {{ totalAmount(row.buy, row) }} {{ row.unit }}</Button
+                      >
+                      <span v-else class="no-quote">No quote</span>
+                    </td>
+                    <td class="col-pair">
+                      <span :title="String(store.state.tokens.gold)">Gold (g)</span> /
+                      <span :title="String(row.assetId)">{{ row.unit }}</span>
+                    </td>
+                    <td class="num col-price">{{ unitPrice(row.buy, row) || 'No quote' }}</td>
+                    <td class="num col-price">{{ unitPrice(row.sell, row) || 'No quote' }}</td>
+                    <td class="col-action">
+                      <Button
+                        v-if="row.sell"
+                        class="trade-btn"
+                        severity="danger"
+                        outlined
+                        @click="executeQuote(row.sell)"
+                        >Sell {{ state.quantityQuote }} grams of gold <br />for
+                        {{ totalAmount(row.sell, row) }} {{ row.unit }}</Button
+                      >
+                      <span v-else class="no-quote">No quote</span>
+                    </td>
+                    <td v-if="store.state.authState.isAuthenticated" class="num col-balance">
+                      {{ goldBalance() }}
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+
+        <p class="note">
           Blockchain DEX trading is using DEX aggregator
-          <a href="https://www.folksrouter.io" target="_blank">Folks router.</a>
+          <a href="https://www.folksrouter.io" target="_blank" rel="noopener">Folks router.</a>
           <span v-if="store.state.authState.account">
             Your account is
             <AlgorandAddress :address="store.state.authState.account"></AlgorandAddress>.
           </span>
         </p>
       </div>
-    </Panel>
+    </section>
   </Layout>
 </template>
-<style>
-#tradingtable tr {
-  height: 3em;
+<style scoped>
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
-
-@media screen and (min-width: 768px) {
-  .md\:revert {
-    display: revert !important;
+.toolbar__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1 1 14rem;
+  max-width: 24rem;
+}
+.toolbar__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.toolbar__input {
+  width: 100%;
+}
+.trading-error {
+  margin-bottom: 1rem;
+}
+.trading {
+  box-shadow: none;
+}
+.trading :deep(.table td) {
+  padding: 0.75rem 0.9rem;
+}
+.col-action {
+  text-align: center;
+}
+.col-pair {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.trade-btn {
+  width: 100%;
+  min-width: 0;
+  padding-inline: 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  text-align: center;
+}
+.no-quote {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.optin {
+  text-align: center;
+  background: var(--gold-50);
+}
+.note {
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.col-balance,
+.col-price {
+  display: none;
+}
+@media (min-width: 576px) {
+  .col-price {
+    display: table-cell;
   }
 }
-@media screen and (min-width: 992px) {
-  .lg\:revert {
-    display: revert !important;
-  }
-}
-@media screen and (min-width: 1200px) {
-  .xl\:revert {
-    display: revert !important;
+@media (min-width: 992px) {
+  .col-balance {
+    display: table-cell;
   }
 }
 </style>

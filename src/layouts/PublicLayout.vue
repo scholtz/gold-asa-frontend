@@ -2,11 +2,22 @@
 import TopHeader from '@/components/TopHeader.vue'
 </script>
 <template>
-  <div class="flex flex-column justify-content-center min-h-full p-0 m-0">
-    <Toast />
+  <div class="layout">
     <TopHeader :hideTopMenu="false" />
-    <div class="flex-grow-1 flex flex-column">
+    <main class="layout__main">
       <slot />
-    </div>
+    </main>
   </div>
 </template>
+
+<style scoped>
+.layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.layout__main {
+  flex: 1;
+}
+</style>

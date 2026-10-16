@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import InputNumber from 'primevue/inputnumber'
-import Button from 'primevue/button'
+import InputNumber from '@/components/ui/UiInputNumber.vue'
+import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
-import { useToast } from 'primevue/usetoast'
-import Image from 'primevue/image'
-import SelectButton from 'primevue/selectbutton'
-import ProgressSpinner from 'primevue/progressspinner'
+import { useToast } from '@/components/ui/useToast'
+import SelectButton from '@/components/ui/UiSelectButton.vue'
+import ProgressSpinner from '@/components/ui/UiSpinner.vue'
 const toast = useToast()
 const store = useAppStore()
 import { computed, reactive, ref } from 'vue'
@@ -151,80 +150,84 @@ async function transferIncomming() {
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <div class="buy-seller-with-eur w-full">
-      <div
-        v-if="!rfq"
-        class="surface-card p-4 shadow-2 border-round w-full text-center lg:w-6 digital_gold_silver_calculator mt-4"
-        style="position: absolute; top: 0; right: 100px"
-      >
-        <div class="text-center mt-1 mb-2">
-          <span
-            class="text-600 font-medium line-height-3"
-            style="color: #757575 !important ; font-size: 30px"
-            >Payment</span
-          >
-        </div>
-        <div class="text-center">
-          <span class="text-600 font-medium line-height-3">Buy gold with bank transfer</span>
-          <div class="text-900 text-3xl font-medium text-center mt-3 mb-3">
-            <SelectButton
-              v-model="state.currency"
-              :options="state.currencies"
-              @click="isSelected(state.currency)"
-              aria-labelledby="basic"
-            />
-          </div>
-        </div>
-        <div class="your_topup_price">
-          <div class="inputstyle">
-            <InputNumber
-              id="amount"
-              v-model="state.amount"
-              :min="min"
-              :step="0.01"
-              :suffix="` ${state.currency}`"
-              class="w-full"
-            ></InputNumber>
-          </div>
-        </div>
-        <Button @click="getRFQ" label="Info" class="mt-3 text-right" severity="info" rounded
-          >Get RFQ</Button
-        >
+    <header class="page-hero">
+      <div class="container">
+        <h1>Buy gold with bank transfer</h1>
+        <p>Request a quote in EUR or CZK and settle by SEPA transfer.</p>
       </div>
-      <div
-        class="surface-card p-4 shadow-2 border-round w-full text-center lg:w-6 digital_gold_silver_calculator mt-3"
-        style="position: absolute; top: 0; right: 10px"
-        v-else-if="state.waitingPayment"
-      >
-        <p>Please do bank transfer to account {{ rfq.iban }}/{{ rfq.bic }}</p>
-        <p>As reference use {{ rfq.rfqId }}/{{ rfq.clientId }}</p>
-        <Button @click="transferIncomming" v-if="state.waitingPayment2"
-          >I have made a transfer</Button
-        >
-        <ProgressSpinner
-          v-else
-          style="width: 1em; height: 1em"
-          strokeWidth="8"
-          animationDuration=".5s"
-          class="mx-1"
-        />
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="rfq-card" aria-live="polite">
+          <template v-if="!rfq">
+            <p class="eyebrow">Payment</p>
+            <h2 class="rfq-card__title">Request a quote</h2>
+            <div class="rfq-card__field">
+              <span id="currency-label" class="rfq-card__label">Currency</span>
+              <SelectButton
+                v-model="state.currency"
+                :options="state.currencies"
+                @click="isSelected(state.currency)"
+                aria-labelledby="currency-label"
+              />
+            </div>
+            <div class="rfq-card__field">
+              <label for="amount" class="rfq-card__label">Amount</label>
+              <InputNumber
+                id="amount"
+                v-model="state.amount"
+                :min="min"
+                :step="0.01"
+                :suffix="` ${state.currency}`"
+                class="w-full"
+              ></InputNumber>
+              <small class="rfq-card__hint">Minimum {{ min }} {{ state.currency }}</small>
+            </div>
+            <Button class="rfq-card__cta" size="large" @click="getRFQ">Get RFQ</Button>
+          </template>
+
+          <template v-else-if="state.waitingPayment">
+            <p class="eyebrow">Step 2</p>
+            <h2 class="rfq-card__title">Make the bank transfer</h2>
+            <dl class="rfq-card__details">
+              <div>
+                <dt>Account (IBAN / BIC)</dt>
+                <dd>{{ rfq.iban }}/{{ rfq.bic }}</dd>
+              </div>
+              <div>
+                <dt>Reference (RFQ id / client id)</dt>
+                <dd>{{ rfq.rfqId }}/{{ rfq.clientId }}</dd>
+              </div>
+            </dl>
+            <Button v-if="state.waitingPayment2" class="rfq-card__cta" @click="transferIncomming"
+              >I have made a transfer</Button
+            >
+            <div v-else class="rfq-card__waiting">
+              <ProgressSpinner
+                style="width: 1.25em; height: 1.25em"
+                strokeWidth="8"
+                animationDuration=".5s"
+              />
+            </div>
+          </template>
+
+          <template v-else>
+            <p class="eyebrow">Step 1</p>
+            <h2 class="rfq-card__title">Your quote</h2>
+            <p class="rfq-card__quote">{{ rfq.quote }}</p>
+            <Button class="rfq-card__cta" @click="confirmRFQ"
+              >I Confirm I want to buy Gold coin for specified quote</Button
+            >
+          </template>
+        </div>
       </div>
-      <div
-        class="surface-card p-4 shadow-2 border-round w-full text-center lg:w-6 digital_gold_silver_calculator mt-3"
-        style="position: absolute; top: 0; right: 100px"
-        v-else
-      >
-        <p>Quote is {{ rfq.quote }}</p>
-        <Button @click="confirmRFQ">I Confirm I want to buy Gold coin for specified quote</Button>
-      </div>
-    </div>
-    <div
-      class="surface-section surface-section-buy px-4 py-8 md:px-6 lg:px-8"
-      style="margin-top: -10px"
-    >
-      <div class="text-700 text-center">
-        <div class="text-900 font-bold text-2xl mb-5 buy-title">LEARN HOW TO BUY ASA REAL GOLD</div>
-        <div class="text-700 text-1xl mb-5 tab-panel">
+    </section>
+
+    <section class="section section--alt">
+      <div class="container">
+        <div class="prose">
+          <h2>Learn how to buy ASA real gold</h2>
           <p>
             First create Request for quote (RFQ) by specifying how much fiat you want to use and the
             currency. If you agree with the quote, confirm the request and execute bank transfer.
@@ -246,6 +249,81 @@ async function transferIncomming() {
           </p>
         </div>
       </div>
-    </div>
+    </section>
   </Layout>
 </template>
+
+<style scoped>
+.rfq-card {
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 2rem 1.75rem;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--gold-500);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+.rfq-card__title {
+  margin: 0 0 1.5rem;
+  font-size: 1.6rem;
+}
+.rfq-card__field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.rfq-card__field :deep(.ui-number) {
+  width: 100%;
+}
+.rfq-card__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rfq-card__hint {
+  color: var(--muted);
+}
+.rfq-card__cta {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+.rfq-card__quote {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  color: var(--gold-700);
+}
+.rfq-card__details {
+  margin: 0 0 1.5rem;
+  text-align: left;
+}
+.rfq-card__details div {
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.6rem;
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+}
+.rfq-card__details dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rfq-card__details dd {
+  margin: 0.2rem 0 0;
+  font-weight: 600;
+  word-break: break-all;
+}
+.rfq-card__waiting {
+  display: flex;
+  justify-content: center;
+  color: var(--gold-600);
+}
+</style>

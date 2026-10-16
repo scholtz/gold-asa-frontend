@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type IEshopItem from '@/types/IEshopItem'
 import formatAssetPrice from '../scripts/algo/formatAssetPrice'
-import Button from 'primevue/button'
+import Button from '@/components/ui/UiButton.vue'
 import { clientBuyNFTTxs, getBoxReferenceNFT, getClient } from 'algorand-asa-gold'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import { useAppStore } from '@/stores/app'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from '@/components/ui/useToast'
 import delay from '@/scripts/common/delay'
 import { reactive } from 'vue'
 import type algosdk from 'algosdk2'
 import getTransactionSignerAccount from '@/scripts/algo/getTransactionSignerAccount'
-import ProgressSpinner from 'primevue/progressspinner'
+import ProgressSpinner from '@/components/ui/UiSpinner.vue'
 import clearBoxCache from '@/scripts/algo/clearBoxCache'
 
 const toast = useToast()
@@ -90,17 +90,11 @@ function getPrice() {
   <Button
     :disabled="state.sending || state.sent"
     :severity="state.sent ? 'success' : 'primary'"
+    size="large"
     v-if="props.assetId && getPrice() > 0"
-    class="mb-2"
     @click="buy(props.item.state.asset1)"
   >
-    <ProgressSpinner
-      v-if="state.sending"
-      style="width: 1em; height: 1em"
-      strokeWidth="8"
-      animationDuration=".5s"
-      class="mx-1"
-    />
+    <ProgressSpinner v-if="state.sending" class="inline-spinner" />
     Buy @
     {{
       formatAssetPrice({
@@ -110,3 +104,9 @@ function getPrice() {
     }}</Button
   >
 </template>
+<style scoped>
+.inline-spinner {
+  width: 1em;
+  height: 1em;
+}
+</style>

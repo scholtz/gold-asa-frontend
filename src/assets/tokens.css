@@ -1,0 +1,51 @@
+/* Design tokens for ASA.Gold. Everything visual should reference these variables. */
+:root {
+  /* brand */
+  --gold-50: #fbf6e4;
+  --gold-100: #f5ead0;
+  --gold-300: #e3c766;
+  --gold-500: #c9a227;
+  --gold-600: #aa8412;
+  --gold-700: #876606;
+
+  /* neutrals */
+  --bg: #f8f6f0;
+  --surface: #ffffff;
+  --surface-alt: #f3f0e7;
+  --line: #e7e2d5;
+  --line-strong: #d4cdb8;
+  --ink: #17202c;
+  --ink-soft: #343f4e;
+  --muted: #5d6879;
+  --dark: #121a26;
+  --dark-2: #1b2535;
+  --on-dark: #f4f1e8;
+  --on-dark-muted: #aeb6c4;
+
+  /* status */
+  --success: #0e8f6c;
+  --success-bg: #e3f5ee;
+  --warn: #a8690b;
+  --warn-bg: #fdf0d9;
+  --danger: #b73228;
+  --danger-bg: #fbe7e5;
+  --info: #1f5fa8;
+  --info-bg: #e4eefa;
+
+  /* shape and depth */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(23, 32, 44, 0.06), 0 1px 3px rgba(23, 32, 44, 0.05);
+  --shadow-md: 0 4px 12px rgba(23, 32, 44, 0.08), 0 2px 4px rgba(23, 32, 44, 0.04);
+  --shadow-lg: 0 18px 40px rgba(23, 32, 44, 0.14), 0 4px 10px rgba(23, 32, 44, 0.05);
+  --focus-ring: 0 0 0 3px rgba(201, 162, 39, 0.35);
+
+  /* type */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+
+  /* layout */
+  --container: 1200px;
+  --header-height: 72px;
+}

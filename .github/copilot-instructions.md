@@ -16,7 +16,7 @@ ASA.Gold is a revolutionary gold-backed token platform built on the Algorand blo
 
 ### Technology Stack
 - **Frontend**: Vue 3 with TypeScript and Composition API
-- **UI Framework**: PrimeVue components with PrimeFlex for styling
+- **UI Framework**: custom components in `src/components/ui/` and design tokens in `src/assets/tokens.css`
 - **Blockchain**: Algorand with custom smart contracts
 - **Authentication**: algorand-authentication-component-vue
 - **State Management**: Pinia stores
@@ -94,9 +94,9 @@ import Layout from '@/layouts/AuthLayout.vue'
 ```
 
 #### Styling Guidelines
-- Use PrimeFlex utility classes for layout and spacing
-- Leverage PrimeVue components for consistent UI
-- Apply responsive design with PrimeFlex grid system
+- Use the utility classes in `src/assets/utilities.css` and layout primitives in `layout.css`
+- Use the `Ui*` components for consistent UI
+- Apply responsive design with the 12-column `.grid`/`.col-*` utilities
 - Use AOS (Animate On Scroll) for page animations
 
 ### Internationalization (i18n)
@@ -222,7 +222,7 @@ export class GoldPriceService {
 ```
 
 #### Error Handling
-- Use PrimeVue Toast for user notifications
+- Use `useToast()` from `@/components/ui/useToast` for notifications
 - Implement proper loading states
 - Handle blockchain-specific errors (insufficient funds, opt-in required, etc.)
 
@@ -378,7 +378,6 @@ const environments = {
 - `algorand-authentication-component-vue`: Wallet authentication
 - `algorand-asa-gold`: Smart contract interactions
 - `algosdk`: Core Algorand SDK functionality  
-- `primevue`: UI component library
 - `pinia`: State management
 - `aos`: Animation library
 

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
 import { useRoute } from 'vue-router'
-import Galleria from 'primevue/galleria'
-import Button from 'primevue/button'
-import Tag from 'primevue/tag'
+import Galleria from '@/components/ui/UiGallery.vue'
+import Button from '@/components/ui/UiButton.vue'
+import Tag from '@/components/ui/UiTag.vue'
+import UiIcon from '@/components/ui/UiIcon.vue'
 import IPFSImage from '../components/IPFSImage.vue'
 import CoinState from '../components/CoinState.vue'
 import BuyButton from '../components/BuyButton.vue'
@@ -14,7 +15,7 @@ import SaleCoin from '../components/SaleCoin.vue'
 import StopSale from '../components/StopSale.vue'
 import RequestDelivery from '../components/RequestDelivery.vue'
 
-import Skeleton from 'primevue/skeleton'
+import Skeleton from '@/components/ui/UiSkeleton.vue'
 import { useAppStore } from '@/stores/app'
 import getARC0003Details from '@/scripts/algo/getARC0003Details'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
@@ -35,75 +36,7 @@ onMounted(async () => {
   product.value = products.find((p) => p.nft.properties.slugName == route.params.slugName)
 })
 const product = ref<IEshopItem>()
-const galleria = ref()
-const images = ref()
 const activeIndex = ref(0)
-const showThumbnails = ref(false)
-const fullScreen = ref(false)
-const isAutoPlay = ref(true)
-
-const toggleAutoSlide = () => {
-  isAutoPlay.value = !isAutoPlay.value
-}
-const onThumbnailButtonClick = () => {
-  showThumbnails.value = !showThumbnails.value
-}
-
-const responsiveOptions = ref([
-  {
-    breakpoint: '1300px',
-    numVisible: 4
-  },
-  {
-    breakpoint: '575px',
-    numVisible: 1
-  }
-])
-
-const toggleFullScreen = () => {
-  if (fullScreen.value) {
-    closeFullScreen()
-  } else {
-    openFullScreen()
-  }
-}
-const openFullScreen = () => {
-  let elem = galleria.value.$el
-  fullScreen.value = true
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen()
-  } else if (elem.mozRequestFullScreen) {
-    /* Firefox */
-    elem.mozRequestFullScreen()
-  } else if (elem.webkitRequestFullscreen) {
-    /* Chrome, Safari & Opera */
-    elem.webkitRequestFullscreen()
-  } else if (elem.msRequestFullscreen) {
-    /* IE/Edge */
-    elem.msRequestFullscreen()
-  }
-}
-const closeFullScreen = () => {
-  fullScreen.value = false
-
-  if (document.exitFullscreen) {
-    document.exitFullscreen()
-    // } else if (document.mozCancelFullScreen) {
-    //   document.mozCancelFullScreen()
-    // } else if (document.webkitExitFullscreen) {
-    //   document.webkitExitFullscreen()
-    // } else if (document.msExitFullscreen) {
-    //   document.msExitFullscreen()
-    // }
-  }
-}
-
-const fullScreenIcon = computed(() => {
-  return `pi ${fullScreen.value ? 'pi-window-minimize' : 'pi-window-maximize'}`
-})
-const slideButtonIcon = computed(() => {
-  return `pi ${isAutoPlay.value ? 'pi-pause' : 'pi-play'}`
-})
 
 const onChange = async () => {
   console.log('onChange')
@@ -125,285 +58,299 @@ async function resetView() {
 
 <template>
   <Layout :hideTopMenu="false">
-    <div class="grid coin-detail" v-if="product">
-      <div class="container">
-        <div class="section-title">
-          <h2>{{ product.nft.properties.name }}</h2>
-          <div class="bar"></div>
+    <template v-if="product">
+      <header class="page-hero">
+        <div class="container">
+          <h1>{{ product.nft.properties.name }}</h1>
+          <div class="hero-meta"><CoinState :item="product" /></div>
         </div>
-        <div class="row pb-8">
-          <div class="col-12 md:col-6">
-            <Galleria
-              ref="galleria"
-              v-model:activeIndex="activeIndex"
-              :value="product.nft.properties.pictures"
-              :numVisible="5"
-              containerStyle="max-width: 600px;"
-              :showThumbnails="showThumbnails"
-              :showItemNavigators="true"
-              :showItemNavigatorsOnHover="true"
-              :circular="true"
-              :autoPlay="isAutoPlay"
-              :transitionInterval="10000"
-              :responsiveOptions="responsiveOptions"
-              :pt="{
-                root: {
-                  class: [{ 'flex flex-column ': fullScreen }]
-                },
-                content: {
-                  class: ['relative', { 'flex-1 justify-content-center': fullScreen }]
-                },
-
-                thumbnailwrapper: 'absolute w-full left-0 bottom-0'
-              }"
-            >
+      </header>
+      <section class="section">
+        <div class="container coin">
+          <div class="coin__gallery">
+            <Galleria v-model:activeIndex="activeIndex" :value="product.nft.properties.pictures">
               <template #item="slotProps">
                 <IPFSImage
+                  class="coin__image"
                   :src="slotProps.item.url"
                   :alt="product.nft.properties.name"
-                  :style="[
-                    {
-                      objectFit: 'scale-down',
-                      height: !fullScreen ? '400px' : '100%',
-                      display: 'block'
-                    }
-                  ]"
                 />
               </template>
               <template #thumbnail="slotProps">
-                <div class="grid grid-nogutter justify-content-center">
-                  <IPFSImage
-                    :src="slotProps.item.thumbnail"
-                    :alt="product.nft.properties.name"
-                    style="display: block"
-                  />
-                </div>
-              </template>
-              <template #footer>
-                <div class="flex align-items-center bg-black-alpha-90 text-300">
-                  <Button
-                    icon="pi pi-list"
-                    @click="onThumbnailButtonClick"
-                    :pt="{
-                      root: {
-                        class: 'border-none border-noround hover:bg-white-alpha-10 text-300',
-                        style: 'background: transparent'
-                      }
-                    }"
-                  />
-                  <Button
-                    :icon="slideButtonIcon"
-                    @click="toggleAutoSlide"
-                    :pt="{
-                      root: {
-                        class: 'border-none border-noround hover:bg-white-alpha-10 text-300',
-                        style: 'background: transparent'
-                      }
-                    }"
-                  />
-                  <span v-if="images" class="title-container">
-                    <span class="text-sm p-3">{{ activeIndex + 1 }}/{{ images.length }}</span>
-                    <span class="font-bold text-sm p-3">{{ images[activeIndex].title }}</span>
-                    <span class="text-sm p-3">{{ images[activeIndex].alt }}</span>
-                  </span>
-                  <Button
-                    :icon="fullScreenIcon"
-                    @click="toggleFullScreen"
-                    :pt="{
-                      root: {
-                        class:
-                          'border-none border-noround ml-auto hover:bg-white-alpha-10 text-300',
-                        style: 'background: transparent'
-                      }
-                    }"
-                  />
-                </div>
+                <IPFSImage
+                  :src="slotProps.item.thumbnail"
+                  :alt="`${product.nft.properties.name} ${slotProps.index + 1}`"
+                />
               </template>
             </Galleria>
           </div>
-          <div class="col-12 md:col-6 gold-detail">
+          <div class="coin__info">
             <SaleCoin
               :item="product"
               @onPriceChange="onChange"
               @onCancel="resetView"
               v-if="state.formEditPrice"
+              class="coin__card"
             />
             <StopSale
               :item="product"
               @onChange="onChange"
               @onCancel="resetView"
               v-else-if="state.formStopSale"
+              class="coin__card"
             />
             <RequestDelivery
               :item="product"
               @onChange="onChange"
               @onCancel="resetView"
               v-else-if="state.formRequestDelivery"
+              class="coin__card"
             />
-            <div v-else>
-              <table id="values-table" class="fontcolor">
-                <tr v-if="store.state.authState.account == product.state.ownerAddr">
-                  <th></th>
-                  <td>
-                    <Tag severity="success">You are owner of this coin</Tag>
-                    <div>
-                      <div>
-                        <Button
-                          v-if="product.state.state == 2"
-                          class="my-2"
-                          @click="state.formEditPrice = true"
-                          >Set on sale</Button
-                        >
-                      </div>
-                      <div>
-                        <Button
-                          v-if="product.state.state == 1 || product.state.state == 3"
-                          class="my-2"
-                          @click="state.formEditPrice = true"
-                          >Change price</Button
-                        >
-                      </div>
-                      <div>
-                        <Button
-                          v-if="product.state.state == 1 || product.state.state == 3"
-                          class="my-2"
-                          @click="state.formStopSale = true"
-                          >Stop sale</Button
-                        >
-                      </div>
-                      <div>
-                        <Button
-                          v-if="product.state.state == 2 || product.state.state == 3"
-                          class="my-2"
-                          @click="state.formRequestDelivery = true"
-                          >Request physical delivery</Button
-                        >
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th>State</th>
-                  <td><CoinState :item="product" /></td>
-                </tr>
-                <tr v-if="product.nft.properties.serialNumber">
-                  <th>{{ t('productDetails.serialNumber') }}</th>
-                  <td>{{ product.nft.properties.serialNumber }}</td>
-                </tr>
-                <tr v-if="product.nft.properties.serialNumber">
-                  <th>ASA Id</th>
-                  <td>
-                    <a :href="`https://allo.info/asset/${product.asa}/nft`" target="_blank">
-                      <Button link size="small">{{ product.asa }}</Button>
-                    </a>
-                  </td>
-                </tr>
-                <tr v-if="product.nft.properties.diameter">
-                  <th>{{ t('productDetails.diameter') }}</th>
-                  <td>
-                    {{ product.nft.properties.diameter }} {{ product.nft.properties.diameterUnit }}
-                  </td>
-                </tr>
-                <tr v-if="product.nft.properties.fitness">
-                  <th>{{ t('productDetails.fitness') }}</th>
-                  <td>{{ product.nft.properties.fitness }}</td>
-                </tr>
-                <tr v-if="product.nft.properties.weight">
-                  <th>{{ t('productDetails.weightOfCoin') }}</th>
-                  <td>
-                    {{ product.nft.properties.weight }} {{ product.nft.properties.weightUnit }}
-                  </td>
-                </tr>
-                <tr v-if="product.nft.properties.goldWeight">
-                  <th>Weight of gold</th>
-                  <td>
-                    {{ product.nft.properties.goldWeight }} {{ product.nft.properties.weightUnit }}
-                  </td>
-                </tr>
-                <tr v-if="product.nft.properties.issueDate">
-                  <th>Date of minting</th>
-                  <td>{{ new Date(product.nft.properties.issueDate).toLocaleDateString() }}</td>
-                </tr>
-                <tr v-if="product.nft.properties.author">
-                  <th>Author</th>
-                  <td>{{ product.nft.properties.author }}</td>
-                </tr>
-                <tr v-if="product.nft.properties.mintage">
-                  <th>Mintage</th>
-                  <td>{{ product.nft.properties.mintage }}</td>
-                </tr>
-                <tr v-if="product.nft.properties.network">
-                  <th>Blockchain network</th>
-                  <td>{{ product.nft.properties.network }}</td>
-                </tr>
-                <tr v-if="product.nft.properties.inReservesSince">
-                  <th>In reserves since</th>
-                  <td>
-                    {{ new Date(product.nft.properties.inReservesSince).toLocaleDateString() }}
-                  </td>
-                </tr>
-                <tr
-                  v-if="
-                    product.nft.properties.reservesNumismaticValue &&
-                    product.nft.properties.inReservesSince
-                  "
-                >
-                  <th
-                    :title="`Numismatic value on ${new Date(
-                      product.nft.properties.inReservesSince
-                    ).toLocaleDateString()}`"
-                  >
-                    Initial numismatic value
-                  </th>
-                  <td>
-                    {{
-                      formatAssetPrice({
-                        assetId: store.state.tokens.gold,
-                        value: product.nft.properties.reservesNumismaticValue * 10 ** 6
-                      })
-                    }}
-                  </td>
-                </tr>
-              </table>
+            <template v-else>
               <div
-                class="buy-coin-button team-info"
+                class="owner-box"
+                v-if="store.state.authState.account == product.state.ownerAddr"
+              >
+                <Tag severity="success" rounded>You are owner of this coin</Tag>
+                <div class="owner-box__actions">
+                  <Button
+                    v-if="product.state.state == 2"
+                    size="small"
+                    @click="state.formEditPrice = true"
+                    >Set on sale</Button
+                  >
+                  <Button
+                    v-if="product.state.state == 1 || product.state.state == 3"
+                    size="small"
+                    @click="state.formEditPrice = true"
+                    >Change price</Button
+                  >
+                  <Button
+                    v-if="product.state.state == 1 || product.state.state == 3"
+                    size="small"
+                    severity="secondary"
+                    @click="state.formStopSale = true"
+                    >Stop sale</Button
+                  >
+                  <Button
+                    v-if="product.state.state == 2 || product.state.state == 3"
+                    size="small"
+                    severity="secondary"
+                    outlined
+                    @click="state.formRequestDelivery = true"
+                    >Request physical delivery</Button
+                  >
+                </div>
+              </div>
+
+              <div class="table-wrap">
+                <table id="values-table" class="table details">
+                  <tbody>
+                    <tr>
+                      <th scope="row">State</th>
+                      <td><CoinState :item="product" /></td>
+                    </tr>
+                    <tr v-if="product.nft.properties.serialNumber">
+                      <th scope="row">{{ t('productDetails.serialNumber') }}</th>
+                      <td>{{ product.nft.properties.serialNumber }}</td>
+                    </tr>
+                    <tr v-if="product.nft.properties.serialNumber">
+                      <th scope="row">ASA Id</th>
+                      <td>
+                        <a
+                          :href="`https://allo.info/asset/${product.asa}/nft`"
+                          target="_blank"
+                          rel="noopener"
+                          class="asa-link"
+                        >
+                          {{ product.asa }}
+                          <UiIcon name="expand" size="0.9em" />
+                        </a>
+                      </td>
+                    </tr>
+                    <tr v-if="product.nft.properties.diameter">
+                      <th scope="row">{{ t('productDetails.diameter') }}</th>
+                      <td>
+                        {{ product.nft.properties.diameter }}
+                        {{ product.nft.properties.diameterUnit }}
+                      </td>
+                    </tr>
+                    <tr v-if="product.nft.properties.fitness">
+                      <th scope="row">{{ t('productDetails.fitness') }}</th>
+                      <td>{{ product.nft.properties.fitness }}</td>
+                    </tr>
+                    <tr v-if="product.nft.properties.weight">
+                      <th scope="row">{{ t('productDetails.weightOfCoin') }}</th>
+                      <td>
+                        {{ product.nft.properties.weight }} {{ product.nft.properties.weightUnit }}
+                      </td>
+                    </tr>
+                    <tr v-if="product.nft.properties.goldWeight">
+                      <th scope="row">Weight of gold</th>
+                      <td>
+                        {{ product.nft.properties.goldWeight }}
+                        {{ product.nft.properties.weightUnit }}
+                      </td>
+                    </tr>
+                    <tr v-if="product.nft.properties.issueDate">
+                      <th scope="row">Date of minting</th>
+                      <td>{{ new Date(product.nft.properties.issueDate).toLocaleDateString() }}</td>
+                    </tr>
+                    <tr v-if="product.nft.properties.author">
+                      <th scope="row">Author</th>
+                      <td>{{ product.nft.properties.author }}</td>
+                    </tr>
+                    <tr v-if="product.nft.properties.mintage">
+                      <th scope="row">Mintage</th>
+                      <td>{{ product.nft.properties.mintage }}</td>
+                    </tr>
+                    <tr v-if="product.nft.properties.network">
+                      <th scope="row">Blockchain network</th>
+                      <td>{{ product.nft.properties.network }}</td>
+                    </tr>
+                    <tr v-if="product.nft.properties.inReservesSince">
+                      <th scope="row">In reserves since</th>
+                      <td>
+                        {{ new Date(product.nft.properties.inReservesSince).toLocaleDateString() }}
+                      </td>
+                    </tr>
+                    <tr
+                      v-if="
+                        product.nft.properties.reservesNumismaticValue &&
+                        product.nft.properties.inReservesSince
+                      "
+                    >
+                      <th
+                        scope="row"
+                        :title="`Numismatic value on ${new Date(
+                          product.nft.properties.inReservesSince
+                        ).toLocaleDateString()}`"
+                      >
+                        Initial numismatic value
+                      </th>
+                      <td>
+                        {{
+                          formatAssetPrice({
+                            assetId: store.state.tokens.gold,
+                            value: product.nft.properties.reservesNumismaticValue * 10 ** 6
+                          })
+                        }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div
+                class="buy-coin-button"
                 v-if="store.state.authState.account != product.state.ownerAddr"
               >
-                <BuyButton
-                  class="btn-default"
-                  :assetId="product.state.asset1"
-                  :item="product"
-                ></BuyButton>
+                <BuyButton :assetId="product.state.asset1" :item="product"></BuyButton>
               </div>
-            </div>
+            </template>
           </div>
         </div>
-        <div class="row pb-8">
-          <div class="md:col-12 col-12 tab-panel" v-if="product.nft.properties.story">
-            <h4 class="buy-title ml-2">{{ t('productDetails.story') }}</h4>
-            <p class="story fontcolor">{{ product.nft.properties.story }}</p>
+      </section>
+      <section class="section section--alt" v-if="product.nft.properties.story">
+        <div class="container">
+          <div class="prose">
+            <h2>{{ t('productDetails.story') }}</h2>
+            <p>{{ product.nft.properties.story }}</p>
           </div>
         </div>
-      </div>
-    </div>
-    <div v-else>
-      <div class="m-2 text-center">Loading..</div>
-      <Skeleton class="mb-2" borderRadius="16px"></Skeleton>
-      <Skeleton width="10rem" class="mb-2" borderRadius="16px"></Skeleton>
-      <Skeleton width="5rem" borderRadius="16px" class="mb-2"></Skeleton>
-      <Skeleton height="2rem" class="mb-2" borderRadius="16px"></Skeleton>
-      <Skeleton width="10rem" height="4rem" borderRadius="16px"></Skeleton>
-    </div>
-    <!--<ProductBox v-if="product" :item="product" />-->
+      </section>
+    </template>
+    <template v-else>
+      <header class="page-hero">
+        <div class="container">
+          <Skeleton width="min(24rem, 70%)" height="2.2rem" />
+        </div>
+      </header>
+      <section class="section" aria-busy="true">
+        <div class="container coin">
+          <Skeleton height="26rem" borderRadius="16px" />
+          <div class="skeleton-stack">
+            <Skeleton height="2.5rem" />
+            <Skeleton height="2.5rem" />
+            <Skeleton height="2.5rem" />
+            <Skeleton height="2.5rem" />
+            <Skeleton width="10rem" height="3rem" borderRadius="999px" />
+          </div>
+        </div>
+      </section>
+    </template>
   </Layout>
 </template>
 <style scoped>
-th {
-  text-align: left;
-  padding-right: 1em;
+.hero-meta {
+  margin-top: 0.5rem;
 }
-.story {
-  font-size: smaller;
-  color: #666;
+.coin {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+.coin__image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  max-height: 28rem;
+  object-fit: contain;
+}
+.coin__card {
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.coin__info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+.owner-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--gold-50);
+  border: 1px solid var(--gold-300);
+  border-radius: var(--radius-lg);
+}
+.owner-box__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.details th {
+  width: 40%;
+  white-space: normal;
+}
+.details td {
+  color: var(--ink);
+  word-break: break-word;
+}
+.asa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--gold-700);
+}
+.buy-coin-button {
+  display: flex;
+}
+.skeleton-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+@media (min-width: 992px) {
+  .coin {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3rem;
+  }
 }
 </style>

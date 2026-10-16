@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Penel from 'primevue/panel'
 import Layout from '@/layouts/AuthLayout.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -7,20 +6,14 @@ const { t } = useI18n()
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <div class="page-title-area-terms">
-      <div class="d-table">
-        <div class="d-table-cell">
-          <div class="container">
-            <div class="sm:m-2 md:m-4 allfont privacy-content" style="color: white">
-              <h2>{{ t('terms.title') }}</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="solutions-area privacy-body ptb-80">
+    <header class="page-hero">
       <div class="container">
-        <div class="text-secondary">
+        <h1>{{ t('terms.title') }}</h1>
+      </div>
+    </header>
+    <div class="section">
+      <div class="container prose">
+        <div>
           <p>
             {{ t('terms.description') }}
           </p>
@@ -169,7 +162,6 @@ const { t } = useI18n()
           </p>
           <p>In Bratislava, November 15th 2023.</p>
         </div>
-        <div class="row"></div>
       </div>
     </div>
   </Layout>

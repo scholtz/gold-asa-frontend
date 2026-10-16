@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import Panel from 'primevue/panel'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
+import Panel from '@/components/ui/UiPanel.vue'
+import Button from '@/components/ui/UiButton.vue'
+import InputText from '@/components/ui/UiInputText.vue'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore } from '@/stores/app'
-import SelectButton from 'primevue/selectbutton'
+import SelectButton from '@/components/ui/UiSelectButton.vue'
 import { onMounted, reactive, watch, computed } from 'vue'
-import Dropdown from 'primevue/dropdown'
+import Dropdown from '@/components/ui/UiDropdown.vue'
 import countries from '../../scripts/common/countries'
 import { bffGetProfile, bffUpdateProfile } from '@/scripts/axios/BFF'
 import type IProfile from '@/types/IProfile'
-import { useToast } from 'primevue/usetoast'
+import { useToast } from '@/components/ui/useToast'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -57,6 +57,12 @@ const state = reactive({
   saving: false,
   saved: false
 })
+
+const addressSections = computed(() => [
+  { key: 'delivery', title: t('profile.deliveryAddress'), model: state.profile.deliveryAddress, show: true },
+  { key: 'residential', title: t('profile.residentialAddress'), model: state.profile.residentialAddress, show: true },
+  { key: 'company', title: t('profile.companyAddress'), model: state.profile.companyAddress, show: state.profile.legalEntity == 'legal-entity' }
+])
 
 const toast = useToast()
 async function storeProfile() {
@@ -108,217 +114,82 @@ onMounted(async () => {
 <template>
   <Layout :hideTopMenu="true">
     <MenuLevel2Settings />
-    <Panel :header="t('profile.title')" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
-      <div class="grid">
-        <div class="col-12 md:col-6">
-          <div class="field grid">
-            <label class="col-12 mb-2 md:col-4 md:mb-0"></label>
-            <div class="col-12 md:col-8">
+    <header class="page-hero">
+      <div class="container">
+        <h1>{{ t('profile.title') }}</h1>
+      </div>
+    </header>
+    <div class="section">
+      <div class="container profile">
+        <Panel :header="t('profile.title')">
+          <div class="form-grid">
+            <div class="field field--full">
               <SelectButton
                 v-model="state.profile.legalEntity"
                 :options="state.legalEntityOptions"
                 optionLabel="name"
                 optionValue="value"
-                aria-labelledby="basic"
+                aria-label="Legal entity"
               />
             </div>
-          </div>
-          <div class="field grid">
-            <label for="firstname" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.firstName') }}</label>
-            <div class="col-12 md:col-8">
-              <InputText
-                id="firstname"
-                type="text"
-                class="w-full"
-                v-model="state.profile.firstName"
-              />
+            <div class="field">
+              <label for="firstname">{{ t('profile.firstName') }}</label>
+              <InputText id="firstname" type="text" v-model="state.profile.firstName" />
             </div>
-          </div>
-          <div class="field grid">
-            <label for="lastname" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.lastName') }}</label>
-            <div class="col-12 md:col-8">
-              <InputText
-                id="lastname"
-                type="text"
-                class="w-full"
-                v-model="state.profile.lastName"
-              />
+            <div class="field">
+              <label for="lastname">{{ t('profile.lastName') }}</label>
+              <InputText id="lastname" type="text" v-model="state.profile.lastName" />
             </div>
+            <template v-if="state.profile.legalEntity == 'legal-entity'">
+              <div class="field">
+                <label for="company">{{ t('profile.companyName') }}</label>
+                <InputText id="company" type="text" v-model="state.profile.company" />
+              </div>
+              <div class="field">
+                <label for="taxid">{{ t('profile.taxId') }}</label>
+                <InputText id="taxid" type="text" v-model="state.profile.taxId" />
+              </div>
+            </template>
           </div>
-          <div class="field grid" v-if="state.profile.legalEntity == 'legal-entity'">
-            <label for="company" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.companyName') }}</label>
-            <div class="col-12 md:col-8">
-              <InputText id="company" type="text" class="w-full" v-model="state.profile.company" />
-            </div>
-          </div>
-          <div class="field grid" v-if="state.profile.legalEntity == 'legal-entity'">
-            <label for="taxid" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.taxId') }}</label>
-            <div class="col-12 md:col-8">
-              <InputText id="taxid" type="text" class="w-full" v-model="state.profile.taxId" />
-            </div>
-          </div>
+        </Panel>
 
-          <Panel :header="t('profile.deliveryAddress')">
-            <div class="field grid">
-              <label for="deliveryStreet" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.street') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="deliveryStreet"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.deliveryAddress.street"
-                />
+        <div class="profile__addresses">
+          <template v-for="section in addressSections" :key="section.key">
+            <Panel v-if="section.show" :header="section.title">
+              <div class="form-grid form-grid--single">
+                <div class="field">
+                  <label :for="`${section.key}Street`">{{ t('profile.street') }}</label>
+                  <InputText :id="`${section.key}Street`" type="text" v-model="section.model.street" />
+                </div>
+                <div class="field">
+                  <label :for="`${section.key}City`">{{ t('profile.city') }}</label>
+                  <InputText :id="`${section.key}City`" type="text" v-model="section.model.city" />
+                </div>
+                <div class="field">
+                  <label :for="`${section.key}Zip`">{{ t('profile.zipCode') }}</label>
+                  <InputText :id="`${section.key}Zip`" type="text" v-model="section.model.zip" />
+                </div>
+                <div class="field">
+                  <label :for="`${section.key}Country`">{{ t('profile.country') }}</label>
+                  <Dropdown
+                    filter
+                    :id="`${section.key}Country`"
+                    v-model="section.model.country"
+                    optionLabel="countryName"
+                    optionValue="countryName"
+                    :options="countries"
+                  />
+                </div>
               </div>
-            </div>
-            <div class="field grid">
-              <label for="deliveryCity" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.city') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="deliveryCity"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.deliveryAddress.city"
-                />
-              </div>
-            </div>
-            <div class="field grid">
-              <label for="deliveryZip" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.zipCode') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="deliveryZip"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.deliveryAddress.zip"
-                />
-              </div>
-            </div>
-            <div class="field grid">
-              <label for="deliveryCountry" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.country') }}</label>
-              <div class="col-12 md:col-8">
-                <Dropdown
-                  filter
-                  id="deliveryCountry"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.deliveryAddress.country"
-                  optionLabel="countryName"
-                  optionValue="countryName"
-                  :options="countries"
-                />
-              </div>
-            </div>
-          </Panel>
+            </Panel>
+          </template>
         </div>
-        <div class="col-12 md:col-6">
-          <Panel :header="t('profile.residentialAddress')">
-            <div class="field grid">
-              <label for="residentialStreet" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.street') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="residentialStreet"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.residentialAddress.street"
-                />
-              </div>
-            </div>
-            <div class="field grid">
-              <label for="residentialCity" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.city') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="residentialCity"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.residentialAddress.city"
-                />
-              </div>
-            </div>
-            <div class="field grid">
-              <label for="residentialZip" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.zipCode') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="residentialZip"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.residentialAddress.zip"
-                />
-              </div>
-            </div>
-            <div class="field grid">
-              <label for="residentialCountry" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.country') }}</label>
-              <div class="col-12 md:col-8">
-                <Dropdown
-                  filter
-                  id="residentialCountry"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.residentialAddress.country"
-                  optionLabel="countryName"
-                  optionValue="countryName"
-                  :options="countries"
-                />
-              </div>
-            </div>
-          </Panel>
-          <Panel
-            :header="t('profile.companyAddress')"
-            class="my-2"
-            v-if="state.profile.legalEntity == 'legal-entity'"
-          >
-            <div class="field grid">
-              <label for="companyStreet" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.street') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="companyStreet"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.companyAddress.street"
-                />
-              </div>
-            </div>
-            <div class="field grid">
-              <label for="companyCity" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.city') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="companyCity"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.companyAddress.city"
-                />
-              </div>
-            </div>
-            <div class="field grid">
-              <label for="companyZip" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.zipCode') }}</label>
-              <div class="col-12 md:col-8">
-                <InputText
-                  id="companyZip"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.companyAddress.zip"
-                />
-              </div>
-            </div>
-            <div class="field grid">
-              <label for="companyCountry" class="col-12 mb-2 md:col-4 md:mb-0">{{ t('profile.country') }}</label>
-              <div class="col-12 md:col-8">
-                <Dropdown
-                  filter
-                  id="companyCountry"
-                  type="text"
-                  class="w-full"
-                  v-model="state.profile.companyAddress.country"
-                  optionLabel="countryName"
-                  optionValue="countryName"
-                  :options="countries"
-                />
-              </div>
-            </div>
-          </Panel>
-        </div>
-        <div class="col-12" v-if="store.state.authState.account">
-          You are authenticated using address {{ store.state.authState.account }}
-        </div>
-        <div class="col-12 text-right">
+
+        <div class="profile__footer">
+          <p v-if="store.state.authState.account" class="profile__account">
+            You are authenticated using address
+            <code>{{ store.state.authState.account }}</code>
+          </p>
           <Button
             :disabled="state.saving"
             @click="storeProfile"
@@ -327,6 +198,60 @@ onMounted(async () => {
           >
         </div>
       </div>
-    </Panel>
+    </div>
   </Layout>
 </template>
+
+<style scoped>
+.profile {
+  display: grid;
+  gap: 1.5rem;
+}
+.profile__addresses {
+  display: grid;
+  gap: 1.5rem;
+  align-items: start;
+}
+.form-grid {
+  display: grid;
+  gap: 1.1rem 1.5rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.field label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.profile__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.profile__account {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+.profile__account code {
+  font-size: 0.85em;
+}
+@media (min-width: 768px) {
+  .form-grid:not(.form-grid--single) {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field--full {
+    grid-column: 1 / -1;
+  }
+  .profile__addresses {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>

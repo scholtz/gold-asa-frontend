@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Penel from 'primevue/panel'
 import Layout from '@/layouts/AuthLayout.vue'
 import { useI18n } from 'vue-i18n'
 
@@ -7,42 +6,91 @@ const { t } = useI18n()
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <Penel :header="t('governance.governanceToken')" class="m-4">
-      <div class="grid">
-        <div class="col-12 md:col-9">
-          <p>
-            {{ t('tokens.governanceTokenMainnetId') }}
-            <a href="https://allo.info/asset/1241945177" target="_blank">1241945177</a>
-          </p>
-          <p>
-            {{ t('tokens.daoTokenWhitePaper') }}
-            <a href="/dao.pdf" target="_blank">dao.pdf</a>
-          </p>
-          <p>
-            {{ t('governance.daoTokenDescription') }}
-          </p>
-          <p>
-            <a href="https://explorer.perawallet.app/assets/1241945177/" target="_blank"
-              >{{ t('governance.verifiedBy') }}</a
-            >
-            by Pera {{ t('governance.since') }} 2023-11-14
-          </p>
-          <p>
-            {{ t('governance.priceDevelopment') }}
-            <a href="https://vestige.fi/asset/1241945177" target="_blank">by Vestige</a>
-          </p>
-          <p>
-            {{ t('tokens.downloadAsaGold') }}
-            <a href="/ASA.Gold-Pitch-Deck.pdf" target="_blank">{{ t('governance.pitchDeck') }}</a>
-          </p>
+    <header class="page-hero">
+      <div class="container">
+        <h1>{{ t('governance.governanceToken') }}</h1>
+        <p>{{ t('governance.daoTokenDescription') }}</p>
+      </div>
+    </header>
+    <div class="section">
+      <div class="container token">
+        <div class="token__body">
+          <ul class="token__list">
+            <li>
+              <span>{{ t('tokens.governanceTokenMainnetId') }}</span>
+              <a href="https://allo.info/asset/1241945177" target="_blank" rel="noopener">1241945177</a>
+            </li>
+            <li>
+              <span>{{ t('tokens.daoTokenWhitePaper') }}</span>
+              <a href="/dao.pdf" target="_blank" rel="noopener">dao.pdf</a>
+            </li>
+            <li>
+              <a href="https://explorer.perawallet.app/assets/1241945177/" target="_blank" rel="noopener">{{ t('governance.verifiedBy') }}</a>
+              <span>by Pera {{ t('governance.since') }} 2023-11-14</span>
+            </li>
+            <li>
+              <span>{{ t('governance.priceDevelopment') }}</span>
+              <a href="https://vestige.fi/asset/1241945177" target="_blank" rel="noopener">by Vestige</a>
+            </li>
+            <li>
+              <span>{{ t('tokens.downloadAsaGold') }}</span>
+              <a href="/ASA.Gold-Pitch-Deck.pdf" target="_blank" rel="noopener">{{ t('governance.pitchDeck') }}</a>
+            </li>
+          </ul>
         </div>
-        <div class="col-12 md:col-3">
+        <figure class="token__media">
           <img
             src="https://bff.asa.gold/ipfs/QmUvP2dfc2qhn7Ym3p2h4B6MQHFLx9F3UFmowyoZ89NkXy"
-            class="w-full"
             alt="DAO Token"
+            loading="lazy"
           />
-        </div>
-      </div> </Penel
-  ></Layout>
+        </figure>
+      </div>
+    </div>
+  </Layout>
 </template>
+
+<style scoped>
+.token {
+  display: grid;
+  gap: 2rem;
+  align-items: start;
+}
+.token__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.token__list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+.token__list li:last-child {
+  border-bottom: 0;
+}
+.token__media {
+  margin: 0;
+  max-width: 280px;
+}
+.token__media img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+@media (min-width: 768px) {
+  .token {
+    grid-template-columns: 1fr 260px;
+  }
+}
+</style>

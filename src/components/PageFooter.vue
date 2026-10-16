@@ -1,184 +1,164 @@
 <script setup lang="ts">
-import Image from 'primevue/image'
-import Button from 'primevue/button'
-import Divider from 'primevue/divider'
-import { useRouter } from 'vue-router'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import UiIcon from '@/components/ui/UiIcon.vue'
 
 const { t } = useI18n()
-const router = useRouter()
-const isMobile = ref(false)
-
-function handleResize() {
-  if (window.innerWidth <= 768) {
-    isMobile.value = true
-  } else {
-    isMobile.value = false
-  }
-}
-
-onMounted(() => {
-  if (window.innerWidth <= 768) {
-    isMobile.value = true
-  }
-  window.addEventListener('resize', handleResize)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
-})
+const year = new Date().getFullYear()
 </script>
+
 <template>
-  <div class="surface-section custom-footer py-7 md:px-6 lg:px-8">
-    <div class="grid">
-      <div class="lg:col-3 md:col-6 md:text-center sm:col-12 mb-4 px-5 text-center">
-        <span class="mb-3 inline-block footer-name" style="border-radius: 10px">
-          <img
-            class="md:ml-auto block md:h-full"
-            src="/images/logo.png"
-            style="width: 80px"
-            alt="logo"
-            @click="router.push('/')"
-          />
-        </span>
-        <div class="text-900 text-xl mb-3 font-medium footer-name">ASA - Real gold</div>
-        <span class="text-300 line-height-3">&copy; 2023 Scholtz &amp; Company, jsa</span>
-      </div>
-      <div
-        :class="
-          isMobile
-            ? 'col-12 px-5 font-style text-center'
-            : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style'
-        "
-      >
-        <div class="text-900 text-xl mb-3 font-medium">{{ t('footer.ourLinks') }}</div>
-        <div class="font-style-div">
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div class="site-footer__brand">
+          <RouterLink to="/" class="site-footer__logo" aria-label="ASA.Gold home">
+            <img src="/images/logo.png" alt="" width="52" height="52" />
+            <span>ASA<span>.Gold</span></span>
+          </RouterLink>
+          <p>ASA - Real gold</p>
+          <div class="site-footer__social">
+            <a href="https://discord.gg/8m4KTcVSH9" aria-label="Discord" rel="noopener" target="_blank">
+              <UiIcon name="discord" size="1.3em" />
+            </a>
+            <a href="https://t.me/+mWQObAvGe_5lNDNk" aria-label="Telegram" rel="noopener" target="_blank">
+              <UiIcon name="telegram" size="1.3em" />
+            </a>
+            <a href="https://twitter.com/eAlgonaut/" aria-label="X (Twitter)" rel="noopener" target="_blank">
+              <UiIcon name="x" size="1.3em" />
+            </a>
+          </div>
+        </div>
+
+        <nav class="site-footer__col" :aria-label="t('footer.ourLinks')">
+          <h2>{{ t('footer.ourLinks') }}</h2>
           <RouterLink to="/about-asa-gold">{{ t('footer.aboutAsaGoldProject') }}</RouterLink>
-        </div>
-        <div class="font-style-div">
           <RouterLink to="/contact-us">{{ t('footer.contactUs') }}</RouterLink>
-        </div>
-        <div class="font-style-div">
           <RouterLink to="/gdpr/latest">{{ t('footer.gdprPolicy') }}</RouterLink>
-        </div>
-        <div class="font-style-div">
           <RouterLink to="/terms/latest">{{ t('footer.termsAndAgreement') }}</RouterLink>
-        </div>
-      </div>
+        </nav>
 
-      <div
-        :class="
-          isMobile
-            ? 'col-12 px-5 font-style text-center mt-2'
-            : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style'
-        "
-      >
-        <div class="text-900 text-xl mb-3 font-medium">{{ t('footer.resources') }}</div>
-        <div class="font-style-div">
+        <nav class="site-footer__col" :aria-label="t('footer.resources')">
+          <h2>{{ t('footer.resources') }}</h2>
           <a href="https://www.asa.gold/">{{ t('footer.mainNet') }}</a>
-        </div>
-        <div class="font-style-div">
           <a href="https://testnet.asa.gold/">{{ t('footer.testNet') }}</a>
-        </div>
-
-        <div class="font-style-div">
           <RouterLink to="/settings">{{ t('footer.settings') }}</RouterLink>
-        </div>
-        <div class="font-style-div">
           <RouterLink to="/price-list">{{ t('footer.priceList') }}</RouterLink>
-        </div>
-        <div class="font-style-div">
           <RouterLink to="/token/dao">{{ t('footer.daoToken') }}</RouterLink>
-        </div>
-        <div class="font-style-div">
           <RouterLink to="/token/gold">{{ t('footer.goldToken') }}</RouterLink>
+        </nav>
+
+        <div class="site-footer__col">
+          <h2>{{ t('footer.language') }}</h2>
+          <LanguageSwitcher data-testid="footer-language-switcher" />
         </div>
       </div>
-      <div
-        :class="
-          isMobile
-            ? 'col-12 px-5 font-style text-center mt-2 contactus'
-            : 'lg:col-3 md:col-6 md:text-center sm:col-12 px-5 font-style contactus'
-        "
-      >
-        <div class="text-900 text-xl mb-3 font-medium ml-2">{{ t('footer.contactUs') }}</div>
-        <a href="https://discord.gg/8m4KTcVSH9">
-          <Button icon="pi pi-discord" severity="info" text raised rounded aria-label="User" />
-        </a>
-        <a href="https://t.me/+mWQObAvGe_5lNDNk">
-          <Button
-            icon="pi pi-telegram"
-            severity="warning"
-            label=""
-            text
-            raised
-            rounded
-            aria-label="Notification"
-          />
-        </a>
-        <a href="https://twitter.com/eAlgonaut/">
-          <Button icon="pi pi-twitter" severity="help" text raised rounded aria-label="Favorite" />
-        </a>
+
+      <div class="site-footer__bottom">
+        <span>&copy; {{ year }} Scholtz &amp; Company, jsa</span>
       </div>
     </div>
-    <div class="footer-bottom flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-5 pt-4 px-5">
-      <span class="text-900 font-medium footer-language-label">{{ t('footer.language') }}</span>
-      <LanguageSwitcher data-testid="footer-language-switcher" />
-    </div>
-  </div>
+  </footer>
 </template>
+
 <style scoped>
-.use-text-subtitle {
-  color: #fff;
-  margin-bottom: 48px;
-  font-size: 30px;
-  line-height: 36px;
-  font-weight: var(--font-medium) !important;
+.site-footer {
+  margin-top: auto;
+  padding: 3.5rem 0 1.5rem;
+  color: var(--on-dark-muted);
+  background: var(--dark);
+  border-top: 3px solid var(--gold-500);
 }
-.custom-footer {
-  background-color: #333e48 !important;
+.site-footer__grid {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
 }
-.footer-name {
-  color: #d4aa00 !important;
+.site-footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--on-dark);
+  text-decoration: none;
 }
-.font-style a {
-  color: white !important;
-  font-size: 14px !important;
-  text-decoration: none !important;
+.site-footer__logo:hover {
+  text-decoration: none;
+  color: var(--on-dark);
 }
-.font-style .font-medium {
-  color: white !important;
-  font-size: 20px !important;
-  font-weight: var(--font-bold);
+.site-footer__logo img {
+  border-radius: 50%;
+}
+.site-footer__logo span span {
+  color: var(--gold-300);
+}
+.site-footer__brand p {
+  margin: 0.8rem 0 1rem;
+}
+.site-footer__social {
+  display: flex;
+  gap: 0.6rem;
+}
+.site-footer__social a {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--on-dark);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.site-footer__social a:hover {
+  color: var(--dark);
+  background: var(--gold-300);
+  border-color: var(--gold-300);
+  text-decoration: none;
+}
+.site-footer__col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+.site-footer__col h2 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: var(--on-dark);
 }
-.font-style-div {
-  padding-top: 15px !important;
+.site-footer__col a {
+  font-size: 0.93rem;
+  color: var(--on-dark-muted);
 }
-.font-style button {
-  background-color: #d4aa00 !important;
-  color: white;
-  height: 45px;
-  margin: 10px;
-  width: 45px;
+.site-footer__col a:hover {
+  color: var(--gold-300);
 }
-.footer-bottom {
-  border-top: 1px solid rgb(216 216 216 / 20%);
+.site-footer__bottom {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-.footer-language-label {
-  color: white !important;
-  font-size: 16px !important;
+
+@media (max-width: 991px) {
+  .site-footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
-.footer-two {
-  padding-top: 40px;
-  border-top: 1px solid rgb(216 216 216 / 53%);
-  max-width: 100%;
-  clip: rect(0, auto, auto, 0);
-  height: 100%;
-  overflow: hidden;
-  top: 0;
-  width: 100%;
+@media (max-width: 575px) {
+  .site-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 }
 </style>

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import Panel from 'primevue/panel'
-import InputText from 'primevue/inputtext'
-import Button from 'primevue/button'
-import Checkbox from 'primevue/checkbox'
+import Panel from '@/components/ui/UiPanel.vue'
+import InputText from '@/components/ui/UiInputText.vue'
+import Button from '@/components/ui/UiButton.vue'
+import Checkbox from '@/components/ui/UiCheckbox.vue'
 import { onMounted, reactive, watch } from 'vue'
 import { useAppStore } from '@/stores/app'
-import Divider from 'primevue/divider'
-import { useToast } from 'primevue/usetoast'
-import ProgressSpinner from 'primevue/progressspinner'
+import Divider from '@/components/ui/UiDivider.vue'
+import { useToast } from '@/components/ui/useToast'
+import ProgressSpinner from '@/components/ui/UiSpinner.vue'
 
 import { bffSendVerificationEmail, bffSendVerifyEmailCode } from '@/scripts/axios/BFF'
 import { useRoute } from 'vue-router'
@@ -127,121 +127,154 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Panel
-    header="Email validation"
-    class="m-4 flex flex-grow-1 flex-column"
-    toggleableContent="text"
-  >
-    <p v-if="!store.state.account?.email">
-      In order to serve you best services under
-      <a
-        href="https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52020PC0593&from=EN"
-        target="_blank"
-        >MiCA legal framework</a
-      >, we need you to accept our terms and conditions and GDRP policy.
-    </p>
-    <p v-if="store.state.account?.email">
-      Your verified email is {{ store.state.account.email }}.
-      <span v-if="store.state.account?.marketingConsent">
-        You have opted in to receive special offers and other marketing communication. You can opt
-        out by filling the form below and uncheck special offers checkbox.</span
-      ><span v-else>
-        You have not opted in to receive special offers and other marketing communication. You can
-        opt in by filling the form below and uncheck special offers checkbox.</span
-      >
-    </p>
-    <div v-if="!route.params.code">
-      <div class="field grid">
-        <label for="email" class="col-12 mb-2 md:col-2 md:mb-0">Email</label>
-        <InputText
-          id="email"
-          v-model="status.email"
-          type="email"
-          placeholder="Input your email please"
-          class="m-1"
-        />
-      </div>
-      <div class="field grid">
-        <div class="col-12 md:col-10 md:col-offset-2">
-          By verifying your email you accept the
-          <a :href="`/terms/${status.terms}`" target="_blank"> terms and conditions</a>.
-        </div>
+  <div class="section">
+    <div class="container ev">
+      <Panel header="Email validation">
+        <div class="ev__body">
+          <p v-if="!store.state.account?.email">
+            In order to serve you best services under
+            <a
+              href="https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:52020PC0593&from=EN"
+              target="_blank"
+              rel="noopener"
+              >MiCA legal framework</a
+            >, we need you to accept our terms and conditions and GDRP policy.
+          </p>
+          <p v-if="store.state.account?.email">
+            Your verified email is <strong>{{ store.state.account.email }}</strong
+            >.
+            <span v-if="store.state.account?.marketingConsent">
+              You have opted in to receive special offers and other marketing communication. You can
+              opt out by filling the form below and uncheck special offers checkbox.</span
+            ><span v-else>
+              You have not opted in to receive special offers and other marketing communication. You
+              can opt in by filling the form below and uncheck special offers checkbox.</span
+            >
+          </p>
 
-        <div class="col-12 md:col-10 md:col-offset-2">
-          {{ t('emailVerification.byVerifying') }}
-          <a :href="`/gdpr/${status.gdpr}`" target="_blank"> {{ t('footer.gdprPolicy') }}</a> {{ t('emailVerification.ofOurService') }}
+          <div v-if="!route.params.code" class="ev__step">
+            <div class="field">
+              <label for="email">Email</label>
+              <InputText
+                id="email"
+                v-model="status.email"
+                type="email"
+                placeholder="Input your email please"
+              />
+            </div>
+            <p class="ev__legal">
+              By verifying your email you accept the
+              <a :href="`/terms/${status.terms}`" target="_blank" rel="noopener">terms and conditions</a>.
+              {{ t('emailVerification.byVerifying') }}
+              <a :href="`/gdpr/${status.gdpr}`" target="_blank" rel="noopener">{{ t('footer.gdprPolicy') }}</a>
+              {{ t('emailVerification.ofOurService') }}
+            </p>
+            <div class="ev__check">
+              <Checkbox inputId="hasMarketing" v-model="status.hasMarketing" :binary="true" />
+              <label for="hasMarketing">
+                I want to opt in/opt out to receive special offers and other marketing communication
+              </label>
+            </div>
+            <div class="ev__actions">
+              <Button @click="verify" :disabled="status.sendingEmail || status.emailSent">
+                <ProgressSpinner
+                  v-if="status.sendingEmail"
+                  style="width: 1em; height: 1em"
+                  strokeWidth="8"
+                  animationDuration=".5s"
+                  class="mx-1"
+                />Verify
+              </Button>
+              <span v-if="status.emailSent" class="ev__note">Please check your mailbox</span>
+            </div>
+            <Divider />
+          </div>
+
+          <div class="ev__step">
+            <div class="field">
+              <label for="code">Verification code</label>
+              <InputText
+                id="code"
+                v-model="status.code"
+                type="code"
+                placeholder="Your code from your email"
+              />
+            </div>
+            <div class="ev__actions">
+              <Button @click="finishVerify" :disabled="!status.code || status.sendingVerification">
+                <ProgressSpinner
+                  v-if="status.sendingVerification"
+                  style="width: 1em; height: 1em"
+                  strokeWidth="8"
+                  animationDuration=".5s"
+                  class="mx-1"
+                />
+                Finish verification
+              </Button>
+            </div>
+            <p v-if="status.bffSendVerifyEmailCodeResult.success" class="ev__note ev__note--ok">
+              Thank you for validating your email address
+            </p>
+            <p v-if="status.bffSendVerifyEmailCodeResult.transactionId" class="ev__note">
+              We have funded you few algorand tokens so that you can opt in to gold asa.
+              <a
+                :href="`https://testnet.algoexplorer.io/tx/${status.bffSendVerifyEmailCodeResult.transactionId}`"
+                target="_blank"
+                rel="noopener"
+                >Check the transaction</a
+              >
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="field grid">
-        <div class="col-12 md:col-10 md:col-offset-2">
-          <Checkbox inputId="hasMarketing" v-model="status.hasMarketing" :binary="true" />
-          <label for="hasMarketing" class="ml-2">
-            I want to opt in/opt out to receive special offers and other marketing communication
-          </label>
-        </div>
-      </div>
-      <div class="field grid">
-        <div class="col-12 md:col-10 md:col-offset-2">
-          <Button class="my-2" @click="verify" :disabled="status.sendingEmail || status.emailSent"
-            ><ProgressSpinner
-              v-if="status.sendingEmail"
-              style="width: 1em; height: 1em"
-              strokeWidth="8"
-              animationDuration=".5s"
-              class="mx-1"
-            />Verify
-          </Button>
-        </div>
-        <div v-if="status.emailSent" class="col-12 md:col-10 md:col-offset-2">
-          Please check your mailbox
-        </div>
-      </div>
-      <Divider />
+      </Panel>
     </div>
-    <div class="field grid">
-      <label for="code" class="col-12 mb-2 md:col-2 md:mb-0">Verification code</label>
-      <InputText
-        id="code"
-        v-model="status.code"
-        type="code"
-        placeholder="Your code from your email"
-        class="m-1"
-      />
-    </div>
-    <div class="field grid">
-      <div class="col-12 md:col-10 md:col-offset-2">
-        <Button
-          class="my-2"
-          @click="finishVerify"
-          :disabled="!status.code || status.sendingVerification"
-        >
-          <ProgressSpinner
-            v-if="status.sendingVerification"
-            style="width: 1em; height: 1em"
-            strokeWidth="8"
-            animationDuration=".5s"
-            class="mx-1"
-          />
-          Finish verification
-        </Button>
-      </div>
-      <div
-        v-if="status.bffSendVerifyEmailCodeResult.success"
-        class="col-12 md:col-10 md:col-offset-2"
-      >
-        Thank you for validating your email address
-      </div>
-      <div
-        v-if="status.bffSendVerifyEmailCodeResult.transactionId"
-        class="col-12 md:col-10 md:col-offset-2"
-      >
-        We have funded you few algorand tokens so that you can opt in to gold asa.
-        <a
-          :href="`https://testnet.algoexplorer.io/tx/${status.bffSendVerifyEmailCodeResult.transactionId}`"
-          target="_blank"
-          >Check the transaction</a
-        >
-      </div>
-    </div>
-  </Panel>
+  </div>
 </template>
+
+<style scoped>
+.ev {
+  max-width: 720px;
+}
+.ev__body,
+.ev__step {
+  display: grid;
+  gap: 1.1rem;
+}
+.ev__body p {
+  margin: 0;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.field label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.ev__legal {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.ev__check {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  font-size: 0.93rem;
+}
+.ev__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+.ev__note {
+  color: var(--ink-soft);
+  font-size: 0.93rem;
+}
+.ev__note--ok {
+  color: var(--success);
+  font-weight: 600;
+}
+</style>

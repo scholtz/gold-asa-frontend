@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import Panel from 'primevue/panel'
-import Button from 'primevue/button'
+import Panel from '@/components/ui/UiPanel.vue'
+import Button from '@/components/ui/UiButton.vue'
+import InputText from '@/components/ui/UiInputText.vue'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore, resetConfiguration, useMainnet, useTestnet, useSandnet } from '@/stores/app'
 import { useI18n } from 'vue-i18n'
@@ -13,96 +14,77 @@ const store = useAppStore()
 <template>
   <Layout :hideTopMenu="true">
     <MenuLevel2Settings />
-    <Panel :header="t('settings.title')" class="m-4 flex flex-grow-1 flex-column" toggleableContent="text">
-      <p class="m-0"></p>
-      <div class="card">
-        <!--
-        <h4>Theme setup</h4>
-        <div class="field grid">
-          <label for="lastname4" class="col-12 mb-2 md:col-2 md:mb-0">Theme</label>
-          <div class="col-12 md:col-10">
-            <Button class="my-2" @click="store.state.theme = 'md-light-indigo'"
-              >MD Light Indigo</Button
-            >
-            <Button class="m-2" @click="store.state.theme = 'md-dark-indigo'"
-              >MD Dark Indigo</Button
-            >
-            <Button class="m-2" @click="store.state.theme = 'lara-light-indigo'"
-              >Lara Light Indigo</Button
-            >
-            <Button class="m-2" @click="store.state.theme = 'lara-dark-indigo'"
-              >Lara Dark Indigo</Button
-            >
-          </div>
-        </div>
-        -->
-        <h4>Blockchain configuration</h4>
-        <!--
-        <div class="field grid">
-          <label for="algodnode" class="col-12 mb-2 md:col-2 md:mb-0">Network defaults</label>
-          <div class="col-12 md:col-10">
-            <Button @click="useMainnet" class="my-2 mr-2">Algorand Mainnet</Button>
-            <Button @click="useTestnet" class="m-2">Algorand Testnet</Button>
-            <Button @click="useSandnet" class="m-2">Algorand Sandbox</Button>
-          </div>
-        </div>-->
-        <div class="field grid">
-          <label for="algodHost" class="col-12 mb-2 md:col-2 md:mb-0">Blockchain endpoint</label>
-          <div class="col-12 md:col-10">
-            <input
-              v-model="store.state.algodHost"
-              id="algodHost"
-              type="text"
-              class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-            />
-          </div>
-        </div>
-        <div class="field grid">
-          <label for="algodPort" class="col-12 mb-2 md:col-2 md:mb-0"
-            >Blockchain endpoint port</label
-          >
-          <div class="col-12 md:col-10">
-            <input
-              v-model="store.state.algodPort"
-              id="algodPort"
-              type="text"
-              class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-            />
-          </div>
-        </div>
-        <div class="field grid">
-          <label for="algodToken" class="col-12 mb-2 md:col-2 md:mb-0"
-            >Blockchain endpoint token</label
-          >
-          <div class="col-12 md:col-10">
-            <input
-              v-model="store.state.algodToken"
-              id="algodToken"
-              type="text"
-              class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-            />
-          </div>
-        </div>
-        <div class="field grid">
-          <label for="customToken" class="col-12 mb-2 md:col-2 md:mb-0">Custom swap token</label>
-          <div class="col-12 md:col-10">
-            <input
-              v-model="store.state.customToken"
-              id="customToken"
-              type="text"
-              class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-            />
-          </div>
-        </div>
-
-        <h4>Default configuration</h4>
-        <div class="field grid">
-          <label class="col-12 mb-2 md:col-2 md:mb-0">{{ t('settings.dangerZone') }}</label>
-          <div class="col-12 md:col-10">
-            <Button @click="resetConfiguration" class="my-2">{{ t('settings.resetConfiguration') }}</Button>
-          </div>
-        </div>
+    <header class="page-hero">
+      <div class="container">
+        <h1>{{ t('settings.title') }}</h1>
       </div>
-    </Panel>
+    </header>
+    <div class="section">
+      <div class="container settings">
+        <Panel header="Blockchain configuration">
+          <div class="form-grid">
+            <div class="field">
+              <label for="algodHost">Blockchain endpoint</label>
+              <InputText id="algodHost" type="text" v-model="store.state.algodHost" />
+            </div>
+            <div class="field">
+              <label for="algodPort">Blockchain endpoint port</label>
+              <input id="algodPort" type="text" class="ui-input" v-model="store.state.algodPort" />
+            </div>
+            <div class="field">
+              <label for="algodToken">Blockchain endpoint token</label>
+              <InputText id="algodToken" type="text" v-model="store.state.algodToken" />
+            </div>
+            <div class="field">
+              <label for="customToken">Custom swap token</label>
+              <input id="customToken" type="text" class="ui-input" v-model="store.state.customToken" />
+            </div>
+          </div>
+        </Panel>
+        <Panel header="Default configuration">
+          <div class="danger">
+            <strong>{{ t('settings.dangerZone') }}</strong>
+            <Button severity="danger" outlined @click="resetConfiguration">{{
+              t('settings.resetConfiguration')
+            }}</Button>
+          </div>
+        </Panel>
+      </div>
+    </div>
   </Layout>
 </template>
+
+<style scoped>
+.settings {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 880px;
+}
+.form-grid {
+  display: grid;
+  gap: 1.1rem 1.5rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.field label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.danger {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>
