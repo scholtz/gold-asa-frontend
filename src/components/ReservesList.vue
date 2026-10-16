@@ -2,7 +2,7 @@
 import { ProductService } from '@/service/ProductService'
 
 import Button from '@/components/ui/UiButton.vue'
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useAppStore } from '@/stores/app'
 import type IEshopItem from '@/types/IEshopItem'
 import { useToast } from '@/components/ui/useToast'
@@ -16,7 +16,7 @@ import getAsa from '@/scripts/algo/getAsa'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 import { RouterLink } from 'vue-router'
 import UiIcon from '@/components/ui/UiIcon.vue'
-import retryingLoad from '@/scripts/common/retryingLoad'
+import { useRetryingLoad } from '@/scripts/common/retryingLoad'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -28,14 +28,12 @@ const state = reactive({
 
 const products = ref<IEshopItem[]>()
 
-let stopLoading: (() => void) | undefined
-onUnmounted(() => stopLoading?.())
+useRetryingLoad({
+  load: () => ProductService.getProductsResult(),
+  onData: (data) => (products.value = data.filter((c) => c.state.state == 1))
+})
 
 onMounted(async () => {
-  stopLoading = retryingLoad({
-    load: () => ProductService.getProductsResult(),
-    onData: (data) => (products.value = data.filter((c) => c.state.state == 1))
-  })
   await loadMintedTokens()
 })
 

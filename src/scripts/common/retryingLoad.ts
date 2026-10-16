@@ -1,3 +1,5 @@
+import { onMounted, onUnmounted } from 'vue'
+
 export const RETRY_DELAY_MS = 10_000
 
 export interface ILoadResult<T> {
@@ -6,7 +8,7 @@ export interface ILoadResult<T> {
   complete: boolean
 }
 
-interface IInput<T> {
+export interface IRetryingLoadInput<T> {
   load: () => Promise<ILoadResult<T>>
   onData: (data: T) => void
   retryMs?: number
@@ -19,7 +21,7 @@ interface IInput<T> {
  * result, until it succeeds completely. Partial data is passed to `onData` right away.
  * Returns a function that stops all further attempts (call it when the component unmounts).
  */
-const retryingLoad = <T>(input: IInput<T>): (() => void) => {
+const retryingLoad = <T>(input: IRetryingLoadInput<T>): (() => void) => {
   const { load, onData, retryMs = RETRY_DELAY_MS, maxIncompleteRetries = 6 } = input
   let stopped = false
   let incompleteRetries = 0
@@ -53,5 +55,13 @@ const retryingLoad = <T>(input: IInput<T>): (() => void) => {
     stopped = true
     if (timer) clearTimeout(timer)
   }
+}
+/** Component helper: starts `retryingLoad` on mount and stops it on unmount. */
+export const useRetryingLoad = <T>(input: IRetryingLoadInput<T>) => {
+  let stop: (() => void) | undefined
+  onMounted(() => {
+    stop = retryingLoad(input)
+  })
+  onUnmounted(() => stop?.())
 }
 export default retryingLoad
