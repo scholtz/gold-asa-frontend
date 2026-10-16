@@ -5,7 +5,7 @@ import { createBiatecAuth } from './biatecAuth'
 import { createBiatecRouter } from './biatecRouter'
 import type { IBiatecApi } from './biatecRouter'
 import { createFolksRouter } from './folksRouter'
-import { DEFAULT_ROUTER_HOST, effectiveRouterKind } from './routerKinds'
+import { effectiveRouterKind, safeRouterHost } from './routerKinds'
 import type { ISwapRouter } from './types'
 
 export * from './types'
@@ -35,7 +35,7 @@ const getAuth = () => {
 const biatecApi = (): IBiatecApi => {
   const store = useAppStore()
   const { OpenAPI, RouterService } = biatecRouter
-  OpenAPI.BASE = (store.state.routerHost || DEFAULT_ROUTER_HOST).replace(/\/+$/, '')
+  OpenAPI.BASE = safeRouterHost(store.state.routerHost)
   OpenAPI.HEADERS = async () => ({ Authorization: await getAuth().getHeader() })
 
   // an expired/rejected header is dropped and the call retried once with a new one

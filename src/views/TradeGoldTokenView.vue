@@ -148,31 +148,32 @@ async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
     [store.state.tokens.btc, 'Btc']
   ]
   if (store.state.customToken) pairs.push([store.state.customToken, 'Custom'])
-  for (const [asset, name] of pairs) {
-    if (isStale()) return null
-    result[`quote${name}Gold` as keyof QuoteResult] = (await quote(
-      'FIXED_OUTPUT',
-      asset,
-      gold
-    )) as never
-    if (isStale()) return null
-    result[`quoteGold${name}` as keyof QuoteResult] = (await quote(
-      'FIXED_INPUT',
-      gold,
-      asset
-    )) as never
-  }
+  // all pairs in parallel: a refresh must finish well within the 30s refresh interval
+  await Promise.all(
+    pairs.flatMap(([asset, name]) => [
+      quote('FIXED_OUTPUT', asset, gold).then((q) => {
+        result[`quote${name}Gold` as keyof QuoteResult] = q as never
+      }),
+      quote('FIXED_INPUT', gold, asset).then((q) => {
+        result[`quoteGold${name}` as keyof QuoteResult] = q as never
+      })
+    ])
+  )
+  if (isStale()) return null
   return result
 }
 
 let quoteRun = 0
+let refreshing = false
 async function fetchQuotes(manual = false) {
   const run = ++quoteRun
+  refreshing = true
   if (manual) resetRouterAuth()
   try {
     const result = await loadQuotes(() => run !== quoteRun)
     if (!result) return
     state.authRequired = false
+    state.lastError = ''
     Object.assign(state, result)
   } catch (e: any) {
     if (run !== quoteRun) return
@@ -186,6 +187,7 @@ async function fetchQuotes(manual = false) {
       state.lastError = e.message
     }
   }
+  refreshing = false
   refreshCount.value++
 }
 function format(number: number | undefined | bigint, assetId: number) {
@@ -231,21 +233,33 @@ async function loadTokens() {
   refreshCount.value++
 }
 watch(
-  () => [store.state.router, store.state.authState.isAuthenticated, store.state.authState.account],
+  () => [
+    store.state.router,
+    store.state.env,
+    store.state.routerHost,
+    store.state.authState.isAuthenticated,
+    store.state.authState.account
+  ],
   () => fetchQuotes()
 )
+let unmounted = false
 onMounted(async () => {
   await fetchQuotes()
   await loadAccount()
   await loadTokens()
+  if (unmounted) return
 
   state.interval = setInterval(async () => {
+    // do not pile up refreshes (and wallet prompts) when the previous one is still running
+    if (refreshing) return
     await fetchQuotes()
     await loadAccount()
     console.log('log')
   }, 30000)
 })
 onBeforeUnmount(() => {
+  unmounted = true
+  quoteRun++ // drop results of a refresh that is still running
   if (state.interval) {
     console.log('clearing timer')
     clearInterval(state.interval)

@@ -28,12 +28,20 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
   const now = deps.now ?? Date.now
   let cached: { account: string; header: string; expires: number } | null = null
   let pending: { account: string; promise: Promise<string> } | null = null
-  let declined: { until: number; message: string } | null = null
+  let declined: { account: string; until: number; message: string } | null = null
+
+  /** the user (or wallet) refused / failed to sign, as opposed to e.g. a network error */
+  class SignError extends Error {}
 
   const create = async (account: string): Promise<string> => {
     const params = await deps.getParams()
     const txn = arc14(BIATEC_ROUTER_REALM, account, params)
-    const [signed] = await deps.sign([txn.toByte()])
+    let signed: Uint8Array | undefined
+    try {
+      ;[signed] = await deps.sign([txn.toByte()])
+    } catch (e: any) {
+      throw new SignError(e?.message ?? 'cancelled')
+    }
     if (!signed) throw new Error('Wallet did not return the signed authentication transaction')
     return arc14Header(signed)
   }
@@ -43,7 +51,7 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
       const account = deps.getAccount()
       if (!account) throw new RouterAuthRequiredError()
       if (cached && cached.account === account && cached.expires > now()) return cached.header
-      if (declined && declined.until > now()) {
+      if (declined && declined.account === account && declined.until > now()) {
         throw new RouterAuthRequiredError(
           `Could not sign the router authentication (${declined.message}). Press "Refresh quotes" to try again.`
         )
@@ -57,10 +65,10 @@ export const createBiatecAuth = (deps: IBiatecAuthDeps) => {
           return header
         })
         .catch((e: any) => {
-          const message = e?.message ?? 'cancelled'
-          declined = { until: now() + DECLINE_COOLDOWN_MS, message }
+          if (!(e instanceof SignError)) throw e // e.g. network error: no cooldown, the next refresh retries
+          declined = { account, until: now() + DECLINE_COOLDOWN_MS, message: e.message }
           throw new RouterAuthRequiredError(
-            `Could not sign the router authentication (${message}). Press "Refresh quotes" to try again.`
+            `Could not sign the router authentication (${e.message}). Press "Refresh quotes" to try again.`
           )
         })
         .finally(() => {

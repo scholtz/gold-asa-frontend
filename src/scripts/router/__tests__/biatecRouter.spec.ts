@@ -1,13 +1,29 @@
 import { describe, expect, it, vi } from 'vitest'
 import { createBiatecRouter, quoteFixedOutput } from '../biatecRouter'
 import type { IBiatecApi } from '../biatecRouter'
-import { DEFAULT_ROUTER, effectiveRouterKind } from '../routerKinds'
+import {
+  DEFAULT_ROUTER,
+  DEFAULT_ROUTER_HOST,
+  effectiveRouterKind,
+  safeRouterHost
+} from '../routerKinds'
 
 /** constant product pool: sells `from` for `to` with a 0.3% fee */
 const pool = (reserveFrom: number, reserveTo: number) =>
   vi.fn(async (_from: number, _to: number, amount: number) =>
     Math.floor((reserveTo * amount * 0.997) / (reserveFrom + amount * 0.997))
   )
+
+describe('safeRouterHost', () => {
+  it('accepts https and localhost only', () => {
+    expect(safeRouterHost('https://router.example.com/')).toBe('https://router.example.com')
+    expect(safeRouterHost('http://localhost:5000')).toBe('http://localhost:5000')
+    expect(safeRouterHost('http://evil.example.com')).toBe(DEFAULT_ROUTER_HOST)
+    expect(safeRouterHost('not a url')).toBe(DEFAULT_ROUTER_HOST)
+    expect(safeRouterHost('')).toBe(DEFAULT_ROUTER_HOST)
+    expect(safeRouterHost(undefined)).toBe(DEFAULT_ROUTER_HOST)
+  })
+})
 
 describe('effectiveRouterKind', () => {
   it('defaults to biatec', () => {
