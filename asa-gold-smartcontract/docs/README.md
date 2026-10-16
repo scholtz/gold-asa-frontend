@@ -7,4 +7,4 @@
 5. `ts-node src/bin/createToken.ts`
 6. modify test/deploy.test.ts
 7. add to .env correct config, read env.md
-8. `npm run deploynft`
+8. `pnpm run deploynft`

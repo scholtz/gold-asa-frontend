@@ -5,14 +5,17 @@ RUN apt update \
   && apt-get clean autoclean \
   && apt-get autoremove --yes \
   && rm -rf /var/lib/{apt,dpkg,cache,log}/ \
-  && npm install -g npm@latest
-COPY package-lock.json package-lock.json
+  && corepack enable \
+  && corepack prepare pnpm@11.10.0 --activate
 COPY package.json package.json
-RUN npm ci
+COPY pnpm-lock.yaml pnpm-lock.yaml
+COPY pnpm-workspace.yaml pnpm-workspace.yaml
+ENV CYPRESS_INSTALL_BINARY=0
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN pnpm run build
 RUN cd /src/dist && ls
-#RUN npm run test
+#RUN pnpm run test
 
 FROM nginxinc/nginx-unprivileged:latest
 USER root

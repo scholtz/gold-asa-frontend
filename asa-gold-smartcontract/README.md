@@ -12,7 +12,7 @@ https://www.asa.gold
 
 For tests its recommended to run sandbox in dev mode `sandbox up dev`. (Faster block times)
 
-Run tests with `npm run test`
+Run tests with `pnpm run test`
 
 ## NPM package repository
 
@@ -25,4 +25,4 @@ Run tests with `npm run test`
 - Supply photos to folder img/
 - ts-node src/bin/createToken.ts
 - Update deploy.test.ts
-- npm run deploynft
+- pnpm run deploynft

@@ -1,0 +1,6 @@
+allowBuilds:
+  cypress: true
+  esbuild: true
+  protobufjs: false
+  sharp: true
+  vue-demi: true
