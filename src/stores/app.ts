@@ -135,6 +135,11 @@ export const useAppStore = defineStore('app', () => {
     const stateFromStorage = localStorage.getItem('state')
     if (stateFromStorage) {
       const istate = JSON.parse(stateFromStorage) as IState
+      if ((istate as any).authState) {
+        // older versions persisted the auth session; remove it
+        delete (istate as any).authState
+        localStorage.setItem('state', JSON.stringify(istate))
+      }
       if (istate.env == initState.env) {
         // if network has been changed make sure we do not load bad data from localstorage
         if (istate.algodHost) initState.algodHost = istate.algodHost

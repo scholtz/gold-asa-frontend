@@ -36,6 +36,10 @@ const walletNetwork = (() => {
   return 'testnet'
 })()
 
+if (!import.meta.env.VITE_WC_PROJECT_ID) {
+  console.warn('VITE_WC_PROJECT_ID is not set; WalletConnect based wallet connections are unavailable')
+}
+
 const app = createApp(App)
 
 app.use(WalletManagerPlugin, {

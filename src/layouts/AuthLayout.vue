@@ -3,7 +3,7 @@ import TopHeader from '@/components/TopHeader.vue'
 import PageFooter from '@/components/PageFooter.vue'
 import ForcedEmailVerification from '@/components/ForcedEmailVerification.vue'
 
-import { watch, onBeforeUnmount } from 'vue'
+import { watch, onBeforeUnmount, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useToast } from 'primevue/usetoast'
@@ -54,7 +54,7 @@ store.state.authComponent = bridge
 
 onBeforeUnmount(() => {
   // do not leave a bridge bound to an unmounted layout
-  if (store.state.authComponent === bridge) store.state.authComponent = null
+  if (toRaw(store.state.authComponent) === bridge) store.state.authComponent = null
 })
 
 // mirror the library state into the app store, so views do not depend on the library directly
