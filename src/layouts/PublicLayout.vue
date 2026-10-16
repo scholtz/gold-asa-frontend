@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import TopHeader from '@/components/TopHeader.vue'
-import UiToast from '@/components/ui/UiToast.vue'
 </script>
 <template>
   <div class="layout">
-    <UiToast />
     <TopHeader :hideTopMenu="false" />
     <main class="layout__main">
       <slot />

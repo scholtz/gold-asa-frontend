@@ -448,6 +448,7 @@ function goldBalance() {
 }
 function unitPrice(quote: SwapQuote | null, row: IPairRow) {
   if (!quote?.quoteAmount) return ''
+  if (!state.quantityQuote) return ''
   return (Number(quote.quoteAmount) / (state.quantityQuote * 10 ** row.decimals)).toFixed(4)
 }
 function totalAmount(quote: SwapQuote | null, row: IPairRow) {

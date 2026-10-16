@@ -54,7 +54,8 @@ const clamp = (value: number): number => {
 const parse = (raw: string): number | null => {
   let cleaned = raw.replace(props.prefix ?? '', '').replace(props.suffix ?? '', '').replace(/\s/g, '')
   // "1,000.5" -> thousands separators; "1,5" -> decimal comma
-  cleaned = cleaned.includes('.') ? cleaned.replace(/,/g, '') : cleaned.replace(',', '.')
+  const thousands = /^-?\d{1,3}(,\d{3})+$/.test(cleaned)
+  cleaned = cleaned.includes('.') || thousands ? cleaned.replace(/,/g, '') : cleaned.replace(',', '.')
   if (cleaned === '' || cleaned === '-' || cleaned === '.') return null
   const value = Number(cleaned)
   return Number.isFinite(value) ? value : null
@@ -87,7 +88,7 @@ const shown = computed(() =>
 </script>
 
 <template>
-  <div class="ui-number ui-control" :class="{ 'is-disabled': disabled, [String($attrs.class ?? '')]: true }">
+  <div class="ui-number ui-control" :class="[$attrs.class, { 'is-disabled': disabled }]">
     <input
       class="ui-number__input"
       inputmode="decimal"

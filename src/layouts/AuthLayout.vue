@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import TopHeader from '@/components/TopHeader.vue'
-import UiToast from '@/components/ui/UiToast.vue'
 import PageFooter from '@/components/PageFooter.vue'
 import ForcedEmailVerification from '@/components/ForcedEmailVerification.vue'
 
@@ -82,7 +81,6 @@ watch(
 
 <template>
   <div class="layout">
-    <UiToast />
     <TopHeader :hideTopMenu="props.hideTopMenu" />
     <AlgorandAuthentication
       arc14Realm="ASA.Gold"
