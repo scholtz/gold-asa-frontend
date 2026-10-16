@@ -197,10 +197,10 @@ When adding new features:
 ```bash
 # Run smart contract tests
 cd asa-gold-smartcontract
-npm test
+pnpm test
 
 # Run specific test suite
-npm run test1  # Deploy and init tests
+pnpm run test1  # Deploy and init tests
 ```
 
 ### API Integration Patterns
@@ -267,9 +267,9 @@ const navigateToTrade = () => {
 
 ### Linting and Formatting
 ```bash
-npm run lint      # ESLint with auto-fix
-npm run format    # Prettier formatting
-npm run type-check # TypeScript validation
+pnpm run lint      # ESLint with auto-fix
+pnpm run format    # Prettier formatting
+pnpm run type-check # TypeScript validation
 ```
 
 ### Testing Strategy
@@ -344,12 +344,12 @@ const isValidAmount = computed(() => amount.value > 0)
 
 ## Development Workflow
 
-1. **Setup**: Run `npm install` to install dependencies
-2. **Development**: Use `npm run dev` for hot reload development
-3. **Type Checking**: Run `npm run type-check` regularly
-4. **Testing**: Execute `npm run test:unit` for component tests
-5. **Building**: Use `npm run build` for production builds
-6. **Smart Contracts**: Test contracts with `cd asa-gold-smartcontract && npm install && npm test`
+1. **Setup**: Run `pnpm install` to install dependencies
+2. **Development**: Use `pnpm run dev` for hot reload development
+3. **Type Checking**: Run `pnpm run type-check` regularly
+4. **Testing**: Execute `pnpm run test:unit` for component tests
+5. **Building**: Use `pnpm run build` for production builds
+6. **Smart Contracts**: Test contracts with `cd asa-gold-smartcontract && pnpm install && pnpm test`
 
 ### CI/CD Pipeline
 - **Automated Deployment**: Main branch automatically deploys to production via GitHub Actions
@@ -416,8 +416,8 @@ console.log('Wallet Address:', store.state.authState.account?.addr)
 3. **Validate smart contract state**: Ensure contract is in correct state for operation
 
 #### Build Issues
-- Use `npm run type-check` to identify TypeScript errors
-- Check for missing dependencies with `npm list`
+- Use `pnpm run type-check` to identify TypeScript errors
+- Check for missing dependencies with `pnpm list`
 - Clear node_modules and reinstall if needed
 
 ### Performance Debugging
@@ -428,11 +428,11 @@ console.log('Wallet Address:', store.state.authState.account?.addr)
 ### Testing Strategies
 ```bash
 # Frontend tests
-npm run test:unit           # Component unit tests
-npm run test:e2e           # End-to-end tests (requires Cypress binary)
+pnpm run test:unit           # Component unit tests
+pnpm run test:e2e           # End-to-end tests (requires Cypress binary)
 
 # Smart contract tests
 cd asa-gold-smartcontract
-npm test                   # Full test suite
-npm run test1             # Specific test groups
+pnpm test                   # Full test suite
+pnpm run test1             # Specific test groups
 ```

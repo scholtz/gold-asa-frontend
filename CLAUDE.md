@@ -17,16 +17,16 @@ Related repos (not here): BFF backend (`scholtz/AsaGoldBff`), repository API (`A
 
 ## Commands (run from repo root)
 
-- `npm ci` - install
-- `npm run dev` - Vite dev server
-- `npm run type-check` - `vue-tsc` against `tsconfig.app.json`
-- `npm run build` - outputs to `dist/`. It runs `type-check` and `vite build` in parallel (`run-p`). A `dist/` directory does not prove types passed; check the exit code and type errors.
-- `npm run test:unit` - Vitest in watch mode (blocks); agents and CI should use `npx vitest run`
-- `npm run test:e2e` - Cypress against `vite preview` (does not build; run `npm run build` first and confirm type-check passed)
-- `npm run lint` - ESLint with `--fix` over the whole repo, including `asa-gold-smartcontract/` (can touch unrelated files; review the diff). For check-only: `npx eslint <files>`
-- `npm run format` - `prettier --write src/` (whole `src/`). To format only your changes: `npx prettier --write <files>`
+- `pnpm install --frozen-lockfile` - install (pnpm, not npm; lockfile `pnpm-lock.yaml`; dependency build scripts are allow-listed in `pnpm-workspace.yaml`, and `asa-gold-smartcontract/` has its own lockfile and workspace file)
+- `pnpm run dev` - Vite dev server
+- `pnpm run type-check` - `vue-tsc` against `tsconfig.app.json`
+- `pnpm run build` - outputs to `dist/`. It runs `type-check` and `vite build` in parallel (`run-p`). A `dist/` directory does not prove types passed; check the exit code and type errors.
+- `pnpm run test:unit` - Vitest in watch mode (blocks); agents and CI should use `npx vitest run`
+- `pnpm run test:e2e` - Cypress against `vite preview` (does not build; run `pnpm run build` first and confirm type-check passed)
+- `pnpm run lint` - ESLint with `--fix` over the whole repo, including `asa-gold-smartcontract/` (can touch unrelated files; review the diff). For check-only: `npx eslint <files>`
+- `pnpm run format` - `prettier --write src/` (whole `src/`). To format only your changes: `npx prettier --write <files>`
 
-Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`): `npm run build` (TealScript compile + client generation), `npm test` (Jest, needs an Algorand sandbox). Do not touch it unless the task is about the contract.
+Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`): `pnpm run build` (TealScript compile + client generation), `pnpm test` (Jest, needs an Algorand sandbox). Do not touch it unless the task is about the contract.
 
 ## Layout
 

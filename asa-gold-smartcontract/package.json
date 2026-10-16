@@ -6,14 +6,14 @@
     "generate-client": "algokitgen generate -a contracts/artifacts/AsaGoldSmartcontract.json -o contracts/clients/AsaGoldSmartcontractClient.ts",
     "compile-contract": "tealscript contracts/asa-gold-smartcontract.algo.ts contracts/artifacts",
     "generate-components": "algokit-generate-component contracts/artifacts/AsaGoldSmartcontract.json contracts/artifacts/components",
-    "build": "npm run compile-contract && npm run generate-client",
-    "test": "npm run build && jest",
-    "test1": "npm run build && jest -t \"03 deploy init nfts\"",
+    "build": "pnpm run compile-contract && pnpm run generate-client",
+    "test": "pnpm run build && jest",
+    "test1": "pnpm run build && jest -t \"03 deploy init nfts\"",
     "lint": "eslint . --ext .ts",
     "fix": "eslint . --ext .ts --fix",
     "build-package": "tsup src/index.ts --format cjs,esm --clean --sourcemap index --dts src/index.ts --dts-resolve",
     "tsup": "tsup --help",
-    "publishCmd": "npm publish",
+    "publishCmd": "pnpm publish",
     "deploynft": "jest -t \"03 deploy nfts\""
   },
   "main": "./dist/index.js",
@@ -51,5 +51,6 @@
     "ts-node": "^10.9.1",
     "tsup": "^7.2.0",
     "typescript": "5.0.2"
-  }
+  },
+  "packageManager": "pnpm@11.10.0"
 }
