@@ -4,7 +4,7 @@ Guidance for AI coding assistants working in this repository.
 
 ## Project
 
-ASA.Gold frontend: a Vue 3 single-page app for buying, selling and swapping a gold-backed token on Algorand, plus an e-shop for physical gold coins (ARC-3 NFTs) with a secondary marketplace. The repo also contains the e-shop smart contract in [asa-gold-smartcontract/](asa-gold-smartcontract/) (published to npm as `algorand-asa-gold`, which the frontend consumes).
+ASA.Gold frontend: a Vue 3 single-page app for buying, selling and swapping a gold-backed token on Algorand, plus an e-shop for physical gold coins (ARC-3 NFTs) with a secondary marketplace. The repo also contains the e-shop smart contract in [asa-gold-smartcontract/](asa-gold-smartcontract/) (published to npm as `algorand-asa-gold`, which the frontend consumes at a pinned version in `package.json`; contract changes only reach the frontend after a new package release and a dependency bump).
 
 Related repos (not here): BFF backend (`scholtz/AsaGoldBff`), repository API (`AsaGoldRepository`), `algorand-authentication-component-vue`.
 
@@ -22,7 +22,7 @@ Related repos (not here): BFF backend (`scholtz/AsaGoldBff`), repository API (`A
 - `npm run type-check` - `vue-tsc` against `tsconfig.app.json`
 - `npm run build` - outputs to `dist/`. It runs `type-check` and `vite build` in parallel (`run-p`). A `dist/` directory does not prove types passed; check the exit code and type errors.
 - `npm run test:unit` - Vitest in watch mode (blocks); agents and CI should use `npx vitest run`
-- `npm run test:e2e` - Cypress against the preview build
+- `npm run test:e2e` - Cypress against `vite preview` (does not build; run `npm run build` first)
 - `npm run lint` - ESLint with `--fix` over the whole repo (can touch unrelated files; review the diff). For check-only: `npx eslint <files>`
 - `npm run format` - `prettier --write src/` (whole `src/`). To format only your changes: `npx prettier --write <files>`
 
@@ -50,7 +50,7 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 
 ## Runtime configuration
 
-The app fetches `/config.json` at startup (see top of `src/stores/app.ts`) to set env (`mainnet-v1.0` / `testnet-v1.0` / `sandnet-v1`), BFF URL, algod endpoint, app ID, token IDs and fee collector. Config per environment lives in `k8s/<env>/conf`. When the stored `env` matches the configured one, the store restores `algodHost`, `algodPort`, `algodToken`, `tokens`, `customToken` and `feeCollector` from `localStorage` key `state` over the defaults (`appId` and `bff` are not restored). Stale `tokens`/`feeCollector` after a redeploy are fixed by clearing that key. Keep this in mind when debugging "wrong network" issues.
+The app fetches `/config.json` at startup (see top of `src/stores/app.ts`) to set env (`mainnet-v1.0` / `testnet-v1.0` / `sandnet-v1`), BFF URL, algod endpoint, app ID, token IDs and fee collector. Config per environment lives in `k8s/<env>/conf`. Precedence in `useAppStore`: defaults < `localStorage` key `state` < `/config.json` < (if a stored `env` exists) stored `env`, `algodHost`, `algodPort`, `algodToken`, which override the config. A watcher persists state on every change and re-forces `bff`, `appId` and the token IDs from the config. `feeCollector` comes from the config, not storage. So "wrong network" symptoms usually come from stored algod/env values (clear them with `resetConfiguration()`, which calls `localStorage.clear()`), while wrong token IDs or fee collector point at the config in `k8s/<env>/conf`.
 
 ## Things to be careful about
 
