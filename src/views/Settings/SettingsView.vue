@@ -3,12 +3,19 @@ import Layout from '@/layouts/AuthLayout.vue'
 import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import InputText from '@/components/ui/UiInputText.vue'
+import SelectButton from '@/components/ui/UiSelectButton.vue'
+import { effectiveRouterKind } from '@/scripts/router'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore, resetConfiguration, useMainnet, useTestnet, useSandnet } from '@/stores/app'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const store = useAppStore()
+
+const routerOptions = [
+  { name: 'Biatec Router (default)', value: 'biatec' },
+  { name: 'Folks Router', value: 'folks' }
+]
 </script>
 
 <template>
@@ -37,7 +44,44 @@ const store = useAppStore()
             </div>
             <div class="field">
               <label for="customToken">Custom swap token</label>
-              <input id="customToken" type="text" class="ui-input" v-model="store.state.customToken" />
+              <input
+                id="customToken"
+                type="text"
+                class="ui-input"
+                v-model="store.state.customToken"
+              />
+            </div>
+          </div>
+        </Panel>
+        <Panel header="Trading">
+          <div class="form-grid">
+            <div class="field">
+              <span id="routerLabel" class="field__label">Swap router (DEX aggregator)</span>
+              <SelectButton
+                v-model="store.state.router"
+                :options="routerOptions"
+                optionLabel="name"
+                optionValue="value"
+                aria-labelledby="routerLabel"
+              />
+              <p class="hint">
+                Biatec Router needs you to be logged in (a free signature authenticates the
+                requests) and works on Algorand mainnet only; on other networks Folks Router is used
+                automatically.
+              </p>
+              <p
+                v-if="
+                  store.state.router === 'biatec' &&
+                  effectiveRouterKind('biatec', store.state.env) !== 'biatec'
+                "
+                class="hint"
+              >
+                Current network ({{ store.state.env }}): Folks Router is in use.
+              </p>
+            </div>
+            <div v-if="store.state.router === 'biatec'" class="field">
+              <label for="routerHost">Biatec Router endpoint</label>
+              <InputText id="routerHost" type="text" v-model="store.state.routerHost" />
             </div>
           </div>
         </Panel>
@@ -74,6 +118,16 @@ const store = useAppStore()
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--ink-soft);
+}
+.field__label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 .danger {
   display: flex;

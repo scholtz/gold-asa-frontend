@@ -44,6 +44,9 @@ importers:
       axios:
         specifier: ^1.12.2
         version: 1.12.2(debug@4.3.4(supports-color@8.1.1))
+      biatec-router:
+        specifier: ^1.0.1
+        version: 1.0.1
       biatec-wallet-use-wallet-client:
         specifier: ^0.6.0
         version: 0.6.0(@txnlab/use-wallet@5.0.1(algosdk@3.9.0))(algosdk@3.9.0)(typescript@5.2.2)
@@ -1241,6 +1244,12 @@ packages:
   aos@2.3.4:
     resolution: {integrity: sha512-zh/ahtR2yME4I51z8IttIt4lC1Nw0ktsFtmeDzID1m9naJnWXhCoARaCgNOGXb5CLy3zm+wqmRAEgMYB5E2HUw==}
 
+  arc14@1.0.4:
+    resolution: {integrity: sha512-rlYrk917gn1P5fRA/2U4U/YUV1XCYMJacZWoqmcHdC0rN8W1kE9ZNxiszXFGlNlNhJx3jSKyy/E4b1dVzU14Og==}
+
+  arc76@1.0.2:
+    resolution: {integrity: sha512-4Wbw3szLfz7dQgh6FKk5oEiV9fLsVqmurDL1ggXiw+nAzs9fDN/MN/mP9V3kY1Op30rUCCDRaZLx/DgRMfbpcQ==}
+
   arch@2.2.0:
     resolution: {integrity: sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==}
 
@@ -1314,6 +1323,9 @@ packages:
 
   bcrypt-pbkdf@1.0.2:
     resolution: {integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==}
+
+  biatec-router@1.0.1:
+    resolution: {integrity: sha512-cGUvXRpJcEUJT3saklvJ5+OmsvDivvFQKcFFl7nHel7q1FTIMgaYyoXkQhdZEscDgE7rwBv/bz8Q0yMKGM8+lQ==}
 
   biatec-wallet-use-wallet-client@0.6.0:
     resolution: {integrity: sha512-yXj2BpasufMBAK4SBjHZPbZXWNud7IeeH+6eQwUwqw58b2Zr2GZEGe9fhTEuGwLLUxW5mmYmyC7H+Rxm5RnhrQ==}
@@ -5202,6 +5214,15 @@ snapshots:
       lodash.debounce: 4.0.8
       lodash.throttle: 4.1.1
 
+  arc14@1.0.4:
+    dependencies:
+      algosdk: 3.9.0
+
+  arc76@1.0.2:
+    dependencies:
+      algosdk: 3.9.0
+      buffer: 6.0.3
+
   arch@2.2.0: {}
 
   arg@5.0.2: {}
@@ -5268,6 +5289,17 @@ snapshots:
   bcrypt-pbkdf@1.0.2:
     dependencies:
       tweetnacl: 0.14.5
+
+  biatec-router@1.0.1:
+    dependencies:
+      algosdk: 3.9.0
+      arc14: 1.0.4
+      arc76: 1.0.2
+      axios: 1.12.2(debug@4.3.4(supports-color@8.1.1))
+      dotenv: 16.4.5
+      form-data: 4.0.4
+    transitivePeerDependencies:
+      - debug
 
   biatec-wallet-use-wallet-client@0.6.0(@txnlab/use-wallet@5.0.1(algosdk@3.9.0))(algosdk@3.9.0)(typescript@5.2.2):
     dependencies:

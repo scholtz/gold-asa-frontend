@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import { FolksRouterClient, Network, SwapMode } from '@folks-router/js-sdk'
-import type { SwapQuote } from '@folks-router/js-sdk'
+import {
+  getSwapRouter,
+  effectiveRouterKind,
+  routerLabel,
+  routerUrl,
+  resetRouterAuth,
+  RouterAuthRequiredError
+} from '@/scripts/router'
+import type { ISwapQuote, SwapMode } from '@/scripts/router'
 import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
 import InputNumber from '@/components/ui/UiInputNumber.vue'
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useToast } from '@/components/ui/useToast'
 import { Buffer } from 'buffer'
 import Message from '@/components/ui/UiMessage.vue'
@@ -22,17 +29,19 @@ const toast = useToast()
 interface IState {
   quantity: number
   quantityQuote: number
-  quoteUsdcGold: SwapQuote | null
-  quoteGoldUsdc: SwapQuote | null
-  quoteEurGold: SwapQuote | null
-  quoteGoldEur: SwapQuote | null
-  quoteAlgoGold: SwapQuote | null
-  quoteGoldAlgo: SwapQuote | null
-  quoteBtcGold: SwapQuote | null
-  quoteGoldBtc: SwapQuote | null
-  quoteCustomGold: SwapQuote | null
-  quoteGoldCustom: SwapQuote | null
+  quoteUsdcGold: ISwapQuote | null
+  quoteGoldUsdc: ISwapQuote | null
+  quoteEurGold: ISwapQuote | null
+  quoteGoldEur: ISwapQuote | null
+  quoteAlgoGold: ISwapQuote | null
+  quoteGoldAlgo: ISwapQuote | null
+  quoteBtcGold: ISwapQuote | null
+  quoteGoldBtc: ISwapQuote | null
+  quoteCustomGold: ISwapQuote | null
+  quoteGoldCustom: ISwapQuote | null
   lastError: string
+  /** the selected router needs the user to log in before it can return quotes */
+  authRequired: boolean
   accountInformation: IAccountInfo | null
   interval: NodeJS.Timeout | null
 }
@@ -60,6 +69,7 @@ const defaultState: IState = {
   quoteCustomGold: null,
   quoteGoldCustom: null,
   lastError: '',
+  authRequired: false,
   accountInformation: null,
   interval: null
 }
@@ -68,110 +78,117 @@ const refreshCount = ref(1)
 
 const store = useAppStore()
 
-function getFolksClient() {
-  if (store.state.env == 'mainnet-v1.0') {
-    return new FolksRouterClient(Network.MAINNET)
-  }
-  if (store.state.env == 'testnet-v1.0') {
-    return new FolksRouterClient(Network.TESTNET)
-  }
-  return null
-}
+const routerKind = computed(() => effectiveRouterKind(store.state.router, store.state.env))
+const routerName = computed(() => routerLabel(routerKind.value))
+const routerFallback = computed(
+  () => store.state.router === 'biatec' && routerKind.value === 'folks'
+)
+
 async function fetchQuote(swapMode: SwapMode, fromAssetId: number, toAssetId: number) {
   try {
-    const client = getFolksClient()
     const algodClient = getAlgodClient(store.state)
     const goldAsa = await getAsa({
       client: algodClient,
       assetId: store.state.tokens.gold
     })
     state.quantityQuote = state.quantity
-    const amount: number | bigint = BigInt(
-      state.quantityQuote * 10 ** goldAsa?.params?.decimals ?? 6
-    )
-    const feeBps: number | bigint = 10
-    const referrer: string = 'AWALLETCPHQPJGCZ6AHLIFPHWBHUEHQ7VBYJVVGQRRY4MEIGWUBKCQYP4Y'
-    const maxGroupSize: number = 15
-    return await client?.fetchSwapQuote(
-      fromAssetId,
-      toAssetId,
-      amount,
-      swapMode,
-      maxGroupSize,
-      feeBps,
-      referrer
-    )
-  } catch (e) {
+    const amount = Math.round(state.quantityQuote * 10 ** (goldAsa?.params?.decimals ?? 6))
+    return await getSwapRouter().fetchQuote({
+      mode: swapMode,
+      fromAsset: fromAssetId,
+      toAsset: toAssetId,
+      amount
+    })
+  } catch (e: any) {
+    if (e instanceof RouterAuthRequiredError) {
+      state.authRequired = true
+      throw e
+    }
     console.error(`failed fetch ${fromAssetId} to ${toAssetId}`, e)
     return null
   }
 }
-async function fetchQuotes() {
+async function fetchQuotes(manual = false) {
+  if (manual) resetRouterAuth()
+  state.authRequired = false
+  try {
+    await loadQuotes()
+  } catch (e: any) {
+    // a router that needs the user to log in (or the user declining to sign) stops the whole refresh
+    if (!(e instanceof RouterAuthRequiredError)) {
+      state.lastError = e.message
+    }
+  }
+  refreshCount.value++
+}
+async function loadQuotes() {
+  if (routerKind.value === 'biatec' && !store.state.authState.isAuthenticated) {
+    throw new RouterAuthRequiredError()
+  }
   state.quoteUsdcGold = null
   state.quoteGoldUsdc = null
   state.quoteUsdcGold = (await fetchQuote(
-    SwapMode.FIXED_OUTPUT,
+    'FIXED_OUTPUT',
     store.state.tokens.usdc,
     store.state.tokens.gold
-  )) as SwapQuote
+  )) as ISwapQuote
   state.quoteGoldUsdc = (await fetchQuote(
-    SwapMode.FIXED_INPUT,
+    'FIXED_INPUT',
     store.state.tokens.gold,
     store.state.tokens.usdc
-  )) as SwapQuote
+  )) as ISwapQuote
 
   state.quoteEurGold = null
   state.quoteGoldEur = null
   state.quoteEurGold = (await fetchQuote(
-    SwapMode.FIXED_OUTPUT,
+    'FIXED_OUTPUT',
     store.state.tokens.eur,
     store.state.tokens.gold
-  )) as SwapQuote
+  )) as ISwapQuote
   state.quoteGoldEur = (await fetchQuote(
-    SwapMode.FIXED_INPUT,
+    'FIXED_INPUT',
     store.state.tokens.gold,
     store.state.tokens.eur
-  )) as SwapQuote
+  )) as ISwapQuote
 
   state.quoteAlgoGold = null
   state.quoteGoldAlgo = null
   state.quoteAlgoGold = (await fetchQuote(
-    SwapMode.FIXED_OUTPUT,
+    'FIXED_OUTPUT',
     store.state.tokens.algo,
     store.state.tokens.gold
-  )) as SwapQuote
+  )) as ISwapQuote
   state.quoteGoldAlgo = (await fetchQuote(
-    SwapMode.FIXED_INPUT,
+    'FIXED_INPUT',
     store.state.tokens.gold,
     store.state.tokens.algo
-  )) as SwapQuote
+  )) as ISwapQuote
   state.quoteBtcGold = null
   state.quoteGoldBtc = null
   state.quoteBtcGold = (await fetchQuote(
-    SwapMode.FIXED_OUTPUT,
+    'FIXED_OUTPUT',
     store.state.tokens.btc,
     store.state.tokens.gold
-  )) as SwapQuote
+  )) as ISwapQuote
   state.quoteGoldBtc = (await fetchQuote(
-    SwapMode.FIXED_INPUT,
+    'FIXED_INPUT',
     store.state.tokens.gold,
     store.state.tokens.btc
-  )) as SwapQuote
+  )) as ISwapQuote
   if (store.state.customToken) {
     state.quoteCustomGold = null
     state.quoteGoldCustom = null
     state.quoteCustomGold = (await fetchQuote(
-      SwapMode.FIXED_OUTPUT,
+      'FIXED_OUTPUT',
       store.state.customToken,
       store.state.tokens.gold
-    )) as SwapQuote
+    )) as ISwapQuote
     state.quoteGoldCustom = (await fetchQuote(
-      SwapMode.FIXED_INPUT,
+      'FIXED_INPUT',
       store.state.tokens.gold,
       store.state.customToken
-    )) as SwapQuote
+    )) as ISwapQuote
   }
-  refreshCount.value++
 }
 function format(number: number | undefined | bigint, assetId: number) {
   if (number === undefined) return '-'
@@ -215,6 +232,10 @@ async function loadTokens() {
   })
   refreshCount.value++
 }
+watch(
+  () => [store.state.router, store.state.authState.isAuthenticated, store.state.authState.account],
+  () => fetchQuotes()
+)
 onMounted(async () => {
   await fetchQuotes()
   await loadAccount()
@@ -237,9 +258,8 @@ console.log('store', store)
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
-async function executeQuote(quote: SwapQuote) {
+async function executeQuote(quote: ISwapQuote) {
   try {
-    const folksRouterClient = getFolksClient()
     if (!store.state.authState.isAuthenticated) {
       toast.add({
         severity: 'info',
@@ -250,16 +270,14 @@ async function executeQuote(quote: SwapQuote) {
       store.state.authComponent?.auth()
       return
     }
-    const slippage = Math.round(10) // 10 = 0.1%
-    const folksTxns = await folksRouterClient?.prepareSwapTransactions(
-      store.state.authState.account,
-      slippage,
-      quote
+    const routerTxns = await getSwapRouter().prepareTransactions(
+      quote,
+      store.state.authState.account
     )
-    const unsignedTxns = folksTxns?.map((txn) =>
+    const unsignedTxns = routerTxns.map((txn) =>
       algosdk.decodeUnsignedTransaction(Buffer.from(txn, 'base64'))
     )
-    if (!unsignedTxns) throw new Error('Did not receive any txs from folks router')
+    if (!unsignedTxns.length) throw new Error(`Did not receive any txs from ${routerName.value}`)
     const unsignedTxnsWithoutGroup = unsignedTxns.map((tx) => {
       tx.group = undefined
       return tx
@@ -384,8 +402,8 @@ interface IPairRow {
   assetId: number
   decimals: number
   optInLabel?: string
-  buy: SwapQuote | null
-  sell: SwapQuote | null
+  buy: ISwapQuote | null
+  sell: ISwapQuote | null
 }
 function pairRows(): IPairRow[] {
   return [
@@ -446,12 +464,12 @@ function goldBalance() {
     store.state.tokens.gold
   )
 }
-function unitPrice(quote: SwapQuote | null, row: IPairRow) {
+function unitPrice(quote: ISwapQuote | null, row: IPairRow) {
   if (!quote?.quoteAmount) return ''
   if (!state.quantityQuote) return ''
   return (Number(quote.quoteAmount) / (state.quantityQuote * 10 ** row.decimals)).toFixed(4)
 }
-function totalAmount(quote: SwapQuote | null, row: IPairRow) {
+function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
   return Number(quote?.quoteAmount) / 10 ** row.decimals
 }
 </script>
@@ -460,7 +478,7 @@ function totalAmount(quote: SwapQuote | null, row: IPairRow) {
     <header class="page-hero">
       <div class="container">
         <h1>{{ t('trading.exploreDecentralizedTrading') }}</h1>
-        <p>Facilitated by Algorand blockchain and the Folks DEX aggregator.</p>
+        <p>Facilitated by Algorand blockchain and the {{ routerName }} DEX aggregator.</p>
       </div>
     </header>
 
@@ -481,12 +499,25 @@ function totalAmount(quote: SwapQuote | null, row: IPairRow) {
               suffix=" g"
             />
           </div>
-          <Button class="toolbar__btn" severity="secondary" @click="fetchQuotes"
+          <Button class="toolbar__btn" severity="secondary" @click="fetchQuotes(true)"
             >Refresh quotes</Button
           >
         </div>
 
         <Panel :header="t('trading.dexTrading')">
+          <Message v-if="routerFallback" class="trading-error" severity="info">
+            Biatec Router is available on Algorand mainnet only. Using Folks Router on this network.
+          </Message>
+          <Message v-if="state.authRequired" class="trading-error" severity="info">
+            {{ routerName }} needs you to log in to provide quotes (you sign a free authentication
+            message, nothing is sent to the network).
+            <Button
+              class="trading-login"
+              size="small"
+              label="Log in"
+              @click="store.state.authComponent?.auth()"
+            />
+          </Message>
           <Message
             v-if="state.lastError"
             class="trading-error"
@@ -577,7 +608,7 @@ function totalAmount(quote: SwapQuote | null, row: IPairRow) {
 
         <p class="note">
           Blockchain DEX trading is using DEX aggregator
-          <a href="https://www.folksrouter.io" target="_blank" rel="noopener">Folks router.</a>
+          <a :href="routerUrl(routerKind)" target="_blank" rel="noopener">{{ routerName }}.</a>
           <span v-if="store.state.authState.account">
             Your account is
             <AlgorandAddress :address="store.state.authState.account"></AlgorandAddress>.
@@ -618,6 +649,9 @@ function totalAmount(quote: SwapQuote | null, row: IPairRow) {
 }
 .trading-error {
   margin-bottom: 1rem;
+}
+.trading-login {
+  margin-left: 0.75rem;
 }
 .trading {
   box-shadow: none;

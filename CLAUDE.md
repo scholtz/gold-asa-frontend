@@ -52,6 +52,8 @@ Smart contract subproject (separate `package.json` in `asa-gold-smartcontract/`)
 
 The app fetches `/config.json` at startup (top of `src/stores/app.ts`) to set env (`mainnet-v1.0` / `testnet-v1.0` / `sandnet-v1`), BFF URL, algod endpoint, app ID, token IDs and fee collector. Config per environment lives in `k8s/<env>/conf`. `k8s/<env>/update-config.sh` and the deployment yaml turn that conf into the served `/config.json`; changing it is a redeploy/ConfigMap update, not a rebuild. The fetch is not validated (a failed fetch falls back to defaults; a non-JSON response is not rejected).
 
+Swap router: `router` (`biatec` default | `folks`) and `routerHost` (default `https://router.api.biatec.io`) are optional keys of `/config.json`; the user's choice in Settings is stored in `localStorage` and wins. Biatec Router needs an ARC-14 header (realm `BiatecRouter`, signed by the wallet, see `src/scripts/router/biatecAuth.ts`) and serves mainnet only, so other networks always use Folks Router (`effectiveRouterKind`).
+
 State is also persisted to `localStorage` key `state`, and stored values are merged with the defaults and config at startup in a subtle order (some fields are re-pinned from the config by a watcher, others are overridable from storage, and stored state is ignored if its `env` differs). Do not assume which source wins: read `useAppStore` before debugging "wrong network", token ID or fee collector issues. The store's hardcoded defaults are testnet-era fallbacks, not mainnet values.
 
 ## Things to be careful about
