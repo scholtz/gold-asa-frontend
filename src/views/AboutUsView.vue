@@ -37,6 +37,39 @@ const events = [
   {
     date: 'Jan 1st 2024',
     content: 'New coin added to the reserves - 1 oz Wiener Philharmoniker'
+  },
+  { date: 'Feb 16th 2024', content: 'EUR added to DEX trading and small redesign of the website' },
+  { date: 'Mar 13th 2024', content: 'Security hardening - X-Frame-Options header added' },
+  { date: 'Apr 29th 2024', content: 'ASA ID of each token and coin is now shown in the interface' },
+  { date: 'Jun 12th 2024', content: 'Links to blockchain explorer updated to the new explorer' },
+  { date: 'Nov 28th 2024', content: 'User experience improvements across the e-shop' },
+  { date: 'Dec 9th 2024', content: 'New coins added to the reserves - serial numbers 15 and 16' },
+  { date: 'May 20th 2025', content: 'Website design update' },
+  {
+    date: 'Sep 27th 2025',
+    content: 'Platform modernised - dependencies upgraded and deployment moved to Node 22'
+  },
+  {
+    date: 'Sep 30th 2025',
+    content: 'Website localized into 8 languages, including Hungarian and Chinese'
+  },
+  {
+    date: 'Jun 1st 2026',
+    content: 'Language switcher moved to the footer, responsive polish and end-to-end tests added'
+  },
+  {
+    date: 'Sep 2026',
+    content: 'Liquidity has been added to the Biatec DEX, so Gold can be traded on-chain'
+  },
+  {
+    date: 'Oct 16th 2026',
+    content:
+      'New wallet authentication, migration to pnpm and a custom design system replacing PrimeVue'
+  },
+  {
+    date: 'Oct 17th 2026',
+    content:
+      'Biatec Router became the default swap router, with a professional trading screen for DEX trading and clearer proof of reserve'
   }
 ]
 
