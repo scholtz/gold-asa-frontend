@@ -18,7 +18,8 @@ const routerHostInvalid = computed(() => {
   const host = store.state.routerHost?.trim()
   if (!host) return false
   const used = safeRouterHost(host, store.state.env)
-  return used !== host.replace(/\/+$/, '') && used === defaultRouterHost(store.state.env)
+  // anything that is not used as typed (not https, odd path, query ...)
+  return used !== host.replace(/\/+$/, '')
 })
 
 const routerOptions = [

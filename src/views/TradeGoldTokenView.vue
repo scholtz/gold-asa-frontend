@@ -212,6 +212,11 @@ async function fetchQuotes() {
       requestedQuantity = null
       loading.value = false
       countdownKey.value++
+      // a failed logo may only have been a network blip: try them again every ~10 minutes
+      if (++runsSinceLogoRetry >= 20) {
+        runsSinceLogoRetry = 0
+        failedLogos.clear()
+      }
       refreshCount.value++
       scheduleNext()
     }
@@ -542,6 +547,7 @@ const LOGO_ASSETS: Record<string, number> = {
   btc: 1058926737
 }
 const failedLogos = reactive(new Set<string>())
+let runsSinceLogoRetry = 0
 function logoUrlOf(row: IPairRow): string | null {
   // a custom token's logo is looked up by its own id, which only means something on mainnet
   const id =

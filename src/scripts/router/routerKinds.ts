@@ -11,7 +11,8 @@ export const DEFAULT_ROUTER_HOST = ROUTER_HOSTS['mainnet-v1.0']
 export const TESTNET_ROUTER_HOST = ROUTER_HOSTS['testnet-v1.0']
 
 /** Networks Biatec Router serves; other networks (e.g. a local sandbox) always use Folks Router. */
-export const biatecSupportsEnv = (env: string): boolean => env in ROUTER_HOSTS
+export const biatecSupportsEnv = (env: string): boolean =>
+  Object.prototype.hasOwnProperty.call(ROUTER_HOSTS, env)
 
 export const effectiveRouterKind = (selected: RouterKind, env: string): RouterKind =>
   selected === 'biatec' && biatecSupportsEnv(env) ? 'biatec' : 'folks'
@@ -22,7 +23,8 @@ export const routerUrl = (kind: RouterKind) =>
   kind === 'biatec' ? 'https://biatec.io' : 'https://www.folksrouter.io'
 
 /** Endpoint of the network's Biatec Router. */
-export const defaultRouterHost = (env: string): string => ROUTER_HOSTS[env] ?? DEFAULT_ROUTER_HOST
+export const defaultRouterHost = (env: string): string =>
+  Object.prototype.hasOwnProperty.call(ROUTER_HOSTS, env) ? ROUTER_HOSTS[env] : DEFAULT_ROUTER_HOST
 
 /**
  * The ARC-14 header is sent to this host, so only https (or localhost for development) is accepted.

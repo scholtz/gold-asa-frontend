@@ -4,6 +4,7 @@ import type { IBiatecApi } from '../biatecRouter'
 import {
   DEFAULT_ROUTER,
   DEFAULT_ROUTER_HOST,
+  defaultRouterHost,
   TESTNET_ROUTER_HOST,
   effectiveRouterKind,
   safeRouterHost
@@ -57,6 +58,13 @@ describe('effectiveRouterKind', () => {
     expect(effectiveRouterKind('biatec', 'testnet-v1.0')).toBe('biatec')
     expect(effectiveRouterKind('biatec', 'sandnet-v1')).toBe('folks')
   })
+  it('does not treat object property names as networks', () => {
+    for (const env of ['constructor', 'toString', '__proto__', 'hasOwnProperty']) {
+      expect(effectiveRouterKind('biatec', env)).toBe('folks')
+      expect(defaultRouterHost(env)).toBe(DEFAULT_ROUTER_HOST)
+    }
+  })
+
   it('respects an explicit folks choice', () => {
     expect(effectiveRouterKind('folks', 'mainnet-v1.0')).toBe('folks')
   })
