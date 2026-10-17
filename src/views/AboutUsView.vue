@@ -97,13 +97,13 @@ const team = [
     <section class="section section--alt">
       <div class="container">
         <div class="section-head">
-          <h2>{{ t('about.progressEyebrow') }}</h2>
-          <p>
-            {{ t('about.hackathonIntro') }}
+          <p class="eyebrow">{{ t('about.progressEyebrow') }}</p>
+          <h2>
             <a href="https://dorahacks.io/buidl/7763" target="_blank" rel="noopener"
               >Algorand's Build a Bull hackathon</a
             >
-          </p>
+          </h2>
+          <p>{{ t('about.hackathonIntro') }}</p>
         </div>
         <div class="timeline">
           <Timeline :value="events" align="left">
