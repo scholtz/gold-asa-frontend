@@ -10,16 +10,15 @@ export const isStaleChunkError = (error: unknown): boolean => {
   return CHUNK_ERROR.test(message)
 }
 
+let reloadedAt = 0
+
 /**
  * Reload the page once so the browser fetches the new index.html and its current chunk names.
  * Returns false (and does nothing) if we already reloaded a moment ago, to avoid a reload loop
  * when the file is really missing.
  */
-let reloadedAt = 0
-
 export const reloadOnce = (now = Date.now()): boolean => {
   if (now - reloadedAt < MIN_INTERVAL_MS) return false
-  reloadedAt = now
   try {
     const last = Number(sessionStorage.getItem(KEY) ?? 0)
     if (now - last < MIN_INTERVAL_MS) return false
@@ -27,6 +26,7 @@ export const reloadOnce = (now = Date.now()): boolean => {
   } catch {
     // storage unavailable: the in-memory guard above still limits it to one reload per page load
   }
+  reloadedAt = now
   window.location.reload()
   return true
 }
@@ -42,7 +42,7 @@ export const reloadOnStaleChunk = (router: {
   })
   // route navigation to a lazy view whose chunk is gone; the navigation would otherwise stay stuck
   router.onError((error) => {
-    if (isStaleChunkError(error)) reloadOnce()
-    else console.error(error)
+    if (isStaleChunkError(error) && reloadOnce()) return
+    console.error(error)
   })
 }
