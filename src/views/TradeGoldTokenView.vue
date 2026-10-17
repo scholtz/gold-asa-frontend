@@ -163,6 +163,18 @@ async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
 
 let quoteRun = 0
 let refreshing = false
+let unmounted = false
+let quantityTimer: ReturnType<typeof setTimeout> | undefined
+
+/** next automatic refresh 30 s after the last one finished, so the countdown bar is always in sync */
+function scheduleNext() {
+  if (unmounted) return
+  if (state.interval) clearTimeout(state.interval)
+  state.interval = setTimeout(async () => {
+    await fetchQuotes()
+    loadAccount().catch((e) => console.error('failed to load account', e))
+  }, 30000)
+}
 async function fetchQuotes() {
   const run = ++quoteRun
   refreshing = true
@@ -186,6 +198,7 @@ async function fetchQuotes() {
       loading.value = false
       countdownKey.value++
       refreshCount.value++
+      scheduleNext()
     }
   }
 }
@@ -213,22 +226,23 @@ const tokensDefault: ITokens = { data: {} }
 const tokens = reactive(tokensDefault)
 async function loadTokens() {
   const algodClient = getAlgodClient(store.state)
-  const gold = await getAsa({ client: algodClient, assetId: store.state.tokens.gold })
-  console.log('gold', gold)
-  tokens.data[store.state.tokens.gold] = gold
-  console.log('tokens.data[store.state.tokens.gold]', tokens)
-  tokens.data[store.state.tokens.algo] = await getAsa({
-    client: algodClient,
-    assetId: store.state.tokens.algo
-  })
-  tokens.data[store.state.tokens.usdc] = await getAsa({
-    client: algodClient,
-    assetId: store.state.tokens.usdc
-  })
-  tokens.data[store.state.tokens.btc] = await getAsa({
-    client: algodClient,
-    assetId: store.state.tokens.btc
-  })
+  const ids = [
+    store.state.tokens.gold,
+    store.state.tokens.algo,
+    store.state.tokens.usdc,
+    store.state.tokens.btc,
+    store.state.tokens.eur
+  ]
+  if (store.state.customToken) ids.push(store.state.customToken)
+  await Promise.all(
+    ids.map(async (assetId) => {
+      try {
+        tokens.data[assetId] = await getAsa({ client: algodClient, assetId })
+      } catch (e: any) {
+        console.error(`failed to load asset ${assetId}`, e)
+      }
+    })
+  )
   refreshCount.value++
 }
 watch(
@@ -241,29 +255,23 @@ watch(
   ],
   () => fetchQuotes()
 )
-let unmounted = false
 onMounted(async () => {
   await fetchQuotes()
-  await loadAccount()
-  await loadTokens()
-  if (unmounted) return
-
-  state.interval = setInterval(async () => {
-    // do not pile up refreshes when the previous one is still running
-    if (refreshing) return
-    await fetchQuotes()
+  try {
     await loadAccount()
-    console.log('log')
-  }, 30000)
+    await loadTokens()
+  } catch (e: any) {
+    console.error('failed to load account or tokens', e)
+  }
 })
 onBeforeUnmount(() => {
   unmounted = true
   quoteRun++ // drop results of a refresh that is still running
   if (state.interval) {
-    console.log('clearing timer')
-    clearInterval(state.interval)
+    clearTimeout(state.interval)
     state.interval = null
   }
+  if (quantityTimer) clearTimeout(quantityTimer)
 })
 console.log('store', store)
 function delay(ms: number) {
@@ -280,6 +288,9 @@ async function executeQuote(quote: ISwapQuote) {
       await delay(1000)
       store.state.authComponent?.auth()
       return
+    }
+    if (state.quantity !== state.quantityQuote) {
+      throw new Error('The amount was changed, please wait for the new prices')
     }
     if (quote.router !== routerKind.value) {
       throw new Error('The quotes are outdated (router changed), please refresh and try again')
@@ -420,6 +431,8 @@ interface IPairRow {
   sell: ISwapQuote | null
 }
 function buildRows(): IPairRow[] {
+  const custom = store.state.customToken
+  const customAsa = custom ? tokens.data[custom] : undefined
   return [
     {
       key: 'eur',
@@ -455,7 +468,19 @@ function buildRows(): IPairRow[] {
       optInLabel: 'Open BTC account',
       buy: state.quoteBtcGold,
       sell: state.quoteGoldBtc
-    }
+    },
+    ...(custom
+      ? [
+          {
+            key: 'custom',
+            unit: String(customAsa?.params?.['unit-name'] ?? `#${custom}`),
+            assetId: custom,
+            decimals: Number(customAsa?.params?.decimals ?? 6),
+            buy: state.quoteCustomGold,
+            sell: state.quoteGoldCustom
+          }
+        ]
+      : [])
   ]
 }
 const rows = computed(() => buildRows())
@@ -481,19 +506,29 @@ function goldBalance() {
 }
 function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
   const total = Number(quote?.quoteAmount) / 10 ** row.decimals
-  // 2 decimals for fiat-like assets, full precision for small amounts (BTC)
-  const decimals = total >= 1 ? 2 : Math.min(row.decimals, 8)
+  // exact amount that is signed (trailing zeros trimmed down to 2 decimals)
   return total.toLocaleString('en-US', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: Math.min(row.decimals, 8),
     useGrouping: false
   })
 }
 
 function setQuantity(amount: number) {
   state.quantity = amount
-  fetchQuotes()
 }
+/** the quotes on screen were requested for another amount than the one in the input */
+const quantityStale = computed(() => state.quantity !== state.quantityQuote)
+watch(
+  () => state.quantity,
+  () => {
+    // reprice shortly after the user stopped changing the amount
+    if (quantityTimer) clearTimeout(quantityTimer)
+    quantityTimer = setTimeout(() => {
+      if (!unmounted && state.quantity !== state.quantityQuote) fetchQuotes()
+    }, 500)
+  }
+)
 /** price of 1 gram in the quote asset */
 function pricePerGram(quote: ISwapQuote | null, row: IPairRow): number | null {
   if (!quote?.quoteAmount || !state.quantityQuote) return null
@@ -521,18 +556,20 @@ function midPrice(row: IPairRow) {
   if (buy === null || sell === null) return ''
   return formatPricePerGram((buy + sell) / 2)
 }
-/** relative difference between buy and sell price */
-function spreadText(row: IPairRow) {
+/** relative difference between buy and sell price, null without a two-sided market */
+function spreadValue(row: IPairRow): number | null {
   const buy = pricePerGram(row.buy, row)
   const sell = pricePerGram(row.sell, row)
-  if (buy === null || sell === null || buy <= 0) return '-'
-  return `${(((buy - sell) / buy) * 100).toFixed(2)} %`
+  if (buy === null || sell === null || buy <= 0) return null
+  return ((buy - sell) / buy) * 100
+}
+function spreadText(row: IPairRow) {
+  const spread = spreadValue(row)
+  return spread === null ? '-' : `${spread.toFixed(2)} %`
 }
 /** buy price below sell price: quotes disagree, flag it */
 function spreadNegative(row: IPairRow) {
-  const buy = pricePerGram(row.buy, row)
-  const sell = pricePerGram(row.sell, row)
-  return buy !== null && sell !== null && buy < sell
+  return (spreadValue(row) ?? 0) < 0
 }
 </script>
 <template>
@@ -726,6 +763,7 @@ function spreadNegative(row: IPairRow) {
                         v-if="hasPrice(row.buy, row)"
                         type="button"
                         class="act act--buy"
+                        :disabled="quantityStale"
                         :aria-label="`Buy ${state.quantityQuote} grams of gold for ${totalAmount(row.buy, row)} ${row.unit}`"
                         @click="executeQuote(row.buy)"
                       >
@@ -737,6 +775,7 @@ function spreadNegative(row: IPairRow) {
                         v-if="hasPrice(row.sell, row)"
                         type="button"
                         class="act act--sell"
+                        :disabled="quantityStale"
                         :aria-label="`Sell ${state.quantityQuote} grams of gold for ${totalAmount(row.sell, row)} ${row.unit}`"
                         @click="executeQuote(row.sell)"
                       >
@@ -1110,7 +1149,11 @@ function spreadNegative(row: IPairRow) {
     background 0.15s ease,
     transform 0.05s ease;
 }
-.act:active {
+.act:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.act:active:not(:disabled) {
   transform: translateY(1px);
 }
 .act__verb {

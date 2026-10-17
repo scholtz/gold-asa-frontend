@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import UiIcon from './UiIcon.vue'
 
 defineOptions({ inheritAttrs: false })
@@ -66,9 +66,12 @@ function parse(raw: string): number | null {
   return Number.isFinite(value) ? value : null
 }
 
-const onFocus = () => {
+const onFocus = (event: FocusEvent) => {
   focused.value = true
   text.value = format(props.modelValue)
+  // the text switches from the decorated (suffix) to the plain number: select it so typing replaces it
+  const input = event.target as HTMLInputElement
+  nextTick(() => input.select())
 }
 const onBlur = () => {
   focused.value = false
@@ -90,7 +93,10 @@ const onInput = (e: Event) => {
 
 const stepBy = (direction: 1 | -1) => {
   const base = props.modelValue ?? 0
-  const decimals = Math.min(20, (props.step.toFixed(20).replace(/0+$/, '').split('.')[1] ?? '').length)
+  const decimals = Math.min(
+    20,
+    (props.step.toFixed(20).replace(/0+$/, '').split('.')[1] ?? '').length
+  )
   const next = round(clamp(Number((base + direction * props.step).toFixed(decimals))))
   text.value = format(next)
   emit('update:modelValue', next)

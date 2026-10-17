@@ -54,6 +54,23 @@ test.describe('trading screen', () => {
     await expect(row(page, 'USDC')).toContainText('140.00')
   })
 
+  test('typing a new amount reprices automatically and cannot trade stale prices', async ({
+    page
+  }) => {
+    await mockApp(page)
+    await page.goto('/trade-gold')
+    await expect(row(page, 'USDC').getByRole('button', { name: /Sell 0\.1 grams/ })).toBeVisible()
+
+    const amount = page.getByLabel('Amount of gold')
+    await amount.fill('2')
+    await amount.blur()
+
+    await expect(
+      row(page, 'USDC').getByRole('button', { name: /^Sell 2 grams of gold for 280\.00 USDC$/ })
+    ).toBeEnabled()
+    await expect(page.getByText('for 2 g')).toBeVisible()
+  })
+
   test('can be used on a phone: every pair has prices and both trade buttons in view', async ({
     page
   }) => {
