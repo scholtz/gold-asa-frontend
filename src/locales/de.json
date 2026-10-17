@@ -192,11 +192,12 @@
   },
   "reserves": {
     "sumOfGoldInReserves": "Summe des Goldes in Reserven",
-    "learnAboutProofOfReserves": "Erfahren Sie mehr über den Nachweis der Reserven",
-    "weBringRevolutionToGoldMarket": "Wir bringen Revolution zum Goldmarkt",
+    "learnAboutProofOfReserves": "Öffentlicher Nachweis der Reserven",
+    "weBringRevolutionToGoldMarket": "Jede Münze, die den ASA.Gold-Token deckt, ist unten aufgeführt",
     "asaGoldTokenId": "Asa.Gold Token ID",
     "mintedTokens": "Geprägte Token",
-    "reserves": "Reserven"
+    "reserves": "Reserven",
+    "listIntro": "Unten finden Sie die Liste der physischen Goldmünzen in den ASA.Gold-Reserven. Jeder kann jede dieser Münzen direkt aus der Goldreserve kaufen und persönlich prüfen. So kann die Öffentlichkeit die Reserven überwachen und überprüfen, dass das Gold wirklich existiert."
   },
   "productDetails": {
     "serialNumber": "Seriennummer",

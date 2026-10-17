@@ -195,6 +195,7 @@ const loadMintedTokens = async () => {
             <h2>{{ t('reserves.learnAboutProofOfReserves') }}</h2>
             <p>{{ t('reserves.weBringRevolutionToGoldMarket') }}</p>
           </div>
+          <p class="reserves-intro">{{ t('reserves.listIntro') }}</p>
           <div class="reserves-grid">
             <img
               class="reserves-img"
@@ -271,6 +272,12 @@ const loadMintedTokens = async () => {
 }
 .event-card li {
   margin-bottom: 0.5rem;
+}
+.reserves-intro {
+  max-width: 48rem;
+  margin: 0 auto 2rem;
+  text-align: center;
+  color: var(--ink-soft);
 }
 .reserves-grid {
   display: grid;

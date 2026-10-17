@@ -80,10 +80,11 @@
   },
   "reserves": {
     "sumOfGoldInReserves": "Arany összege a tartalékokban",
-    "learnAboutProofOfReserves": "Tudjon meg többet a tartalék bizonyítékról",
-    "weBringRevolutionToGoldMarket": "Forradalmat hozunk az arany piacra",
+    "learnAboutProofOfReserves": "Nyilvános tartalékbizonyíték",
+    "weBringRevolutionToGoldMarket": "Az ASA.Gold tokent fedező minden érme az alábbiakban látható",
     "asaGoldTokenId": "Asa.Gold Token azonosító",
-    "mintedTokens": "Kibocsátott tokenek"
+    "mintedTokens": "Kibocsátott tokenek",
+    "listIntro": "Az alábbiakban az ASA.Gold tartalékaiban lévő fizikai aranyérmék listája látható. Bárki megvásárolhatja bármelyik érmét közvetlenül az aranytartalékból, és személyesen ellenőrizheti, így a nyilvánosság felügyelheti a tartalékokat, és ellenőrizheti, hogy az arany valóban létezik."
   },
   "productDetails": {
     "serialNumber": "Sorozatszám",

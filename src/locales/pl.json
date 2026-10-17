@@ -192,11 +192,12 @@
   },
   "reserves": {
     "sumOfGoldInReserves": "Suma złota w rezerwach",
-    "learnAboutProofOfReserves": "Dowiedz się o dowodzie rezerw",
-    "weBringRevolutionToGoldMarket": "Przynosimy rewolucję na rynek złota",
+    "learnAboutProofOfReserves": "Publiczny dowód rezerw",
+    "weBringRevolutionToGoldMarket": "Każda moneta zabezpieczająca token ASA.Gold jest wymieniona poniżej",
     "asaGoldTokenId": "ID tokenu Asa.Gold",
     "mintedTokens": "Wybite tokeny",
-    "reserves": "Rezerwy"
+    "reserves": "Rezerwy",
+    "listIntro": "Poniżej znajduje się lista fizycznych złotych monet w rezerwach ASA.Gold. Każdy może kupić dowolną z tych monet bezpośrednio z rezerwy złota i osobiście ją sprawdzić, dzięki czemu opinia publiczna nadzoruje rezerwy i może zweryfikować, że złoto naprawdę istnieje."
   },
   "productDetails": {
     "serialNumber": "Numer seryjny",
