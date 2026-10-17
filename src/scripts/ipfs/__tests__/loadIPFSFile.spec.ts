@@ -32,16 +32,34 @@ describe('loadIPFSFile', () => {
   afterEach(() => vi.useRealTimers())
 
   it('returns a cached entry of any age without a request', async () => {
-    localStorage.setItem('ipfs-h1', JSON.stringify({ time: '2020-01-01T00:00:00Z', data: meta }))
+    localStorage.setItem('ipfs-h1', JSON.stringify({ data: meta }))
     expect(await load('h1')).toEqual(meta)
     expect(get).not.toHaveBeenCalled()
   })
 
   it('ignores a cached entry that is not a metadata object', async () => {
-    localStorage.setItem('ipfs-h2', JSON.stringify({ time: '2020-01-01T00:00:00Z', data: 'x' }))
+    localStorage.setItem('ipfs-h2', JSON.stringify({ data: 'x' }))
     get.mockResolvedValue({ data: meta })
     expect(await load('h2')).toEqual(meta)
     expect(get).toHaveBeenCalledTimes(1)
+  })
+
+  it('ignores a corrupted cache entry', async () => {
+    localStorage.setItem('ipfs-h2b', '{not json')
+    get.mockResolvedValue({ data: meta })
+    expect(await load('h2b')).toEqual(meta)
+  })
+
+  it('treats a JSON error body like a bad body: retries, never caches it', async () => {
+    get.mockResolvedValue({ data: { error: 'not found' } })
+    expect(await load('h2c')).toBeNull()
+    expect(urls()).toEqual([
+      'https://bff.asa.gold/ipfs/h2c',
+      'https://bff.asa.gold/ipfs/h2c',
+      'https://ipfs.io/ipfs/h2c',
+      'https://dweb.link/ipfs/h2c'
+    ])
+    expect(localStorage.getItem('ipfs-h2c')).toBeNull()
   })
 
   it('fetches from the BFF and caches the result', async () => {

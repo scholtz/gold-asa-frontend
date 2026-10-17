@@ -2,15 +2,24 @@ import axios from 'axios'
 import safeGetItem from '@/scripts/common/safeGetItem'
 import safeSetItem from '@/scripts/common/safeSetItem'
 interface ICache {
-  time: string
   data: any
 }
 
-const isMetadata = (data: unknown) => !!data && typeof data === 'object' && !Array.isArray(data)
+/**
+ * ARC-3 metadata is a JSON object with a name and/or properties. Anything else (an HTML page,
+ * a JSON error body such as {"error":"..."}) must never be returned or cached, because cached
+ * entries do not expire.
+ */
+const isMetadata = (data: unknown): boolean => {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return false
+  const { name, properties } = data as Record<string, unknown>
+  return typeof name === 'string' || (!!properties && typeof properties === 'object')
+}
 
 // The BFF is the primary source. The public gateways are best-effort fallbacks
 // (cloudflare-ipfs.com no longer exists; gateway.ipfs.io is an alias of ipfs.io).
-const ipfsGateways = ['bff.asa.gold', 'ipfs.io', 'dweb.link']
+const primaryGateway = 'bff.asa.gold'
+const ipfsGateways = [primaryGateway, 'ipfs.io', 'dweb.link']
 const requestTimeoutMs = 5000
 const retryDelayMs = 500
 
@@ -63,9 +72,9 @@ const fetchAndCache = async (hash: string, cacheKey: string) => {
   // try every gateway, some are often down; only the primary one is retried, because a
   // transient failure there (e.g. a mobile network hiccup) would otherwise drop the coin
   for (let i = 0; i < ipfsGateways.length; i++) {
-    const data = await fetchFromGateway(ipfsGateways[i], hash, i === 0)
+    const data = await fetchFromGateway(ipfsGateways[i], hash, ipfsGateways[i] === primaryGateway)
     if (data) {
-      const cacheValue: ICache = { time: new Date().toISOString(), data }
+      const cacheValue: ICache = { data }
       safeSetItem(cacheKey, JSON.stringify(cacheValue))
       return data
     }
@@ -87,7 +96,7 @@ export const loadIPFSFile = async (hash: string) => {
   }
   // every caller gets its own copy, like a cache hit does
   const data = await request
-  return data ? structuredClone(data) : null
+  return data ? JSON.parse(JSON.stringify(data)) : null
 }
 
 export default loadIPFSFile
