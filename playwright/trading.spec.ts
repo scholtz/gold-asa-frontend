@@ -1,0 +1,87 @@
+import { test, expect } from '@playwright/test'
+import type { Page } from '@playwright/test'
+import { mockApp } from './support/router-mocks'
+
+// The trading screen: price ticker, market table, order ticket. Network is mocked (see support/router-mocks.ts).
+
+const row = (page: Page, unit: string) => page.locator('#tradingtable tbody tr', { hasText: unit })
+
+test.describe('trading screen', () => {
+  test('shows reference prices, bid/ask and spread per pair', async ({ page }) => {
+    await mockApp(page)
+    await page.goto('/trade-gold')
+
+    // ticker in the header: mid price of 1 gram
+    const ticker = page.getByRole('list', { name: 'Gold reference prices' })
+    await expect(ticker).toContainText('Gold / USDC')
+    await expect(ticker).toContainText('140.00')
+    await expect(ticker).toContainText('1,100.00')
+
+    // market row: sell price, buy price and spread
+    const usdc = row(page, 'USDC')
+    await expect(usdc).toContainText('140.00')
+    await expect(usdc).toContainText('%')
+    await expect(
+      usdc.getByRole('button', { name: /^Buy 0\.1 grams of gold for 14\.00 USDC$/ })
+    ).toBeVisible()
+    await expect(
+      usdc.getByRole('button', { name: /^Sell 0\.1 grams of gold for 14\.00 USDC$/ })
+    ).toBeVisible()
+
+    // small prices keep their precision
+    await expect(row(page, 'BTC')).toContainText('0.00158000')
+    await expect(page.getByText(/Updated \d/)).toBeVisible()
+  })
+
+  test('quick amount buttons reprice the whole table', async ({ page }) => {
+    await mockApp(page)
+    await page.goto('/trade-gold')
+    await expect(row(page, 'USDC').getByRole('button', { name: /Sell 0\.1 grams/ })).toBeVisible()
+
+    await page
+      .getByRole('group', { name: 'Quick amounts' })
+      .getByRole('button', { name: '1 g', exact: true })
+      .click()
+
+    await expect(
+      row(page, 'USDC').getByRole('button', { name: /^Sell 1 grams of gold for 140\.00 USDC$/ })
+    ).toBeVisible()
+    await expect(
+      row(page, 'Algo').getByRole('button', { name: /^Sell 1 grams of gold for 1100\.00 Algo$/ })
+    ).toBeVisible()
+    await expect(page.getByText('for 1 g')).toBeVisible()
+    // price per gram does not depend on the amount
+    await expect(row(page, 'USDC')).toContainText('140.00')
+  })
+
+  test('can be used on a phone: every pair has prices and both trade buttons in view', async ({
+    page
+  }) => {
+    await mockApp(page)
+    await page.setViewportSize({ width: 375, height: 800 })
+    await page.goto('/trade-gold')
+
+    const usdc = row(page, 'USDC')
+    await expect(usdc.getByRole('button', { name: /Buy 0\.1 grams/ })).toBeVisible()
+    await expect(usdc.getByRole('button', { name: /Sell 0\.1 grams/ })).toBeVisible()
+    // prices are labelled with the column name on small screens (shown via CSS from data-label)
+    await expect(usdc.locator('td[data-label="Sell price"]')).toBeVisible()
+    await expect(usdc.locator('td[data-label="Buy price"]')).toBeVisible()
+
+    // nothing makes the page scroll sideways
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+    )
+    expect(overflow).toBeLessThanOrEqual(0)
+  })
+
+  test('shows an empty state instead of prices when the router has none', async ({ page }) => {
+    const mocks = await mockApp(page)
+    mocks.biatecFail = { status: 500, times: 1000 }
+    await page.goto('/trade-gold')
+    await expect(page.getByText('No quotes were returned by Biatec Router')).toBeVisible()
+    await expect(row(page, 'USDC').getByText('No quote').first()).toBeVisible()
+    await expect(row(page, 'USDC').getByRole('button')).toHaveCount(0)
+    await expect(page.getByRole('list', { name: 'Gold reference prices' })).toContainText('-')
+  })
+})
