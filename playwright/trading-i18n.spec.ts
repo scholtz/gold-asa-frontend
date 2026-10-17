@@ -43,7 +43,7 @@ for (const locale of LOCALES) {
     const usdc = row(page, 'USDC')
     await expect(
       usdc.getByRole('button', {
-        name: fill(t.sellLabel, { amount: 0.1, total, unit: 'USDC' }),
+        name: fill(t.sellLabel, { amount: (0.1).toLocaleString(locale), total, unit: 'USDC' }),
         exact: true
       })
     ).toBeVisible()
@@ -53,7 +53,9 @@ for (const locale of LOCALES) {
     await expect(
       page.getByText(fill(t.updated, { time: '' }).trim().split(' ')[0]).first()
     ).toBeVisible()
-    await expect(page.getByText(fill(t.forAmount, { amount: 0.1 }))).toBeVisible()
+    await expect(
+      page.getByText(fill(t.forAmount, { amount: (0.1).toLocaleString(locale) }))
+    ).toBeVisible()
     await expect(page.getByText(t.pair, { exact: true }).first()).toBeAttached()
 
     // no raw message keys leak into the page

@@ -28,8 +28,11 @@ describe('safeRouterHost', () => {
   it('uses the router of the network when nothing (valid) is configured', () => {
     expect(safeRouterHost('', 'testnet-v1.0')).toBe(TESTNET_ROUTER_HOST)
     expect(safeRouterHost('http://evil.example.com', 'testnet-v1.0')).toBe(TESTNET_ROUTER_HOST)
-    // older versions stored the mainnet default; on testnet that must not stick
-    expect(safeRouterHost(DEFAULT_ROUTER_HOST, 'testnet-v1.0')).toBe(TESTNET_ROUTER_HOST)
+    // an explicit choice is respected, also the mainnet router while on testnet
+    expect(safeRouterHost(DEFAULT_ROUTER_HOST, 'testnet-v1.0')).toBe(DEFAULT_ROUTER_HOST)
+    expect(safeRouterHost('https://proxy.example.com/biatec/', 'testnet-v1.0')).toBe(
+      'https://proxy.example.com/biatec'
+    )
     expect(safeRouterHost('https://router.example.com', 'testnet-v1.0')).toBe(
       'https://router.example.com'
     )

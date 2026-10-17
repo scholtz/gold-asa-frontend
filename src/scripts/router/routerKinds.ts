@@ -2,13 +2,16 @@ import type { RouterKind } from './types'
 
 export const DEFAULT_ROUTER: RouterKind = 'biatec'
 
-/** Biatec Router endpoints per Algorand network. */
-export const DEFAULT_ROUTER_HOST = 'https://router.api.biatec.io'
-export const TESTNET_ROUTER_HOST = 'https://testnet.router.api.biatec.io'
+/** Biatec Router endpoint per Algorand network. Networks that are not listed have no Biatec Router. */
+const ROUTER_HOSTS: Record<string, string> = {
+  'mainnet-v1.0': 'https://router.api.biatec.io',
+  'testnet-v1.0': 'https://testnet.router.api.biatec.io'
+}
+export const DEFAULT_ROUTER_HOST = ROUTER_HOSTS['mainnet-v1.0']
+export const TESTNET_ROUTER_HOST = ROUTER_HOSTS['testnet-v1.0']
 
 /** Networks Biatec Router serves; other networks (e.g. a local sandbox) always use Folks Router. */
-export const biatecSupportsEnv = (env: string): boolean =>
-  env === 'mainnet-v1.0' || env === 'testnet-v1.0'
+export const biatecSupportsEnv = (env: string): boolean => env in ROUTER_HOSTS
 
 export const effectiveRouterKind = (selected: RouterKind, env: string): RouterKind =>
   selected === 'biatec' && biatecSupportsEnv(env) ? 'biatec' : 'folks'
@@ -19,21 +22,19 @@ export const routerUrl = (kind: RouterKind) =>
   kind === 'biatec' ? 'https://biatec.io' : 'https://www.folksrouter.io'
 
 /** Endpoint of the network's Biatec Router. */
-export const defaultRouterHost = (env: string): string =>
-  env === 'testnet-v1.0' ? TESTNET_ROUTER_HOST : DEFAULT_ROUTER_HOST
+export const defaultRouterHost = (env: string): string => ROUTER_HOSTS[env] ?? DEFAULT_ROUTER_HOST
 
 /**
  * The ARC-14 header is sent to this host, so only https (or localhost for development) is accepted.
- * An empty or invalid setting (and the former mainnet default that older versions stored) means "the
- * network's own router".
+ * An empty or invalid setting means "the network's own router".
  */
 export const safeRouterHost = (host: string | undefined, env = 'mainnet-v1.0'): string => {
   try {
     const url = new URL((host ?? '').trim())
     const local = url.hostname === 'localhost' || url.hostname === '127.0.0.1'
-    const origin = url.origin
-    if (origin === DEFAULT_ROUTER_HOST) return defaultRouterHost(env)
-    if (url.protocol === 'https:' || (url.protocol === 'http:' && local)) return origin
+    if (url.protocol === 'https:' || (url.protocol === 'http:' && local)) {
+      return url.origin + url.pathname.replace(/\/+$/, '')
+    }
   } catch {
     // not a URL
   }

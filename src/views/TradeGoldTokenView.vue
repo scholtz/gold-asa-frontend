@@ -544,7 +544,13 @@ const LOGO_ASSETS: Record<string, number> = {
 const failedLogos = reactive(new Set<string>())
 function logoUrl(row: IPairRow): string | null {
   if (failedLogos.has(row.key)) return null
-  const id = row.key === 'custom' ? row.assetId : LOGO_ASSETS[row.key]
+  // a custom token's logo is looked up by its own id, which only means something on mainnet
+  const id =
+    row.key === 'custom'
+      ? store.state.env === 'mainnet-v1.0'
+        ? row.assetId
+        : undefined
+      : LOGO_ASSETS[row.key]
   return id === undefined ? null : `https://api.algorand.scan.biatec.io/api/asset/image/${id}`
 }
 
@@ -552,6 +558,10 @@ function setQuantity(amount: number) {
   state.quantity = amount
 }
 /** the quotes on screen were requested for another amount than the one in the input */
+/** the amount for display, formatted for the active language */
+const quantityText = computed(() =>
+  state.quantityQuote.toLocaleString(locale.value, { maximumFractionDigits: 8 })
+)
 const quantityStale = computed(() => state.quantity !== state.quantityQuote)
 watch(
   () => state.quantity,
@@ -709,7 +719,7 @@ function spreadNegative(row: IPairRow) {
               <span v-if="lastUpdated">{{ t('trading.updated', { time: lastUpdated }) }}</span>
               <span v-else>{{ t('trading.loadingPrices') }}</span>
               <span class="market__qty">{{
-                t('trading.forAmount', { amount: state.quantityQuote })
+                t('trading.forAmount', { amount: quantityText })
               }}</span>
             </div>
           </div>
@@ -814,7 +824,7 @@ function spreadNegative(row: IPairRow) {
                         :disabled="quantityStale"
                         :aria-label="
                           t('trading.buyLabel', {
-                            amount: state.quantityQuote,
+                            amount: quantityText,
                             total: totalAmount(row.buy, row),
                             unit: row.unit
                           })
@@ -832,7 +842,7 @@ function spreadNegative(row: IPairRow) {
                         :disabled="quantityStale"
                         :aria-label="
                           t('trading.sellLabel', {
-                            amount: state.quantityQuote,
+                            amount: quantityText,
                             total: totalAmount(row.sell, row),
                             unit: row.unit
                           })
@@ -1330,8 +1340,7 @@ function spreadNegative(row: IPairRow) {
   .mkt thead {
     display: none;
   }
-  .mkt,
-  .mkt tbody {
+  .mkt {
     display: block;
   }
   .mkt tbody {
@@ -1378,7 +1387,7 @@ function spreadNegative(row: IPairRow) {
     text-align: right;
   }
   .mkt td.mkt__spread::before {
-    content: 'Spread ';
+    content: attr(data-label) ' ';
     font-family: var(--font-sans);
   }
   .mkt td.mkt__sell {

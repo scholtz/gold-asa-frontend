@@ -150,7 +150,9 @@ export const useAppStore = defineStore('app', () => {
       }
       // the router is a user preference, so it wins over the config default (whatever the network)
       if (istate.router === 'biatec' || istate.router === 'folks') initState.router = istate.router
-      if (istate.routerHost) initState.routerHost = istate.routerHost
+      // older versions stored the mainnet endpoint as the default; empty means the network's own router
+      if (istate.routerHost && istate.routerHost !== 'https://router.api.biatec.io')
+        initState.routerHost = istate.routerHost
       if (istate.env == initState.env) {
         // if network has been changed make sure we do not load bad data from localstorage
         if (istate.algodHost) initState.algodHost = istate.algodHost
