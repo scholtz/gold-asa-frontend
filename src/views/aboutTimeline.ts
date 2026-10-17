@@ -1,0 +1,27 @@
+// months only (YYYY-MM); the texts live in the locale files under about.events
+export const aboutTimeline: [string, string][] = [
+  ['2023-10', 'auth'],
+  ['2023-10', 'domain'],
+  ['2023-10', 'folks'],
+  ['2023-11', 'email'],
+  ['2023-11', 'contract'],
+  ['2023-11', 'npm'],
+  ['2023-11', 'eshop'],
+  ['2023-11', 'testnet'],
+  ['2023-11', 'mainnet'],
+  ['2023-12', 'design2023'],
+  ['2024-01', 'coin2024'],
+  ['2024-02', 'eurDex'],
+  ['2024-03', 'xframe'],
+  ['2024-04', 'asaId'],
+  ['2024-06', 'explorer'],
+  ['2024-11', 'ux2024'],
+  ['2024-12', 'coins1516'],
+  ['2025-05', 'design2025'],
+  ['2025-09', 'node22'],
+  ['2025-09', 'languages'],
+  ['2026-05', 'footerLang'],
+  ['2026-09', 'liquidity'],
+  ['2026-10', 'wallet'],
+  ['2026-10', 'router']
+]

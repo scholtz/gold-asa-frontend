@@ -3,49 +3,33 @@ import Layout from '@/layouts/AuthLayout.vue'
 import Card from '@/components/ui/UiCard.vue'
 import Timeline from '@/components/ui/UiTimeline.vue'
 import UiIcon from '@/components/ui/UiIcon.vue'
+import { computed } from 'vue'
+import { aboutTimeline } from './aboutTimeline'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-const events = [
-  {
-    date: 'Oct 19th 2023',
-    content:
-      'Web2 Authentication Experience - We created algorand-authentication-component-vue component free for use for anybody.'
-  },
-  { date: 'Oct 21st 2023', content: 'Domain has been registered' },
-  {
-    date: 'Oct 26th 2023',
-    content:
-      'We have integrated Folks Router for swapping Gold to Algorand, USDC and BTC and vice versa'
-  },
-  {
-    date: 'Nov 1st 2023',
-    content:
-      'We have integrated email templates, and on email verification we airdop some algos so that web2 users have even better xp'
-  },
-  { date: 'Nov 5th 2023', content: 'Smart contract has been finished with full test coverage' },
-  { date: 'Nov 6th 2023', content: 'ASA.Gold NPM package has been published' },
-  { date: 'Nov 12th 2023', content: 'Eshop is working' },
-  { date: 'Nov 13th 2023', content: 'Testnet launched at https://testnet.asa.gold/' },
-  {
-    date: 'Nov 14th 2023',
-    content:
-      'Mainnet launched at https://www.asa.gold/. Gold token has been minted: Gold: 1241944285, and DAO governance token has been minted: GoldDAO: 1241945177'
-  },
-  { date: 'Dec 26th 2023', content: 'Website design improvements' },
-  {
-    date: 'Jan 1st 2024',
-    content: 'New coin added to the reserves - 1 oz Wiener Philharmoniker'
-  }
-]
+const events = computed(() => {
+  const format = new Intl.DateTimeFormat(locale.value, {
+    year: 'numeric',
+    month: 'long',
+    timeZone: 'UTC'
+  })
+  return aboutTimeline.map(([month, key]) => {
+    const [year, m] = month.split('-').map(Number)
+    return {
+      date: format.format(new Date(Date.UTC(year, m - 1, 1))),
+      content: t(`about.events.${key}`)
+    }
+  })
+})
 
 const repos = [
   { label: 'FE', icon: 'home', href: 'https://github.com/scholtz/gold-asa-frontend' },
   { label: 'BFF', icon: 'cog', href: 'https://github.com/scholtz/AsaGoldBff' },
   { label: 'RepoApi', icon: 'list', href: 'https://github.com/scholtz/AsaGoldRepository' },
   {
-    label: 'EShop smart contract',
+    labelKey: 'about.repoEshop',
     icon: 'shield',
     href: 'https://github.com/scholtz/gold-asa-frontend/tree/main/asa-gold-smartcontract'
   },
@@ -54,7 +38,11 @@ const repos = [
     icon: 'user',
     href: 'https://github.com/scholtz/algorand-authentication-component-vue'
   },
-  { label: 'NPM package', icon: 'coins', href: 'https://www.npmjs.com/package/algorand-asa-gold' }
+  {
+    labelKey: 'about.repoNpm',
+    icon: 'coins',
+    href: 'https://www.npmjs.com/package/algorand-asa-gold'
+  }
 ]
 
 const team = [
@@ -92,19 +80,16 @@ const team = [
         <p class="eyebrow">ASA.Gold</p>
         <h1>{{ t('home.aboutAsaGoldProject') }}</h1>
         <p>
-          The startup ASA.Gold has been started in October 2023 with goal to tokenize real world
-          asset which users can fully trust.
+          {{ t('about.heroIntro') }}
         </p>
       </div>
     </header>
 
     <section class="section">
       <div class="container story">
-        <h2>About ASA.Gold Project</h2>
+        <h2>{{ t('about.storyTitle') }}</h2>
         <p class="story__lead">
-          To allow this we created hypothesis that if person can select in the eshop any product and
-          this can be shipped to him, he trusts that all other products are real as well. There is
-          no incentivization from ASA.Gold to cheat because of this public oversight.
+          {{ t('about.storyLead') }}
         </p>
       </div>
     </section>
@@ -112,18 +97,13 @@ const team = [
     <section class="section section--alt">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Progress we have made so far</p>
+          <p class="eyebrow">{{ t('about.progressEyebrow') }}</p>
           <h2>
             <a href="https://dorahacks.io/buidl/7763" target="_blank" rel="noopener"
               >Algorand's Build a Bull hackathon</a
             >
           </h2>
-          <p>
-            Project has been initiated by and submitted to
-            <a href="https://dorahacks.io/buidl/7763" target="_blank" rel="noopener"
-              >Algorand's Build a Bull hackathon</a
-            >.
-          </p>
+          <p>{{ t('about.hackathonIntro') }}</p>
         </div>
         <div class="timeline">
           <Timeline :value="events" align="left">
@@ -146,15 +126,15 @@ const team = [
     <section class="section">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">Open source</p>
-          <h2>Experience The Best Features Ever</h2>
-          <p>Check our open source progress</p>
+          <p class="eyebrow">{{ t('about.openSourceEyebrow') }}</p>
+          <h2>{{ t('about.openSourceTitle') }}</h2>
+          <p>{{ t('about.openSourceLead') }}</p>
         </div>
         <ul class="repos">
-          <li v-for="repo in repos" :key="repo.label">
+          <li v-for="repo in repos" :key="repo.href">
             <a :href="repo.href" target="_blank" rel="noopener" class="repo">
               <span class="repo__icon"><UiIcon :name="repo.icon" /></span>
-              <span class="repo__label">{{ repo.label }}</span>
+              <span class="repo__label">{{ repo.labelKey ? t(repo.labelKey) : repo.label }}</span>
               <UiIcon name="chevron-right" class="repo__arrow" />
             </a>
           </li>
@@ -166,7 +146,7 @@ const team = [
       <div class="container">
         <div class="section-head">
           <p class="eyebrow">{{ t('contact.ceoTitle') }}</p>
-          <h2>Our Awesome Team</h2>
+          <h2>{{ t('about.teamTitle') }}</h2>
         </div>
         <div class="team">
           <article class="member member--ceo">

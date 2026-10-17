@@ -7,6 +7,7 @@ import es from '../es.json'
 import hu from '../hu.json'
 import pl from '../pl.json'
 import zh from '../zh.json'
+import { aboutTimeline } from '../../views/aboutTimeline'
 
 const locales = { sk, cs, de, es, hu, pl, zh } as Record<string, any>
 
@@ -58,4 +59,44 @@ describe('router settings translations', () => {
       expect(placeholders((messages as any).settings.routerFallbackHint)).toEqual(['env'])
     })
   }
+})
+
+describe('about page translations', () => {
+  const leaves = (value: any, prefix = ''): string[] =>
+    typeof value === 'string'
+      ? [prefix]
+      : Object.entries(value).flatMap(([key, child]) =>
+          leaves(child, `${prefix}${prefix ? '.' : ''}${key}`)
+        )
+  const get = (messages: any, path: string) => path.split('.').reduce((o, k) => o?.[k], messages)
+
+  for (const [name, messages] of Object.entries(locales)) {
+    it(`${name} has every about and contact text without interpolation syntax`, () => {
+      for (const path of [...leaves(en.about, 'about'), ...leaves(en.contact, 'contact')].filter(
+        (path) => !path.endsWith('Email')
+      )) {
+        const value = get(messages, path)
+        expect(value, `${name}.${path}`).toBeTypeOf('string')
+        expect(value.trim(), `${name}.${path}`).not.toBe('')
+        expect(value, `${name}.${path}`).not.toMatch(/[|@$]/)
+        expect(value, `${name}.${path}`).not.toMatch(/[{}]/)
+      }
+    })
+  }
+})
+
+describe('about timeline', () => {
+  it('has a text for every entry and no unused texts', () => {
+    const used = aboutTimeline.map(([, key]) => key).sort()
+    for (const [name, messages] of Object.entries({ en, ...locales })) {
+      const events = (messages as any).about.events as Record<string, string>
+      expect(Object.keys(events).sort(), name).toEqual(used)
+    }
+  })
+
+  it('is in chronological order', () => {
+    const months = aboutTimeline.map(([month]) => month)
+    for (const month of months) expect(month).toMatch(/^20dd-(0[1-9]|1[0-2])$/)
+    expect([...months].sort()).toEqual(months)
+  })
 })
