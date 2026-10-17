@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import { getSwapRouter, effectiveRouterKind, routerLabel, routerUrl } from '@/scripts/router'
+import {
+  getSwapRouter,
+  effectiveRouterKind,
+  routerLabel,
+  routerUrl,
+  biatecSupportsEnv
+} from '@/scripts/router'
 import type { ISwapQuote, SwapMode } from '@/scripts/router'
 import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
@@ -17,7 +23,7 @@ import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import AlgorandAddress from '@/components/AlgorandAddress.vue'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 
 interface IState {
@@ -69,7 +75,10 @@ const refreshCount = ref(1)
 /** restarts the 30 s countdown bar; only changes when a refresh finishes */
 const countdownKey = ref(0)
 const loading = ref(false)
-const lastUpdated = ref('')
+const lastUpdatedAt = ref<Date | null>(null)
+const lastUpdated = computed(() =>
+  lastUpdatedAt.value ? lastUpdatedAt.value.toLocaleTimeString(locale.value) : ''
+)
 const quickAmounts = [0.1, 0.5, 1, 5]
 
 const store = useAppStore()
@@ -118,7 +127,7 @@ const emptyQuotes = (): QuoteResult => ({
 
 /** Fetches all quotes for the current amount; returns null when a newer refresh superseded this one. */
 async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
-  if (!(state.quantity > 0)) throw new Error('Enter an amount of gold greater than zero')
+  if (!(state.quantity > 0)) throw new Error(t('trading.enterAmount'))
   const router = getSwapRouter()
   const goldAsa = await getAsa({
     client: getAlgodClient(store.state),
@@ -189,13 +198,13 @@ async function fetchQuotes() {
     if (!result) return
     Object.assign(state, result)
     const any = Object.entries(result).some(([key, value]) => key !== 'quantityQuote' && value)
-    state.lastError = any ? '' : `No quotes were returned by ${routerName.value} right now.`
-    lastUpdated.value = any ? new Date().toLocaleTimeString() : ''
+    state.lastError = any ? '' : t('trading.noQuotesReturned', { router: routerName.value })
+    lastUpdatedAt.value = any ? new Date() : null
   } catch (e: any) {
     if (run !== quoteRun) return
     Object.assign(state, emptyQuotes())
     state.quantityQuote = state.quantity // nothing is shown for it, so it must not block trading after a retry
-    lastUpdated.value = ''
+    lastUpdatedAt.value = null
     state.lastError = e.message
   } finally {
     // only the newest run owns the flag; an older run must not re-enable the interval refresh early
@@ -203,6 +212,11 @@ async function fetchQuotes() {
       requestedQuantity = null
       loading.value = false
       countdownKey.value++
+      // a failed logo may only have been a network blip: try them again every ~10 minutes
+      if (++runsSinceLogoRetry >= 20) {
+        runsSinceLogoRetry = 0
+        failedLogos.clear()
+      }
       refreshCount.value++
       scheduleNext()
     }
@@ -292,7 +306,7 @@ async function executeQuote(quote: ISwapQuote) {
     if (!store.state.authState.isAuthenticated) {
       toast.add({
         severity: 'info',
-        detail: 'Please authenticate first',
+        detail: t('trading.authenticateFirst'),
         life: 5000
       })
       await delay(1000)
@@ -300,10 +314,10 @@ async function executeQuote(quote: ISwapQuote) {
       return
     }
     if (state.quantity !== state.quantityQuote) {
-      throw new Error('The amount was changed, please wait for the new prices')
+      throw new Error(t('trading.amountChanged'))
     }
     if (quote.router !== routerKind.value) {
-      throw new Error('The quotes are outdated (router changed), please refresh and try again')
+      throw new Error(t('trading.quotesOutdated'))
     }
     const routerTxns = await getSwapRouter().prepareTransactions(
       quote,
@@ -353,13 +367,13 @@ async function executeQuote(quote: ISwapQuote) {
     const { txId } = await algodClient.sendRawTransaction(txs).do()
     toast.add({
       severity: 'info',
-      detail: 'Transaction is being submitted to the network',
+      detail: t('trading.txSubmitting'),
       life: 5000
     })
     await algosdk.waitForConfirmation(algodClient, txId, 4)
     toast.add({
       severity: 'success',
-      detail: 'Transaction has been processed',
+      detail: t('trading.txProcessed'),
       life: 5000
     })
   } catch (e: any) {
@@ -414,13 +428,13 @@ async function optIn(assetId: number) {
     const { txId } = await algodClient.sendRawTransaction(txs).do()
     toast.add({
       severity: 'info',
-      detail: 'Transaction is being submitted to the network',
+      detail: t('trading.txSubmitting'),
       life: 5000
     })
     await algosdk.waitForConfirmation(algodClient, txId, 4)
     toast.add({
       severity: 'success',
-      detail: 'Transaction has been processed',
+      detail: t('trading.txProcessed'),
       life: 5000
     })
 
@@ -449,7 +463,7 @@ function buildRows(): IPairRow[] {
       unit: 'EURs',
       assetId: store.state.tokens.eur,
       decimals: 6,
-      optInLabel: 'Open Stasis EUR account',
+      optInLabel: t('trading.openEurAccount'),
       buy: state.quoteEurGold,
       sell: state.quoteGoldEur
     },
@@ -458,7 +472,7 @@ function buildRows(): IPairRow[] {
       unit: 'USDC',
       assetId: store.state.tokens.usdc,
       decimals: 6,
-      optInLabel: 'Open USDC account',
+      optInLabel: t('trading.openUsdcAccount'),
       buy: state.quoteUsdcGold,
       sell: state.quoteGoldUsdc
     },
@@ -475,7 +489,7 @@ function buildRows(): IPairRow[] {
       unit: 'BTC',
       assetId: store.state.tokens.btc,
       decimals: 8,
-      optInLabel: 'Open BTC account',
+      optInLabel: t('trading.openBtcAccount'),
       buy: state.quoteBtcGold,
       sell: state.quoteGoldBtc
     },
@@ -516,18 +530,47 @@ function goldBalance() {
 }
 function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
   const total = Number(quote?.quoteAmount) / 10 ** row.decimals
-  // exact amount that is signed (trailing zeros trimmed down to 2 decimals)
+  // the amount of the quote, shown with at least 2 decimals and the active language's number format
   const maxDigits = Math.min(row.decimals, 8)
-  return total.toLocaleString('en-US', {
+  return total.toLocaleString(locale.value, {
     minimumFractionDigits: Math.min(2, maxDigits),
     maximumFractionDigits: maxDigits,
     useGrouping: false
   })
 }
 
+/** asset logos from Biatec Scan; the logos are the same on every network, so mainnet asset ids are used */
+const LOGO_ASSETS: Record<string, number> = {
+  eur: 227855942,
+  usdc: 31566704,
+  algo: 0,
+  btc: 1058926737
+}
+const failedLogos = reactive(new Set<string>())
+let runsSinceLogoRetry = 0
+function logoUrlOf(row: IPairRow): string | null {
+  // a custom token's logo is looked up by its own id, which only means something on mainnet
+  const id =
+    row.key === 'custom'
+      ? store.state.env === 'mainnet-v1.0'
+        ? row.assetId
+        : undefined
+      : LOGO_ASSETS[row.key]
+  if (id === undefined) return null
+  const url = `https://api.algorand.scan.biatec.io/api/asset/image/${id}`
+  // failures are remembered per logo url, so another custom token gets its own chance
+  return failedLogos.has(url) ? null : url
+}
+/** logo url per row key, computed once per render */
+const logos = computed(() => Object.fromEntries(rows.value.map((row) => [row.key, logoUrlOf(row)])))
+
 function setQuantity(amount: number) {
   state.quantity = amount
 }
+/** the amount for display, formatted for the active language */
+const quantityText = computed(() =>
+  state.quantityQuote.toLocaleString(locale.value, { maximumFractionDigits: 8 })
+)
 /** the quotes on screen were requested for another amount than the one in the input */
 const quantityStale = computed(() => state.quantity !== state.quantityQuote)
 watch(
@@ -551,7 +594,7 @@ function pricePerGram(quote: ISwapQuote | null, row: IPairRow): number | null {
 function formatPricePerGram(price: number | null): string {
   if (price === null || !Number.isFinite(price)) return ''
   const decimals = price >= 100 ? 2 : price >= 1 ? 4 : 8
-  return price.toLocaleString('en-US', {
+  return price.toLocaleString(locale.value, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals
   })
@@ -578,7 +621,9 @@ function spreadValue(row: IPairRow): number | null {
 }
 function spreadText(row: IPairRow) {
   const spread = spreadValue(row)
-  return spread === null ? '-' : `${spread.toFixed(2)} %`
+  return spread === null
+    ? '-'
+    : `${spread.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`
 }
 /** buy price below sell price: quotes disagree, flag it */
 function spreadNegative(row: IPairRow) {
@@ -591,11 +636,11 @@ function spreadNegative(row: IPairRow) {
       <div class="container trade-hero__inner">
         <div>
           <h1>{{ t('trading.exploreDecentralizedTrading') }}</h1>
-          <p>Facilitated by Algorand blockchain and the {{ routerName }} DEX aggregator.</p>
+          <p>{{ t('trading.facilitatedBy', { router: routerName }) }}</p>
         </div>
-        <ul class="ticker" aria-label="Gold reference prices">
+        <ul class="ticker" :aria-label="t('trading.referencePrices')">
           <li v-for="row in rows" :key="row.key" class="ticker__item">
-            <span class="ticker__pair">Gold / {{ row.unit }}</span>
+            <span class="ticker__pair">{{ t('trading.goldGram') }} / {{ row.unit }}</span>
             <span class="ticker__price">{{ midPrice(row) || '-' }}</span>
           </li>
         </ul>
@@ -605,11 +650,13 @@ function spreadNegative(row: IPairRow) {
     <section class="section trade-section">
       <div class="container trade">
         <!-- order settings -->
-        <aside class="ticket" aria-label="Trade settings">
-          <h2 class="ticket__title">Order</h2>
+        <aside class="ticket" :aria-label="t('trading.tradeSettings')">
+          <h2 class="ticket__title">{{ t('trading.order') }}</h2>
 
           <div class="ticket__field">
-            <label for="minmax-buttons" class="ticket__label">Amount of gold</label>
+            <label for="minmax-buttons" class="ticket__label">{{
+              t('trading.amountOfGold')
+            }}</label>
             <InputNumber
               class="ticket__input"
               v-model="state.quantity"
@@ -621,7 +668,7 @@ function spreadNegative(row: IPairRow) {
               :minFractionDigits="6"
               suffix=" g"
             />
-            <div class="chips" role="group" aria-label="Quick amounts">
+            <div class="chips" role="group" :aria-label="t('trading.quickAmounts')">
               <button
                 v-for="amount in quickAmounts"
                 :key="amount"
@@ -636,10 +683,10 @@ function spreadNegative(row: IPairRow) {
           </div>
 
           <div class="ticket__field">
-            <span id="router-label" class="ticket__label">Swap router</span>
+            <span id="router-label" class="ticket__label">{{ t('trading.swapRouter') }}</span>
             <SelectButton
               :modelValue="routerKind"
-              :disabled="store.state.env !== 'mainnet-v1.0'"
+              :disabled="!biatecSupportsEnv(store.state.env)"
               @update:modelValue="chooseRouter"
               data-testid="router-select"
               :options="routerOptions"
@@ -654,12 +701,12 @@ function spreadNegative(row: IPairRow) {
             severity="secondary"
             :loading="loading"
             @click="fetchQuotes()"
-            >Refresh quotes</Button
+            >{{ t('trading.refreshQuotes') }}</Button
           >
 
           <dl v-if="store.state.authState.isAuthenticated" class="balances">
             <div class="balances__row">
-              <dt>Gold balance</dt>
+              <dt>{{ t('trading.goldBalance') }}</dt>
               <dd>{{ goldBalance() }} g</dd>
             </div>
             <div v-for="row in rows" :key="row.key" class="balances__row">
@@ -667,7 +714,7 @@ function spreadNegative(row: IPairRow) {
               <dd>{{ balanceOf(row) }}</dd>
             </div>
           </dl>
-          <p v-else class="ticket__hint">Log in to trade. Prices are shown without logging in.</p>
+          <p v-else class="ticket__hint">{{ t('trading.loginToTrade') }}</p>
         </aside>
 
         <!-- market -->
@@ -679,9 +726,11 @@ function spreadNegative(row: IPairRow) {
               <UiTag severity="contrast" rounded>{{ routerName }}</UiTag>
             </div>
             <div class="market__meta">
-              <span v-if="lastUpdated">Updated {{ lastUpdated }}</span>
-              <span v-else>Loading prices…</span>
-              <span class="market__qty">for {{ state.quantityQuote }} g</span>
+              <span v-if="lastUpdated">{{ t('trading.updated', { time: lastUpdated }) }}</span>
+              <span v-else>{{ t('trading.loadingPrices') }}</span>
+              <span class="market__qty">{{
+                t('trading.forAmount', { amount: quantityText })
+              }}</span>
             </div>
           </div>
           <div class="live" aria-hidden="true">
@@ -689,10 +738,9 @@ function spreadNegative(row: IPairRow) {
           </div>
 
           <div class="market__notices">
-            <Message v-if="routerFallback" severity="info">
-              Biatec Router is available on Algorand mainnet only. Using Folks Router on this
-              network.
-            </Message>
+            <Message v-if="routerFallback" severity="info">{{
+              t('trading.biatecUnavailable')
+            }}</Message>
             <Message
               v-if="state.lastError"
               severity="error"
@@ -706,11 +754,11 @@ function spreadNegative(row: IPairRow) {
             <table :class="refreshCount" id="tradingtable" class="mkt">
               <thead>
                 <tr id="tradingtable-tr">
-                  <th class="mkt__pair">Pair</th>
-                  <th class="num">Sell price</th>
-                  <th class="num">Buy price</th>
-                  <th class="num mkt__spread">Spread</th>
-                  <th class="mkt__actions">Trade</th>
+                  <th class="mkt__pair">{{ t('trading.pair') }}</th>
+                  <th class="num">{{ t('trading.sellPrice') }}</th>
+                  <th class="num">{{ t('trading.buyPrice') }}</th>
+                  <th class="num mkt__spread">{{ t('trading.spread') }}</th>
+                  <th class="mkt__actions">{{ t('trading.trade') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -720,8 +768,8 @@ function spreadNegative(row: IPairRow) {
                       severity="secondary"
                       size="small"
                       @click="optIn(store.state.tokens.gold)"
-                      :title="`Opt in to asset ${store.state.tokens.gold}`"
-                      >Open Gold account</Button
+                      :title="t('trading.optInAsset', { id: store.state.tokens.gold })"
+                      >{{ t('trading.openGoldAccount') }}</Button
                     >
                   </td>
                 </tr>
@@ -734,40 +782,47 @@ function spreadNegative(row: IPairRow) {
                     </td>
                   </tr>
                   <tr v-else>
-                    <td class="mkt__pair" data-label="Pair">
-                      <span class="coin" :class="`coin--${row.key}`" aria-hidden="true">{{
-                        row.unit.charAt(0)
-                      }}</span>
+                    <td class="mkt__pair" :data-label="t('trading.pair')">
+                      <span class="coin" :class="`coin--${row.key}`" aria-hidden="true">
+                        <img
+                          v-if="logos[row.key]"
+                          :src="logos[row.key] as string"
+                          alt=""
+                          width="32"
+                          height="32"
+                          loading="lazy"
+                          @error="failedLogos.add(logos[row.key] as string)"
+                        />
+                        <template v-else>{{ row.unit.charAt(0) }}</template>
+                      </span>
                       <strong class="mkt__name"
-                        ><span :title="String(store.state.tokens.gold)">Gold (g)</span> /
-                        <span :title="String(row.assetId)">{{ row.unit }}</span></strong
+                        ><span :title="String(store.state.tokens.gold)">{{
+                          t('trading.goldGram')
+                        }}</span>
+                        / <span :title="String(row.assetId)">{{ row.unit }}</span></strong
                       >
                     </td>
-                    <td class="num mkt__sell" data-label="Sell price">
+                    <td class="num mkt__sell" :data-label="t('trading.sellPrice')">
                       <template v-if="priceText(row.sell, row)">{{
                         priceText(row.sell, row)
                       }}</template>
-                      <span v-else class="no-quote" :class="{ 'is-loading': loading }"
-                        >No quote</span
-                      >
+                      <span v-else class="no-quote" :class="{ 'is-loading': loading }">{{
+                        t('trading.noQuote')
+                      }}</span>
                     </td>
-                    <td class="num mkt__buy" data-label="Buy price">
+                    <td class="num mkt__buy" :data-label="t('trading.buyPrice')">
                       <template v-if="priceText(row.buy, row)">{{
                         priceText(row.buy, row)
                       }}</template>
-                      <span v-else class="no-quote" :class="{ 'is-loading': loading }"
-                        >No quote</span
-                      >
+                      <span v-else class="no-quote" :class="{ 'is-loading': loading }">{{
+                        t('trading.noQuote')
+                      }}</span>
                     </td>
                     <td
                       class="num mkt__spread"
                       :class="{ 'is-inverted': spreadNegative(row) }"
-                      data-label="Spread"
-                      :title="
-                        spreadNegative(row)
-                          ? 'Buy price is below sell price: quotes are out of sync'
-                          : undefined
-                      "
+                      :data-label="t('trading.spread')"
+                      :title="spreadNegative(row) ? t('trading.spreadInverted') : undefined"
                     >
                       {{ spreadText(row) }}
                     </td>
@@ -777,27 +832,39 @@ function spreadNegative(row: IPairRow) {
                         type="button"
                         class="act act--buy"
                         :disabled="quantityStale"
-                        :aria-label="`Buy ${state.quantityQuote} grams of gold for ${totalAmount(row.buy, row)} ${row.unit}`"
+                        :aria-label="
+                          t('trading.buyLabel', {
+                            amount: quantityText,
+                            total: totalAmount(row.buy, row),
+                            unit: row.unit
+                          })
+                        "
                         @click="executeQuote(row.buy)"
                       >
-                        <span class="act__verb">Buy</span>
+                        <span class="act__verb">{{ t('trading.buy') }}</span>
                         <span class="act__sub">{{ totalAmount(row.buy, row) }} {{ row.unit }}</span>
                       </button>
-                      <span v-else class="act act--off">Buy</span>
+                      <span v-else class="act act--off">{{ t('trading.buy') }}</span>
                       <button
                         v-if="hasPrice(row.sell, row)"
                         type="button"
                         class="act act--sell"
                         :disabled="quantityStale"
-                        :aria-label="`Sell ${state.quantityQuote} grams of gold for ${totalAmount(row.sell, row)} ${row.unit}`"
+                        :aria-label="
+                          t('trading.sellLabel', {
+                            amount: quantityText,
+                            total: totalAmount(row.sell, row),
+                            unit: row.unit
+                          })
+                        "
                         @click="executeQuote(row.sell)"
                       >
-                        <span class="act__verb">Sell</span>
+                        <span class="act__verb">{{ t('trading.sell') }}</span>
                         <span class="act__sub"
                           >{{ totalAmount(row.sell, row) }} {{ row.unit }}</span
                         >
                       </button>
-                      <span v-else class="act act--off">Sell</span>
+                      <span v-else class="act act--off">{{ t('trading.sell') }}</span>
                     </td>
                   </tr>
                 </template>
@@ -806,11 +873,13 @@ function spreadNegative(row: IPairRow) {
           </div>
 
           <p class="note">
-            Blockchain DEX trading is using DEX aggregator
-            <a :href="routerUrl(routerKind)" target="_blank" rel="noopener">{{ routerName }}.</a>
-            Prices refresh every 30 seconds.
+            <i18n-t keypath="trading.note" tag="span">
+              <template #router>
+                <a :href="routerUrl(routerKind)" target="_blank" rel="noopener">{{ routerName }}</a>
+              </template>
+            </i18n-t>
             <span v-if="store.state.authState.account">
-              Your account is
+              {{ t('trading.yourAccountIs') }}
               <AlgorandAddress :address="store.state.authState.account"></AlgorandAddress>.
             </span>
           </p>
@@ -880,7 +949,7 @@ function spreadNegative(row: IPairRow) {
 }
 @media (min-width: 992px) {
   .trade {
-    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-columns: minmax(0, 1fr) 19rem;
     grid-template-areas: 'market ticket';
   }
   .market {
@@ -977,6 +1046,7 @@ function spreadNegative(row: IPairRow) {
 
 /* ---- market (dark trading panel) ---- */
 .market {
+  container: market / inline-size;
   min-width: 0;
   color: var(--on-dark);
   background: var(--dark);
@@ -1071,7 +1141,7 @@ function spreadNegative(row: IPairRow) {
 }
 .mkt th,
 .mkt td {
-  padding: 0.9rem 1.25rem;
+  padding: 0.85rem 0.8rem;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
@@ -1082,6 +1152,14 @@ function spreadNegative(row: IPairRow) {
   text-transform: uppercase;
   color: var(--on-dark-muted);
   white-space: nowrap;
+}
+.mkt th:first-child,
+.mkt td:first-child {
+  padding-left: 1.25rem;
+}
+.mkt th:last-child,
+.mkt td:last-child {
+  padding-right: 1.25rem;
 }
 .mkt tbody tr:hover td {
   background: rgba(255, 255, 255, 0.03);
@@ -1125,6 +1203,12 @@ function spreadNegative(row: IPairRow) {
   background: var(--coin-default);
   border-radius: 50%;
 }
+.coin img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
 .coin--eur {
   background: var(--coin-eur);
 }
@@ -1150,8 +1234,8 @@ function spreadNegative(row: IPairRow) {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  min-width: 6.2rem;
-  padding: 0.4rem 0.8rem;
+  min-width: 6.6rem;
+  padding: 0.4rem 0.7rem;
   font: inherit;
   line-height: 1.2;
   color: var(--on-accent);
@@ -1176,10 +1260,10 @@ function spreadNegative(row: IPairRow) {
   text-transform: uppercase;
 }
 .act__sub {
-  max-width: 9rem;
+  max-width: none;
   overflow: hidden;
   font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   opacity: 0.92;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1247,27 +1331,53 @@ function spreadNegative(row: IPairRow) {
   color: var(--gold-300);
 }
 
-/* ---- small screens: each pair becomes a card ---- */
-@media (max-width: 767px) {
+/* ---- narrow market panel: drop the spread column ---- */
+@container market (max-width: 839px) {
+  .mkt th.mkt__spread,
+  .mkt td.mkt__spread {
+    display: none;
+  }
+}
+
+/* ---- small panel (phones, tablets): each pair becomes a card ---- */
+@container market (max-width: 719px) {
+  .market__head {
+    padding: 0.9rem 1rem;
+  }
   .market__scroll {
     overflow: visible;
   }
   .mkt thead {
     display: none;
   }
-  .mkt,
-  .mkt tbody {
+  .mkt {
     display: block;
+  }
+  .mkt tbody {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
   }
   .mkt tr {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.35rem 0.75rem;
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'pair spread'
+      'sell buy'
+      'actions actions';
+    gap: 0.6rem;
+    padding: 0.9rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius);
   }
   .mkt th,
-  .mkt td {
+  .mkt td,
+  .mkt th:first-child,
+  .mkt td:first-child,
+  .mkt th:last-child,
+  .mkt td:last-child {
     padding: 0;
     border: 0;
   }
@@ -1275,11 +1385,39 @@ function spreadNegative(row: IPairRow) {
     background: transparent;
   }
   .mkt td.mkt__pair {
-    grid-column: 1 / -1;
+    grid-area: pair;
+    display: flex;
+    align-items: center;
   }
-  .mkt td[data-label]:not(.mkt__pair)::before {
+  .mkt td.mkt__spread,
+  .mkt th.mkt__spread {
     display: block;
-    margin-bottom: 0.15rem;
+    grid-area: spread;
+    align-self: center;
+    text-align: right;
+  }
+  .mkt td.mkt__spread::before {
+    content: attr(data-label) ' ';
+    font-family: var(--font-sans);
+  }
+  .mkt td.mkt__sell {
+    grid-area: sell;
+  }
+  .mkt td.mkt__buy {
+    grid-area: buy;
+  }
+  .mkt td.mkt__sell,
+  .mkt td.mkt__buy {
+    padding: 0.55rem 0.7rem;
+    font-size: 1.1rem;
+    text-align: left;
+    background: rgba(0, 0, 0, 0.22);
+    border-radius: var(--radius-sm);
+  }
+  .mkt td.mkt__sell::before,
+  .mkt td.mkt__buy::before {
+    display: block;
+    margin-bottom: 0.1rem;
     content: attr(data-label);
     font-family: var(--font-sans);
     font-size: 0.65rem;
@@ -1288,18 +1426,48 @@ function spreadNegative(row: IPairRow) {
     text-transform: uppercase;
     color: var(--on-dark-muted);
   }
-  .mkt .num {
-    text-align: left;
-  }
   .mkt td.mkt__actions {
-    grid-column: 1 / -1;
-    margin-top: 0.5rem;
+    grid-area: actions;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
   }
   .mkt__actions .act {
-    flex: 1;
+    min-height: 2.9rem;
+    justify-content: center;
   }
   .mkt__optin {
     display: block;
+  }
+  .mkt tr.mkt__optin {
+    display: block;
+  }
+  .mkt tr.mkt__optin td {
+    background: transparent;
+  }
+  .note {
+    padding: 0.9rem 1rem 1.1rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .trade-hero h1 {
+    font-size: 1.6rem;
+  }
+  .ticker {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+  }
+  .ticker__item {
+    min-width: 0;
+  }
+  .trade-section {
+    padding-top: 1.25rem;
+  }
+  .market__meta {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 @media (prefers-reduced-motion: reduce) {

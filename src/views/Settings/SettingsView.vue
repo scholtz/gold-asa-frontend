@@ -4,13 +4,23 @@ import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import InputText from '@/components/ui/UiInputText.vue'
 import SelectButton from '@/components/ui/UiSelectButton.vue'
-import { effectiveRouterKind } from '@/scripts/router'
+import { defaultRouterHost, effectiveRouterKind, safeRouterHost } from '@/scripts/router'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore, resetConfiguration, useMainnet, useTestnet, useSandnet } from '@/stores/app'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const store = useAppStore()
+
+/** a typed endpoint that is not used (not https) */
+const routerHostInvalid = computed(() => {
+  const host = store.state.routerHost?.trim()
+  if (!host) return false
+  const used = safeRouterHost(host, store.state.env)
+  // anything that is not used as typed (not https, odd path, query ...)
+  return used !== host.replace(/\/+$/, '')
+})
 
 const routerOptions = [
   { name: 'Biatec Router (default)', value: 'biatec' },
@@ -53,10 +63,10 @@ const routerOptions = [
             </div>
           </div>
         </Panel>
-        <Panel header="Trading">
+        <Panel :header="t('settings.tradingPanel')">
           <div class="form-grid">
             <div class="field">
-              <span id="routerLabel" class="field__label">Swap router (DEX aggregator)</span>
+              <span id="routerLabel" class="field__label">{{ t('trading.swapRouter') }}</span>
               <SelectButton
                 v-model="store.state.router"
                 :options="routerOptions"
@@ -64,11 +74,7 @@ const routerOptions = [
                 optionValue="value"
                 aria-labelledby="routerLabel"
               />
-              <p class="hint">
-                Biatec Router works on Algorand mainnet only (prices do not need a login or a wallet
-                signature); on other networks Folks Router is used automatically. Swaps are always
-                signed by your wallet.
-              </p>
+              <p class="hint">{{ t('settings.routerHint') }}</p>
               <p
                 v-if="
                   store.state.router === 'biatec' &&
@@ -76,12 +82,20 @@ const routerOptions = [
                 "
                 class="hint"
               >
-                Current network ({{ store.state.env }}): Folks Router is in use.
+                {{ t('settings.routerFallbackHint', { env: store.state.env }) }}
               </p>
             </div>
             <div v-if="store.state.router === 'biatec'" class="field">
-              <label for="routerHost">Biatec Router endpoint</label>
-              <InputText id="routerHost" type="text" v-model="store.state.routerHost" />
+              <label for="routerHost">{{ t('settings.routerEndpoint') }}</label>
+              <InputText
+                id="routerHost"
+                type="text"
+                v-model="store.state.routerHost"
+                :placeholder="defaultRouterHost(store.state.env)"
+              />
+              <p v-if="routerHostInvalid" class="hint">
+                {{ t('settings.routerEndpointInvalid') }}
+              </p>
             </div>
           </div>
         </Panel>

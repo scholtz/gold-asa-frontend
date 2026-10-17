@@ -88,7 +88,7 @@ const defaultState: IState = {
   appId: 0,
   feeCollector: 'H27RABAZCD4AK2AFQQDO2JJYVACGVODA4ITJWBMCI3AGYGHO46JAAXO6LU',
   router: 'biatec',
-  routerHost: 'https://router.api.biatec.io',
+  routerHost: '', // empty: the router of the current network
   reloadAccount: reloadAccount
 }
 interface IConfig {
@@ -127,7 +127,9 @@ try {
     initState.feeCollector = configData.feeCollector
     if (configData.router === 'biatec' || configData.router === 'folks')
       initState.router = configData.router
-    if (configData.routerHost) initState.routerHost = configData.routerHost
+    // the mainnet endpoint was the old default: it must not force testnet to use the mainnet router
+    if (configData.routerHost && configData.routerHost !== 'https://router.api.biatec.io')
+      initState.routerHost = configData.routerHost
   }
 } catch (e: any) {
   console.error(e.message)
@@ -150,7 +152,9 @@ export const useAppStore = defineStore('app', () => {
       }
       // the router is a user preference, so it wins over the config default (whatever the network)
       if (istate.router === 'biatec' || istate.router === 'folks') initState.router = istate.router
-      if (istate.routerHost) initState.routerHost = istate.routerHost
+      // older versions stored the mainnet endpoint as the default; empty means the network's own router
+      if (istate.routerHost && istate.routerHost !== 'https://router.api.biatec.io')
+        initState.routerHost = istate.routerHost
       if (istate.env == initState.env) {
         // if network has been changed make sure we do not load bad data from localstorage
         if (istate.algodHost) initState.algodHost = istate.algodHost
