@@ -59,3 +59,26 @@ describe('router settings translations', () => {
     })
   }
 })
+
+describe('about page translations', () => {
+  const leaves = (value: any, prefix = ''): string[] =>
+    typeof value === 'string'
+      ? [prefix]
+      : Object.entries(value).flatMap(([key, child]) =>
+          leaves(child, `${prefix}${prefix ? '.' : ''}${key}`)
+        )
+  const get = (messages: any, path: string) => path.split('.').reduce((o, k) => o?.[k], messages)
+
+  for (const [name, messages] of Object.entries(locales)) {
+    it(`${name} translates every about and contact text`, () => {
+      for (const path of [...leaves(en.about, 'about'), ...leaves(en.contact, 'contact')].filter(
+        (path) => !path.endsWith('Email')
+      )) {
+        const value = get(messages, path)
+        expect(value, `${name}.${path}`).toBeTypeOf('string')
+        expect(value.trim(), `${name}.${path}`).not.toBe('')
+        expect(value, `${name}.${path}`).not.toMatch(/[|@$]/)
+      }
+    })
+  }
+})
