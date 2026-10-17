@@ -193,9 +193,7 @@ const loadMintedTokens = async () => {
         <div class="container">
           <div class="section-head">
             <h2>{{ t('reserves.learnAboutProofOfReserves') }}</h2>
-            <p>{{ t('reserves.weBringRevolutionToGoldMarket') }}</p>
           </div>
-          <p class="reserves-intro">{{ t('reserves.listIntro') }}</p>
           <div class="reserves-grid">
             <img
               class="reserves-img"
@@ -204,6 +202,7 @@ const loadMintedTokens = async () => {
               loading="lazy"
             />
             <div>
+              <p class="reserves-intro">{{ t('reserves.listIntro') }}</p>
               <ReservesList />
             </div>
           </div>
@@ -274,9 +273,7 @@ const loadMintedTokens = async () => {
   margin-bottom: 0.5rem;
 }
 .reserves-intro {
-  max-width: 48rem;
-  margin: 0 auto 2rem;
-  text-align: center;
+  margin: 0 0 1.5rem;
   color: var(--ink-soft);
 }
 .reserves-grid {
