@@ -12,6 +12,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
+import { reloadOnStaleChunk } from './scripts/common/reloadOnStaleChunk'
 
 import { WalletManagerPlugin } from '@txnlab/use-wallet-vue'
 import { pera } from '@txnlab/use-wallet-pera'
@@ -48,5 +49,6 @@ app.use(WalletManagerPlugin, {
 app.use(i18n)
 
 app.use(createPinia())
+reloadOnStaleChunk(router)
 app.use(router)
 app.mount('#app')
