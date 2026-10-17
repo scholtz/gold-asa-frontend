@@ -96,6 +96,7 @@ describe('about timeline', () => {
 
   it('is in chronological order', () => {
     const months = aboutTimeline.map(([month]) => month)
+    for (const month of months) expect(month).toMatch(/^20dd-(0[1-9]|1[0-2])$/)
     expect([...months].sort()).toEqual(months)
   })
 })
