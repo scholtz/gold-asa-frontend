@@ -162,7 +162,8 @@ async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
 }
 
 let quoteRun = 0
-let refreshing = false
+/** amount of the quote request that is currently running (null when idle) */
+let requestedQuantity: number | null = null
 let unmounted = false
 let quantityTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -171,13 +172,17 @@ function scheduleNext() {
   if (unmounted) return
   if (state.interval) clearTimeout(state.interval)
   state.interval = setTimeout(async () => {
-    await fetchQuotes()
-    loadAccount().catch((e) => console.error('failed to load account', e))
+    try {
+      await fetchQuotes()
+      await loadAccount()
+    } catch (e: any) {
+      console.error('automatic refresh failed', e)
+    }
   }, 30000)
 }
 async function fetchQuotes() {
   const run = ++quoteRun
-  refreshing = true
+  requestedQuantity = state.quantity
   loading.value = true
   try {
     const result = await loadQuotes(() => run !== quoteRun)
@@ -189,12 +194,13 @@ async function fetchQuotes() {
   } catch (e: any) {
     if (run !== quoteRun) return
     Object.assign(state, emptyQuotes())
+    state.quantityQuote = state.quantity // nothing is shown for it, so it must not block trading after a retry
     lastUpdated.value = ''
     state.lastError = e.message
   } finally {
     // only the newest run owns the flag; an older run must not re-enable the interval refresh early
     if (run === quoteRun) {
-      refreshing = false
+      requestedQuantity = null
       loading.value = false
       countdownKey.value++
       refreshCount.value++
@@ -257,13 +263,17 @@ watch(
 )
 onMounted(async () => {
   await fetchQuotes()
-  try {
-    await loadAccount()
-    await loadTokens()
-  } catch (e: any) {
-    console.error('failed to load account or tokens', e)
-  }
+  // independent: a failing account lookup must not keep the asset names/decimals from loading
+  await loadTokens().catch((e) => console.error('failed to load tokens', e))
+  await loadAccount().catch((e) => console.error('failed to load account', e))
 })
+watch(
+  () => store.state.customToken,
+  async () => {
+    await loadTokens()
+    fetchQuotes()
+  }
+)
 onBeforeUnmount(() => {
   unmounted = true
   quoteRun++ // drop results of a refresh that is still running
@@ -507,9 +517,10 @@ function goldBalance() {
 function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
   const total = Number(quote?.quoteAmount) / 10 ** row.decimals
   // exact amount that is signed (trailing zeros trimmed down to 2 decimals)
+  const maxDigits = Math.min(row.decimals, 8)
   return total.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: Math.min(row.decimals, 8),
+    minimumFractionDigits: Math.min(2, maxDigits),
+    maximumFractionDigits: maxDigits,
     useGrouping: false
   })
 }
@@ -525,7 +536,9 @@ watch(
     // reprice shortly after the user stopped changing the amount
     if (quantityTimer) clearTimeout(quantityTimer)
     quantityTimer = setTimeout(() => {
-      if (!unmounted && state.quantity !== state.quantityQuote) fetchQuotes()
+      if (unmounted || state.quantity === state.quantityQuote) return
+      if (requestedQuantity === state.quantity) return // that amount is already being priced
+      fetchQuotes()
     }, 500)
   }
 )

@@ -71,7 +71,9 @@ const onFocus = (event: FocusEvent) => {
   text.value = format(props.modelValue)
   // the text switches from the decorated (suffix) to the plain number: select it so typing replaces it
   const input = event.target as HTMLInputElement
-  nextTick(() => input.select())
+  nextTick(() => {
+    if (document.activeElement === input) input.select()
+  })
 }
 const onBlur = () => {
   focused.value = false
