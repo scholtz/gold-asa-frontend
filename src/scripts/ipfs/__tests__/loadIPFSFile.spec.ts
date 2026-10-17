@@ -76,6 +76,11 @@ describe('loadIPFSFile', () => {
     expect(await load('h2b')).toEqual(meta)
   })
 
+  it('returns null for an empty hash without any request', async () => {
+    expect(await load('')).toBeNull()
+    expect(get).not.toHaveBeenCalled()
+  })
+
   it('fetches from the BFF and caches the result', async () => {
     get.mockResolvedValue({ data: meta })
     expect(await load('h3')).toEqual(meta)
@@ -101,7 +106,8 @@ describe('loadIPFSFile', () => {
 
   it.each([
     ['a 404', status(404)],
-    ['a timeout', { code: 'ECONNABORTED' }]
+    ['a timeout', { code: 'ECONNABORTED' }],
+    ['an ETIMEDOUT timeout', { code: 'ETIMEDOUT' }]
   ])('does not retry %s, it moves on to the next gateway', async (_name, error) => {
     get.mockRejectedValueOnce(error).mockResolvedValueOnce({ data: meta })
     expect(await load('h6')).toEqual(meta)

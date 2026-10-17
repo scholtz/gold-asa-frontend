@@ -39,7 +39,7 @@ const isTransient = (e: any) => {
   if (e instanceof BadBodyError) return true
   const status = e?.response?.status
   if (status !== undefined) return status === 429 || status >= 500
-  return ['ERR_NETWORK', 'ECONNRESET', 'ETIMEDOUT', 'ERR_BAD_RESPONSE'].includes(e?.code)
+  return ['ERR_NETWORK', 'ECONNRESET', 'ERR_BAD_RESPONSE'].includes(e?.code)
 }
 
 const fetchFromGateway = async (gateway: string, hash: string, retry: boolean): Promise<any> => {
@@ -75,6 +75,7 @@ const fetchAndCache = async (hash: string, cacheKey: string) => {
 const inFlight = new Map<string, Promise<any>>()
 
 export const loadIPFSFile = async (hash: string) => {
+  if (!hash) return null
   const cacheKey = `ipfs-${hash}`
   const cached = readCache(cacheKey)
   if (cached) {
