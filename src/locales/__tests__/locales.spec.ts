@@ -39,3 +39,17 @@ describe('trading screen translations', () => {
     }
   })
 })
+
+describe('router settings translations', () => {
+  const keys = ['tradingPanel', 'routerHint', 'routerFallbackHint', 'routerEndpoint']
+  for (const [name, messages] of Object.entries({ en, ...locales })) {
+    it(`${name} has the router settings texts`, () => {
+      for (const key of keys) {
+        const value = (messages as any).settings?.[key]
+        expect(value, `${name}.settings.${key}`).toBeTypeOf('string')
+        expect(value.trim(), `${name}.settings.${key}`).not.toBe('')
+      }
+      expect(placeholders((messages as any).settings.routerFallbackHint)).toEqual(['env'])
+    })
+  }
+})

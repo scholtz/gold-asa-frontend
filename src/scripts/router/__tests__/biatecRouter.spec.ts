@@ -17,21 +17,30 @@ const pool = (reserveFrom: number, reserveTo: number) =>
 
 describe('safeRouterHost', () => {
   it('accepts https and localhost only', () => {
-    expect(safeRouterHost('https://router.example.com/')).toBe('https://router.example.com')
-    expect(safeRouterHost('http://localhost:5000')).toBe('http://localhost:5000')
-    expect(safeRouterHost('http://evil.example.com')).toBe(DEFAULT_ROUTER_HOST)
-    expect(safeRouterHost('not a url')).toBe(DEFAULT_ROUTER_HOST)
-    expect(safeRouterHost('')).toBe(DEFAULT_ROUTER_HOST)
-    expect(safeRouterHost(undefined)).toBe(DEFAULT_ROUTER_HOST)
+    expect(safeRouterHost('https://router.example.com/', 'mainnet-v1.0')).toBe(
+      'https://router.example.com'
+    )
+    expect(safeRouterHost('http://localhost:5000', 'mainnet-v1.0')).toBe('http://localhost:5000')
+    expect(safeRouterHost('http://evil.example.com', 'mainnet-v1.0')).toBe(DEFAULT_ROUTER_HOST)
+    expect(safeRouterHost('not a url', 'mainnet-v1.0')).toBe(DEFAULT_ROUTER_HOST)
+    expect(safeRouterHost('', 'mainnet-v1.0')).toBe(DEFAULT_ROUTER_HOST)
+    expect(safeRouterHost(undefined, 'mainnet-v1.0')).toBe(DEFAULT_ROUTER_HOST)
   })
 
   it('uses the router of the network when nothing (valid) is configured', () => {
     expect(safeRouterHost('', 'testnet-v1.0')).toBe(TESTNET_ROUTER_HOST)
     expect(safeRouterHost('http://evil.example.com', 'testnet-v1.0')).toBe(TESTNET_ROUTER_HOST)
-    // an explicit choice is respected, also the mainnet router while on testnet
+    // a valid setting is used as it is (the store ignores the old stored default, see app.ts)
     expect(safeRouterHost(DEFAULT_ROUTER_HOST, 'testnet-v1.0')).toBe(DEFAULT_ROUTER_HOST)
     expect(safeRouterHost('https://proxy.example.com/biatec/', 'testnet-v1.0')).toBe(
       'https://proxy.example.com/biatec'
+    )
+    // paths are normalised by the URL parser, odd ones fall back to the origin
+    expect(safeRouterHost('https://x.example.com/a/../b', 'testnet-v1.0')).toBe(
+      'https://x.example.com/b'
+    )
+    expect(safeRouterHost('https://x.example.com/a%2Fb', 'testnet-v1.0')).toBe(
+      'https://x.example.com'
     )
     expect(safeRouterHost('https://router.example.com', 'testnet-v1.0')).toBe(
       'https://router.example.com'

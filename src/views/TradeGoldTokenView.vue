@@ -543,7 +543,6 @@ const LOGO_ASSETS: Record<string, number> = {
 }
 const failedLogos = reactive(new Set<string>())
 function logoUrl(row: IPairRow): string | null {
-  if (failedLogos.has(row.key)) return null
   // a custom token's logo is looked up by its own id, which only means something on mainnet
   const id =
     row.key === 'custom'
@@ -551,17 +550,20 @@ function logoUrl(row: IPairRow): string | null {
         ? row.assetId
         : undefined
       : LOGO_ASSETS[row.key]
-  return id === undefined ? null : `https://api.algorand.scan.biatec.io/api/asset/image/${id}`
+  if (id === undefined) return null
+  const url = `https://api.algorand.scan.biatec.io/api/asset/image/${id}`
+  // failures are remembered per logo url, so another custom token gets its own chance
+  return failedLogos.has(url) ? null : url
 }
 
 function setQuantity(amount: number) {
   state.quantity = amount
 }
-/** the quotes on screen were requested for another amount than the one in the input */
 /** the amount for display, formatted for the active language */
 const quantityText = computed(() =>
   state.quantityQuote.toLocaleString(locale.value, { maximumFractionDigits: 8 })
 )
+/** the quotes on screen were requested for another amount than the one in the input */
 const quantityStale = computed(() => state.quantity !== state.quantityQuote)
 watch(
   () => state.quantity,
@@ -781,7 +783,7 @@ function spreadNegative(row: IPairRow) {
                           width="32"
                           height="32"
                           loading="lazy"
-                          @error="failedLogos.add(row.key)"
+                          @error="failedLogos.add(logoUrl(row) as string)"
                         />
                         <template v-else>{{ row.unit.charAt(0) }}</template>
                       </span>

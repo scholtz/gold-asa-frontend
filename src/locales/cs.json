@@ -50,7 +50,11 @@
     "title": "Nastavení",
     "resetConfiguration": "Resetovat konfiguraci",
     "dangerZone": "Nebezpečná zóna",
-    "emailVerification": "Ověření e-mailu"
+    "emailVerification": "Ověření e-mailu",
+    "tradingPanel": "Obchodování",
+    "routerHint": "Biatec Router funguje v sítích Algorand mainnet a testnet (ceny nevyžadují přihlášení ani podpis peněženkou); v ostatních sítích se automaticky používá Folks Router. Swapy vždy podepisuje vaše peněženka.",
+    "routerFallbackHint": "Aktuální síť ({env}): používá se Folks Router.",
+    "routerEndpoint": "Endpoint Biatec Router"
   },
   "profile": {
     "title": "Uživatelský profil",

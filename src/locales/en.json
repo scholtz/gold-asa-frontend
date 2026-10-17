@@ -50,7 +50,11 @@
     "title": "Settings",
     "resetConfiguration": "Reset configuration",
     "dangerZone": "Danger zone",
-    "emailVerification": "Email verification"
+    "emailVerification": "Email verification",
+    "tradingPanel": "Trading",
+    "routerHint": "Biatec Router works on Algorand mainnet and testnet (prices do not need a login or a wallet signature); on other networks Folks Router is used automatically. Swaps are always signed by your wallet.",
+    "routerFallbackHint": "Current network ({env}): Folks Router is in use.",
+    "routerEndpoint": "Biatec Router endpoint"
   },
   "profile": {
     "title": "User profile",

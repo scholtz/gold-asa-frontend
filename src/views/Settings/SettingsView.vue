@@ -53,10 +53,10 @@ const routerOptions = [
             </div>
           </div>
         </Panel>
-        <Panel header="Trading">
+        <Panel :header="t('settings.tradingPanel')">
           <div class="form-grid">
             <div class="field">
-              <span id="routerLabel" class="field__label">Swap router (DEX aggregator)</span>
+              <span id="routerLabel" class="field__label">{{ t('trading.swapRouter') }}</span>
               <SelectButton
                 v-model="store.state.router"
                 :options="routerOptions"
@@ -64,11 +64,7 @@ const routerOptions = [
                 optionValue="value"
                 aria-labelledby="routerLabel"
               />
-              <p class="hint">
-                Biatec Router works on Algorand mainnet and testnet (prices do not need a login or a
-                wallet signature); on other networks Folks Router is used automatically. Swaps are
-                always signed by your wallet.
-              </p>
+              <p class="hint">{{ t('settings.routerHint') }}</p>
               <p
                 v-if="
                   store.state.router === 'biatec' &&
@@ -76,11 +72,11 @@ const routerOptions = [
                 "
                 class="hint"
               >
-                Current network ({{ store.state.env }}): Folks Router is in use.
+                {{ t('settings.routerFallbackHint', { env: store.state.env }) }}
               </p>
             </div>
             <div v-if="store.state.router === 'biatec'" class="field">
-              <label for="routerHost">Biatec Router endpoint</label>
+              <label for="routerHost">{{ t('settings.routerEndpoint') }}</label>
               <InputText
                 id="routerHost"
                 type="text"

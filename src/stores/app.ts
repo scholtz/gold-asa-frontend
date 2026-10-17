@@ -127,7 +127,9 @@ try {
     initState.feeCollector = configData.feeCollector
     if (configData.router === 'biatec' || configData.router === 'folks')
       initState.router = configData.router
-    if (configData.routerHost) initState.routerHost = configData.routerHost
+    // the mainnet endpoint was the old default: it must not force testnet to use the mainnet router
+    if (configData.routerHost && configData.routerHost !== 'https://router.api.biatec.io')
+      initState.routerHost = configData.routerHost
   }
 } catch (e: any) {
   console.error(e.message)

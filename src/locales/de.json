@@ -50,7 +50,11 @@
     "title": "Einstellungen",
     "resetConfiguration": "Konfiguration zurücksetzen",
     "dangerZone": "Gefahrenzone",
-    "emailVerification": "E-Mail-Verifizierung"
+    "emailVerification": "E-Mail-Verifizierung",
+    "tradingPanel": "Handel",
+    "routerHint": "Biatec Router funktioniert im Algorand Mainnet und Testnet (Preise erfordern weder Anmeldung noch Wallet-Signatur); in anderen Netzwerken wird automatisch Folks Router verwendet. Swaps werden immer von Ihrer Wallet signiert.",
+    "routerFallbackHint": "Aktuelles Netzwerk ({env}): Folks Router wird verwendet.",
+    "routerEndpoint": "Biatec-Router-Endpunkt"
   },
   "profile": {
     "title": "Benutzerprofil",

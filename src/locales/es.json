@@ -50,7 +50,11 @@
     "title": "Configuración",
     "resetConfiguration": "Restablecer configuración",
     "dangerZone": "Zona de peligro",
-    "emailVerification": "Verificación de correo electrónico"
+    "emailVerification": "Verificación de correo electrónico",
+    "tradingPanel": "Operaciones",
+    "routerHint": "Biatec Router funciona en la mainnet y la testnet de Algorand (los precios no requieren iniciar sesión ni firmar con la billetera); en otras redes se usa Folks Router automáticamente. Los intercambios siempre los firma su billetera.",
+    "routerFallbackHint": "Red actual ({env}): se usa Folks Router.",
+    "routerEndpoint": "Endpoint de Biatec Router"
   },
   "profile": {
     "title": "Perfil de usuario",

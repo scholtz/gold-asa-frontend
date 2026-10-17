@@ -28,12 +28,14 @@ export const defaultRouterHost = (env: string): string => ROUTER_HOSTS[env] ?? D
  * The ARC-14 header is sent to this host, so only https (or localhost for development) is accepted.
  * An empty or invalid setting means "the network's own router".
  */
-export const safeRouterHost = (host: string | undefined, env = 'mainnet-v1.0'): string => {
+export const safeRouterHost = (host: string | undefined, env: string): string => {
   try {
     const url = new URL((host ?? '').trim())
     const local = url.hostname === 'localhost' || url.hostname === '127.0.0.1'
     if (url.protocol === 'https:' || (url.protocol === 'http:' && local)) {
-      return url.origin + url.pathname.replace(/\/+$/, '')
+      // keep a plain path prefix (proxy), drop anything unusual
+      const path = url.pathname.replace(/\/+$/, '')
+      return url.origin + (/^(\/[\w.-]+)*$/.test(path) && !path.includes('..') ? path : '')
     }
   } catch {
     // not a URL

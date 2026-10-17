@@ -50,7 +50,11 @@
     "title": "Ustawienia",
     "resetConfiguration": "Resetuj konfigurację",
     "dangerZone": "Strefa niebezpieczna",
-    "emailVerification": "Weryfikacja e-mail"
+    "emailVerification": "Weryfikacja e-mail",
+    "tradingPanel": "Handel",
+    "routerHint": "Biatec Router działa w sieciach Algorand mainnet i testnet (ceny nie wymagają logowania ani podpisu portfela); w innych sieciach automatycznie używany jest Folks Router. Wymiany zawsze podpisuje Twój portfel.",
+    "routerFallbackHint": "Bieżąca sieć ({env}): używany jest Folks Router.",
+    "routerEndpoint": "Endpoint Biatec Router"
   },
   "profile": {
     "title": "Profil użytkownika",

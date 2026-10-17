@@ -57,7 +57,11 @@
     "useSandnet": "Sandnet használata",
     "dangerZone": "Veszélyes zóna",
     "resetConfiguration": "Konfiguráció visszaállítása",
-    "emailVerification": "Email hitelesítés"
+    "emailVerification": "Email hitelesítés",
+    "tradingPanel": "Kereskedés",
+    "routerHint": "A Biatec Router az Algorand mainneten és testneten működik (az árakhoz nem kell bejelentkezés vagy tárcaaláírás); más hálózatokon automatikusan a Folks Router működik. A cseréket mindig az Ön tárcája írja alá.",
+    "routerFallbackHint": "Jelenlegi hálózat ({env}): Folks Router van használatban.",
+    "routerEndpoint": "Biatec Router végpont"
   },
   "home": {
     "aurumStandardAsset": "Aurum Standard Asset",
