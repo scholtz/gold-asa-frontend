@@ -59,24 +59,9 @@ const state = reactive({
 })
 
 const addressSections = computed(() => [
-  {
-    key: 'delivery',
-    title: t('profile.deliveryAddress'),
-    model: state.profile.deliveryAddress,
-    show: true
-  },
-  {
-    key: 'residential',
-    title: t('profile.residentialAddress'),
-    model: state.profile.residentialAddress,
-    show: true
-  },
-  {
-    key: 'company',
-    title: t('profile.companyAddress'),
-    model: state.profile.companyAddress,
-    show: state.profile.legalEntity == 'legal-entity'
-  }
+  { key: 'delivery', title: t('profile.deliveryAddress'), model: state.profile.deliveryAddress, show: true },
+  { key: 'residential', title: t('profile.residentialAddress'), model: state.profile.residentialAddress, show: true },
+  { key: 'company', title: t('profile.companyAddress'), model: state.profile.companyAddress, show: state.profile.legalEntity == 'legal-entity' }
 ])
 
 const toast = useToast()
@@ -174,11 +159,7 @@ onMounted(async () => {
               <div class="form-grid form-grid--single">
                 <div class="field">
                   <label :for="`${section.key}Street`">{{ t('profile.street') }}</label>
-                  <InputText
-                    :id="`${section.key}Street`"
-                    type="text"
-                    v-model="section.model.street"
-                  />
+                  <InputText :id="`${section.key}Street`" type="text" v-model="section.model.street" />
                 </div>
                 <div class="field">
                   <label :for="`${section.key}City`">{{ t('profile.city') }}</label>

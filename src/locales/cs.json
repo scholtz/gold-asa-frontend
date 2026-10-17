@@ -54,7 +54,8 @@
     "tradingPanel": "Obchodování",
     "routerHint": "Biatec Router funguje v sítích Algorand mainnet a testnet (ceny nevyžadují přihlášení ani podpis peněženkou); v ostatních sítích se automaticky používá Folks Router. Swapy vždy podepisuje vaše peněženka.",
     "routerFallbackHint": "Aktuální síť ({env}): používá se Folks Router.",
-    "routerEndpoint": "Endpoint Biatec Router"
+    "routerEndpoint": "Endpoint Biatec Router",
+    "routerEndpointInvalid": "Tento endpoint není platný (vyžaduje se https), místo něj se používá výchozí endpoint sítě."
   },
   "profile": {
     "title": "Uživatelský profil",

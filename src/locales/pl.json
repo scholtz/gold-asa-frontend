@@ -54,7 +54,8 @@
     "tradingPanel": "Handel",
     "routerHint": "Biatec Router działa w sieciach Algorand mainnet i testnet (ceny nie wymagają logowania ani podpisu portfela); w innych sieciach automatycznie używany jest Folks Router. Wymiany zawsze podpisuje Twój portfel.",
     "routerFallbackHint": "Bieżąca sieć ({env}): używany jest Folks Router.",
-    "routerEndpoint": "Endpoint Biatec Router"
+    "routerEndpoint": "Endpoint Biatec Router",
+    "routerEndpointInvalid": "Ten endpoint jest nieprawidłowy (wymagany jest https), zamiast niego używany jest domyślny endpoint sieci."
   },
   "profile": {
     "title": "Profil użytkownika",

@@ -525,7 +525,7 @@ function goldBalance() {
 }
 function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
   const total = Number(quote?.quoteAmount) / 10 ** row.decimals
-  // exact amount that is signed (trailing zeros trimmed down to 2 decimals)
+  // the amount of the quote, shown with at least 2 decimals and the active language's number format
   const maxDigits = Math.min(row.decimals, 8)
   return total.toLocaleString(locale.value, {
     minimumFractionDigits: Math.min(2, maxDigits),
@@ -542,7 +542,7 @@ const LOGO_ASSETS: Record<string, number> = {
   btc: 1058926737
 }
 const failedLogos = reactive(new Set<string>())
-function logoUrl(row: IPairRow): string | null {
+function logoUrlOf(row: IPairRow): string | null {
   // a custom token's logo is looked up by its own id, which only means something on mainnet
   const id =
     row.key === 'custom'
@@ -555,6 +555,8 @@ function logoUrl(row: IPairRow): string | null {
   // failures are remembered per logo url, so another custom token gets its own chance
   return failedLogos.has(url) ? null : url
 }
+/** logo url per row key, computed once per render */
+const logos = computed(() => Object.fromEntries(rows.value.map((row) => [row.key, logoUrlOf(row)])))
 
 function setQuantity(amount: number) {
   state.quantity = amount
@@ -777,13 +779,13 @@ function spreadNegative(row: IPairRow) {
                     <td class="mkt__pair" :data-label="t('trading.pair')">
                       <span class="coin" :class="`coin--${row.key}`" aria-hidden="true">
                         <img
-                          v-if="logoUrl(row)"
-                          :src="logoUrl(row) as string"
+                          v-if="logos[row.key]"
+                          :src="logos[row.key] as string"
                           alt=""
                           width="32"
                           height="32"
                           loading="lazy"
-                          @error="failedLogos.add(logoUrl(row) as string)"
+                          @error="failedLogos.add(logos[row.key] as string)"
                         />
                         <template v-else>{{ row.unit.charAt(0) }}</template>
                       </span>

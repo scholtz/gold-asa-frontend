@@ -61,7 +61,8 @@
     "tradingPanel": "Kereskedés",
     "routerHint": "A Biatec Router az Algorand mainneten és testneten működik (az árakhoz nem kell bejelentkezés vagy tárcaaláírás); más hálózatokon automatikusan a Folks Router működik. A cseréket mindig az Ön tárcája írja alá.",
     "routerFallbackHint": "Jelenlegi hálózat ({env}): Folks Router van használatban.",
-    "routerEndpoint": "Biatec Router végpont"
+    "routerEndpoint": "Biatec Router végpont",
+    "routerEndpointInvalid": "Ez a végpont érvénytelen (https szükséges), helyette a hálózat alapértelmezett végpontja van használatban."
   },
   "home": {
     "aurumStandardAsset": "Aurum Standard Asset",

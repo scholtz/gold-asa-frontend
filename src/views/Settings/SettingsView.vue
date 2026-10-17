@@ -4,13 +4,22 @@ import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import InputText from '@/components/ui/UiInputText.vue'
 import SelectButton from '@/components/ui/UiSelectButton.vue'
-import { defaultRouterHost, effectiveRouterKind } from '@/scripts/router'
+import { defaultRouterHost, effectiveRouterKind, safeRouterHost } from '@/scripts/router'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore, resetConfiguration, useMainnet, useTestnet, useSandnet } from '@/stores/app'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const store = useAppStore()
+
+/** a typed endpoint that is not used (not https) */
+const routerHostInvalid = computed(() => {
+  const host = store.state.routerHost?.trim()
+  if (!host) return false
+  const used = safeRouterHost(host, store.state.env)
+  return used !== host.replace(/\/+$/, '') && used === defaultRouterHost(store.state.env)
+})
 
 const routerOptions = [
   { name: 'Biatec Router (default)', value: 'biatec' },
@@ -83,6 +92,9 @@ const routerOptions = [
                 v-model="store.state.routerHost"
                 :placeholder="defaultRouterHost(store.state.env)"
               />
+              <p v-if="routerHostInvalid" class="hint">
+                {{ t('settings.routerEndpointInvalid') }}
+              </p>
             </div>
           </div>
         </Panel>

@@ -54,7 +54,8 @@
     "tradingPanel": "Operaciones",
     "routerHint": "Biatec Router funciona en la mainnet y la testnet de Algorand (los precios no requieren iniciar sesión ni firmar con la billetera); en otras redes se usa Folks Router automáticamente. Los intercambios siempre los firma su billetera.",
     "routerFallbackHint": "Red actual ({env}): se usa Folks Router.",
-    "routerEndpoint": "Endpoint de Biatec Router"
+    "routerEndpoint": "Endpoint de Biatec Router",
+    "routerEndpointInvalid": "Este endpoint no es válido (se requiere https), se usa en su lugar el endpoint predeterminado de la red."
   },
   "profile": {
     "title": "Perfil de usuario",

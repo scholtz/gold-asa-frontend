@@ -61,7 +61,8 @@
     "tradingPanel": "交易",
     "routerHint": "Biatec Router 支持 Algorand 主网和测试网（查看价格无需登录或钱包签名）；其他网络会自动使用 Folks Router。兑换始终由您的钱包签名。",
     "routerFallbackHint": "当前网络（{env}）：正在使用 Folks Router。",
-    "routerEndpoint": "Biatec Router 端点"
+    "routerEndpoint": "Biatec Router 端点",
+    "routerEndpointInvalid": "此端点无效（需要 https），已改用网络的默认端点。"
   },
   "home": {
     "aurumStandardAsset": "黄金标准资产",

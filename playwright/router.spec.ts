@@ -178,6 +178,16 @@ test.describe('swap router on the trading page', () => {
     expect(mocks.biatec).toHaveLength(0)
   })
 
+  test('Settings warns about an endpoint that cannot be used', async ({ page }) => {
+    await mockApp(page)
+    await page.goto('/settings')
+    const field = page.getByLabel('Biatec Router endpoint')
+    await field.fill('http://evil.example.com')
+    await expect(page.getByText(/This endpoint is not valid/)).toBeVisible()
+    await field.fill('https://router.example.com')
+    await expect(page.getByText(/This endpoint is not valid/)).toHaveCount(0)
+  })
+
   test('uses the Biatec testnet router on testnet', async ({ page }) => {
     const mocks = await mockApp(page, { config: testnetConfig })
     await page.goto('/trade-gold')

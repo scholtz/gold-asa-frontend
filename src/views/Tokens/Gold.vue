@@ -18,46 +18,27 @@ const { t } = useI18n()
           <ul class="token__list">
             <li>
               <span>{{ t('tokens.reservesAddress') }}</span>
-              <a
-                href="https://allo.info/account/OAOYIJWXVC44DBCX5GKCDZVDGGHQJFAKHLTYDCT5DKJPQL7TNWLUFH5KOM/assets"
-                target="_blank"
-                rel="noopener"
-                >OAOY..5KOM</a
-              >
+              <a href="https://allo.info/account/OAOYIJWXVC44DBCX5GKCDZVDGGHQJFAKHLTYDCT5DKJPQL7TNWLUFH5KOM/assets" target="_blank" rel="noopener">OAOY..5KOM</a>
             </li>
             <li>
               <span>{{ t('tokens.goldTokenMainnetId') }}</span>
-              <a href="https://allo.info/asset/1241944285" target="_blank" rel="noopener"
-                >1241944285</a
-              >
+              <a href="https://allo.info/asset/1241944285" target="_blank" rel="noopener">1241944285</a>
             </li>
             <li>
               <span>{{ t('tokens.goldTokenWhitePaper') }}</span>
               <a href="/gold.pdf" target="_blank" rel="noopener">gold.pdf</a>
             </li>
             <li>
-              <a
-                href="https://explorer.perawallet.app/assets/1241944285/"
-                target="_blank"
-                rel="noopener"
-                >{{ t('governance.verifiedBy') }}</a
-              >
+              <a href="https://explorer.perawallet.app/assets/1241944285/" target="_blank" rel="noopener">{{ t('governance.verifiedBy') }}</a>
               <span>by Pera {{ t('governance.since') }} 2023-11-14</span>
             </li>
             <li>
               <span>{{ t('governance.priceDevelopment') }}</span>
-              <a
-                href="https://algorand.scan.biatec.io/asset/1241944285"
-                target="_blank"
-                rel="noopener"
-                >by Biatec Scan</a
-              >
+              <a href="https://algorand.scan.biatec.io/asset/1241944285" target="_blank" rel="noopener">by Biatec Scan</a>
             </li>
             <li>
               <span>{{ t('tokens.downloadAsaGold') }}</span>
-              <a href="/ASA.Gold-Pitch-Deck.pdf" target="_blank" rel="noopener">{{
-                t('governance.pitchDeck')
-              }}</a>
+              <a href="/ASA.Gold-Pitch-Deck.pdf" target="_blank" rel="noopener">{{ t('governance.pitchDeck') }}</a>
             </li>
           </ul>
         </div>

@@ -18,37 +18,23 @@ const { t } = useI18n()
           <ul class="token__list">
             <li>
               <span>{{ t('tokens.governanceTokenMainnetId') }}</span>
-              <a href="https://allo.info/asset/1241945177" target="_blank" rel="noopener"
-                >1241945177</a
-              >
+              <a href="https://allo.info/asset/1241945177" target="_blank" rel="noopener">1241945177</a>
             </li>
             <li>
               <span>{{ t('tokens.daoTokenWhitePaper') }}</span>
               <a href="/dao.pdf" target="_blank" rel="noopener">dao.pdf</a>
             </li>
             <li>
-              <a
-                href="https://explorer.perawallet.app/assets/1241945177/"
-                target="_blank"
-                rel="noopener"
-                >{{ t('governance.verifiedBy') }}</a
-              >
+              <a href="https://explorer.perawallet.app/assets/1241945177/" target="_blank" rel="noopener">{{ t('governance.verifiedBy') }}</a>
               <span>by Pera {{ t('governance.since') }} 2023-11-14</span>
             </li>
             <li>
               <span>{{ t('governance.priceDevelopment') }}</span>
-              <a
-                href="https://algorand.scan.biatec.io/asset/1241945177"
-                target="_blank"
-                rel="noopener"
-                >by Biatec Scan</a
-              >
+              <a href="https://algorand.scan.biatec.io/asset/1241945177" target="_blank" rel="noopener">by Biatec Scan</a>
             </li>
             <li>
               <span>{{ t('tokens.downloadAsaGold') }}</span>
-              <a href="/ASA.Gold-Pitch-Deck.pdf" target="_blank" rel="noopener">{{
-                t('governance.pitchDeck')
-              }}</a>
+              <a href="/ASA.Gold-Pitch-Deck.pdf" target="_blank" rel="noopener">{{ t('governance.pitchDeck') }}</a>
             </li>
           </ul>
         </div>

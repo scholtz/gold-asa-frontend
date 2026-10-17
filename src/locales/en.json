@@ -54,7 +54,8 @@
     "tradingPanel": "Trading",
     "routerHint": "Biatec Router works on Algorand mainnet and testnet (prices do not need a login or a wallet signature); on other networks Folks Router is used automatically. Swaps are always signed by your wallet.",
     "routerFallbackHint": "Current network ({env}): Folks Router is in use.",
-    "routerEndpoint": "Biatec Router endpoint"
+    "routerEndpoint": "Biatec Router endpoint",
+    "routerEndpointInvalid": "This endpoint is not valid (https is required), the default endpoint of the network is used instead."
   },
   "profile": {
     "title": "User profile",

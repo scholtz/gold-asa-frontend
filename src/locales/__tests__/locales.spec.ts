@@ -41,7 +41,13 @@ describe('trading screen translations', () => {
 })
 
 describe('router settings translations', () => {
-  const keys = ['tradingPanel', 'routerHint', 'routerFallbackHint', 'routerEndpoint']
+  const keys = [
+    'tradingPanel',
+    'routerHint',
+    'routerFallbackHint',
+    'routerEndpoint',
+    'routerEndpointInvalid'
+  ]
   for (const [name, messages] of Object.entries({ en, ...locales })) {
     it(`${name} has the router settings texts`, () => {
       for (const key of keys) {
