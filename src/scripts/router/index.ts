@@ -20,7 +20,7 @@ const getAuth = () => {
       // a header is bound to the router host and to the node (network) whose rounds it was built from
       getScope: () => {
         const { routerHost, algodHost, algodPort, env } = useAppStore().state
-        return `${safeRouterHost(routerHost)}|${env}|${algodHost}:${algodPort}`
+        return `${safeRouterHost(routerHost, env)}|${env}|${algodHost}:${algodPort}`
       },
       getParams: () => {
         const { algodHost, algodPort, algodToken } = useAppStore().state
@@ -34,7 +34,7 @@ const getAuth = () => {
 const biatecApi = (): IBiatecApi => {
   const store = useAppStore()
   const { OpenAPI, RouterService } = biatecRouter
-  OpenAPI.BASE = safeRouterHost(store.state.routerHost)
+  OpenAPI.BASE = safeRouterHost(store.state.routerHost, store.state.env)
   OpenAPI.HEADERS = async () => ({ Authorization: await getAuth().getHeader() })
 
   // an expired/rejected header is dropped and the call retried once with a new one

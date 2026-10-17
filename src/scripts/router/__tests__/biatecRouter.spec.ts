@@ -4,6 +4,7 @@ import type { IBiatecApi } from '../biatecRouter'
 import {
   DEFAULT_ROUTER,
   DEFAULT_ROUTER_HOST,
+  TESTNET_ROUTER_HOST,
   effectiveRouterKind,
   safeRouterHost
 } from '../routerKinds'
@@ -23,15 +24,25 @@ describe('safeRouterHost', () => {
     expect(safeRouterHost('')).toBe(DEFAULT_ROUTER_HOST)
     expect(safeRouterHost(undefined)).toBe(DEFAULT_ROUTER_HOST)
   })
+
+  it('uses the router of the network when nothing (valid) is configured', () => {
+    expect(safeRouterHost('', 'testnet-v1.0')).toBe(TESTNET_ROUTER_HOST)
+    expect(safeRouterHost('http://evil.example.com', 'testnet-v1.0')).toBe(TESTNET_ROUTER_HOST)
+    // older versions stored the mainnet default; on testnet that must not stick
+    expect(safeRouterHost(DEFAULT_ROUTER_HOST, 'testnet-v1.0')).toBe(TESTNET_ROUTER_HOST)
+    expect(safeRouterHost('https://router.example.com', 'testnet-v1.0')).toBe(
+      'https://router.example.com'
+    )
+  })
 })
 
 describe('effectiveRouterKind', () => {
   it('defaults to biatec', () => {
     expect(DEFAULT_ROUTER).toBe('biatec')
   })
-  it('uses biatec only on mainnet', () => {
+  it('uses biatec on mainnet and testnet only', () => {
     expect(effectiveRouterKind('biatec', 'mainnet-v1.0')).toBe('biatec')
-    expect(effectiveRouterKind('biatec', 'testnet-v1.0')).toBe('folks')
+    expect(effectiveRouterKind('biatec', 'testnet-v1.0')).toBe('biatec')
     expect(effectiveRouterKind('biatec', 'sandnet-v1')).toBe('folks')
   })
   it('respects an explicit folks choice', () => {

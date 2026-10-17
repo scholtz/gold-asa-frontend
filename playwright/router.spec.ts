@@ -7,6 +7,7 @@ import {
   BTC,
   mainnetConfig,
   testnetConfig,
+  sandboxConfig,
   persistedState,
   mockApp
 } from './support/router-mocks'
@@ -16,7 +17,7 @@ import algosdk from 'algosdk'
 // - Biatec Router (default on mainnet) authenticates with a random throwaway session account, so quotes load
 //   without the user logging in or signing anything
 // - the user can choose Folks Router instead, and the choice is persisted
-// - on networks Biatec Router does not serve (testnet) Folks Router is used automatically
+// - Biatec Router has a mainnet and a testnet endpoint; where it has none (sandbox) Folks Router is used
 // All network access (algod, both routers, BFF) is mocked, so the tests are deterministic and offline.
 
 const row = (page: Page, unit: string) => page.locator('#tradingtable tbody tr', { hasText: unit })
@@ -177,22 +178,35 @@ test.describe('swap router on the trading page', () => {
     expect(mocks.biatec).toHaveLength(0)
   })
 
-  test('uses Folks Router with a notice on testnet and never calls Biatec', async ({ page }) => {
+  test('uses the Biatec testnet router on testnet', async ({ page }) => {
     const mocks = await mockApp(page, { config: testnetConfig })
     await page.goto('/trade-gold')
+    await expect(routerChoice(page, 'Biatec Router')).toBeChecked()
     await expect(
-      page.getByText('Biatec Router is available on Algorand mainnet only')
+      page.getByText('Facilitated by Algorand blockchain and the Biatec Router')
     ).toBeVisible()
+    await expect(row(page, 'USDC').getByRole('button', { name: /Sell/ })).toBeVisible()
+    expect(mocks.biatec.length).toBeGreaterThan(8)
+    // testnet has its own router host, the mainnet router is never used there
+    for (const request of mocks.biatec) {
+      expect(new URL(request.url()).hostname).toBe('testnet.router.api.biatec.io')
+      decodeAuth(request)
+    }
+    expect(mocks.folks).toHaveLength(0)
+  })
+
+  test('falls back to Folks Router with a notice where Biatec has no router (sandbox)', async ({
+    page
+  }) => {
+    const mocks = await mockApp(page, { config: sandboxConfig })
+    await page.goto('/trade-gold')
+    await expect(page.getByText('Biatec Router is not available on this network')).toBeVisible()
     await expect(
       page.getByText('Facilitated by Algorand blockchain and the Folks Router')
     ).toBeVisible()
-    await expect(row(page, 'USDC').getByRole('button', { name: /Sell/ })).toBeVisible()
-    // the selector shows what is really used and cannot pick an unavailable router
     await expect(routerChoice(page, 'Folks Router')).toBeChecked()
     await expect(routerChoice(page, 'Biatec Router')).toBeDisabled()
-    expect(mocks.folks.length).toBeGreaterThan(0)
     expect(mocks.biatec).toHaveLength(0)
-    expect(mocks.algodParams).toHaveLength(0)
   })
 
   test('a rejected (expired) header is replaced and the request retried', async ({ page }) => {

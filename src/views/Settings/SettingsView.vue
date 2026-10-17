@@ -4,7 +4,7 @@ import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import InputText from '@/components/ui/UiInputText.vue'
 import SelectButton from '@/components/ui/UiSelectButton.vue'
-import { effectiveRouterKind } from '@/scripts/router'
+import { defaultRouterHost, effectiveRouterKind } from '@/scripts/router'
 import MenuLevel2Settings from '@/components/MenuLevel2Settings.vue'
 import { useAppStore, resetConfiguration, useMainnet, useTestnet, useSandnet } from '@/stores/app'
 import { useI18n } from 'vue-i18n'
@@ -65,9 +65,9 @@ const routerOptions = [
                 aria-labelledby="routerLabel"
               />
               <p class="hint">
-                Biatec Router works on Algorand mainnet only (prices do not need a login or a wallet
-                signature); on other networks Folks Router is used automatically. Swaps are always
-                signed by your wallet.
+                Biatec Router works on Algorand mainnet and testnet (prices do not need a login or a
+                wallet signature); on other networks Folks Router is used automatically. Swaps are
+                always signed by your wallet.
               </p>
               <p
                 v-if="
@@ -81,7 +81,12 @@ const routerOptions = [
             </div>
             <div v-if="store.state.router === 'biatec'" class="field">
               <label for="routerHost">Biatec Router endpoint</label>
-              <InputText id="routerHost" type="text" v-model="store.state.routerHost" />
+              <InputText
+                id="routerHost"
+                type="text"
+                v-model="store.state.routerHost"
+                :placeholder="defaultRouterHost(store.state.env)"
+              />
             </div>
           </div>
         </Panel>

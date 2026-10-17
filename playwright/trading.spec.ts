@@ -13,7 +13,7 @@ test.describe('trading screen', () => {
 
     // ticker in the header: mid price of 1 gram
     const ticker = page.getByRole('list', { name: 'Gold reference prices' })
-    await expect(ticker).toContainText('Gold / USDC')
+    await expect(ticker).toContainText('Gold (g) / USDC')
     await expect(ticker).toContainText('140.00')
     await expect(ticker).toContainText('1,100.00')
 
@@ -90,6 +90,29 @@ test.describe('trading screen', () => {
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth
     )
     expect(overflow).toBeLessThanOrEqual(0)
+  })
+
+  test('shows the asset logos from Biatec Scan and falls back to the letter', async ({ page }) => {
+    const mocks = await mockApp(page)
+    await page.goto('/trade-gold')
+    const logo = (unit: string) => row(page, unit).locator('.coin img')
+    for (const unit of ['EURs', 'USDC', 'Algo', 'BTC']) {
+      await expect(logo(unit)).toHaveAttribute(
+        'src',
+        /^https:\/\/api\.algorand\.scan\.biatec\.io\/api\/asset\/image\/\d+$/
+      )
+    }
+    await expect(logo('USDC')).toHaveAttribute('src', /\/image\/31566704$/)
+    await expect(logo('Algo')).toHaveAttribute('src', /\/image\/0$/)
+    await expect.poll(() => mocks.logos.length).toBeGreaterThanOrEqual(4)
+  })
+
+  test('falls back to a letter badge when a logo cannot be loaded', async ({ page }) => {
+    const mocks = await mockApp(page)
+    mocks.logosFail = true
+    await page.goto('/trade-gold')
+    await expect(row(page, 'USDC').locator('.coin')).toHaveText('U')
+    await expect(row(page, 'USDC').locator('.coin img')).toHaveCount(0)
   })
 
   test('shows an empty state instead of prices when the router has none', async ({ page }) => {

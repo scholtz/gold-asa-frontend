@@ -88,7 +88,7 @@ const defaultState: IState = {
   appId: 0,
   feeCollector: 'H27RABAZCD4AK2AFQQDO2JJYVACGVODA4ITJWBMCI3AGYGHO46JAAXO6LU',
   router: 'biatec',
-  routerHost: 'https://router.api.biatec.io',
+  routerHost: '', // empty: the router of the current network
   reloadAccount: reloadAccount
 }
 interface IConfig {

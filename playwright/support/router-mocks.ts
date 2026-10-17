@@ -24,6 +24,12 @@ export const mainnetConfig = {
   eurToken: EUR,
   feeCollector: 'GOPQRISPHSWZBLHM2K67RJNSELDQEDNCL4DS3FTICW2Q2UM3KZWEME7BPE'
 }
+export const sandboxConfig = {
+  ...mainnetConfig,
+  env: 'sandnet-v1',
+  algodHost: 'http://localhost',
+  algodPort: 4001
+}
 export const testnetConfig = {
   ...mainnetConfig,
   env: 'testnet-v1.0',
@@ -52,6 +58,9 @@ export interface IMocks {
   algodParams: Request[]
   /** make the next N biatec quote calls fail with this status */
   biatecFail: { status: number; times: number } | null
+  /** requested asset logo urls */
+  logos: string[]
+  logosFail: boolean
   biatecRouteTxs: Request[]
 }
 
@@ -68,6 +77,8 @@ export async function mockApp(
     folks: [],
     algodParams: [],
     biatecFail: null,
+    logos: [],
+    logosFail: false,
     biatecRouteTxs: []
   }
 
@@ -126,8 +137,22 @@ export async function mockApp(
     return route.fulfill({ status: 404, headers: cors, json: { message: 'not mocked' } })
   })
 
+  // asset logos (Biatec Scan): a 1x1 png, `logoFailures` can make them fail
+  await page.route('https://api.algorand.scan.biatec.io/api/asset/image/*', (route) => {
+    mocks.logos.push(route.request().url())
+    if (mocks.logosFail) return route.fulfill({ status: 404, headers: cors, body: '' })
+    return route.fulfill({
+      headers: { ...cors, 'content-type': 'image/png' },
+      body: Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        'base64'
+      )
+    })
+  })
+
   // Biatec Router
-  await page.route('https://router.api.biatec.io/**', async (route: Route) => {
+  // mainnet router and the separate testnet router
+  await page.route(/^https:\/\/(testnet\.)?router\.api\.biatec\.io\//, async (route: Route) => {
     const request = route.request()
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
     mocks.biatec.push(request)
