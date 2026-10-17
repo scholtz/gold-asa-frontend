@@ -62,6 +62,9 @@ const loadProducts = async (key: string): Promise<ILoadResult<IEshopItem[]>> => 
         if (result.value) {
           loaded.set(asset, result.value)
           details.push(result.value)
+        } else {
+          // no longer a listed coin: do not resurrect it from an earlier attempt
+          loaded.delete(asset)
         }
         continue
       }
