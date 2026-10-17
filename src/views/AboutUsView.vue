@@ -4,53 +4,25 @@ import Card from '@/components/ui/UiCard.vue'
 import Timeline from '@/components/ui/UiTimeline.vue'
 import UiIcon from '@/components/ui/UiIcon.vue'
 import { computed } from 'vue'
+import { aboutTimeline } from './aboutTimeline'
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
 
-const formatMonth = (month: string) => {
-  const [year, m] = month.split('-').map(Number)
-  return new Intl.DateTimeFormat(locale.value, {
+const events = computed(() => {
+  const format = new Intl.DateTimeFormat(locale.value, {
     year: 'numeric',
     month: 'long',
     timeZone: 'UTC'
-  }).format(new Date(Date.UTC(year, m - 1, 1)))
-}
-
-// months only; the texts live in the locale files under about.events
-const timeline = [
-  ['2023-10', 'auth'],
-  ['2023-10', 'domain'],
-  ['2023-10', 'folks'],
-  ['2023-11', 'email'],
-  ['2023-11', 'contract'],
-  ['2023-11', 'npm'],
-  ['2023-11', 'eshop'],
-  ['2023-11', 'testnet'],
-  ['2023-11', 'mainnet'],
-  ['2023-12', 'design2023'],
-  ['2024-01', 'coin2024'],
-  ['2024-02', 'eurDex'],
-  ['2024-03', 'xframe'],
-  ['2024-04', 'asaId'],
-  ['2024-06', 'explorer'],
-  ['2024-11', 'ux2024'],
-  ['2024-12', 'coins1516'],
-  ['2025-05', 'design2025'],
-  ['2025-09', 'node22'],
-  ['2025-09', 'languages'],
-  ['2026-06', 'footerLang'],
-  ['2026-09', 'liquidity'],
-  ['2026-10', 'wallet'],
-  ['2026-10', 'router']
-]
-
-const events = computed(() =>
-  timeline.map(([month, key]) => ({
-    date: formatMonth(month),
-    content: t(`about.events.${key}`)
-  }))
-)
+  })
+  return aboutTimeline.map(([month, key]) => {
+    const [year, m] = month.split('-').map(Number)
+    return {
+      date: format.format(new Date(Date.UTC(year, m - 1, 1))),
+      content: t(`about.events.${key}`)
+    }
+  })
+})
 
 const repos = [
   { label: 'FE', icon: 'home', href: 'https://github.com/scholtz/gold-asa-frontend' },
@@ -125,12 +97,7 @@ const team = [
     <section class="section section--alt">
       <div class="container">
         <div class="section-head">
-          <p class="eyebrow">{{ t('about.progressEyebrow') }}</p>
-          <h2>
-            <a href="https://dorahacks.io/buidl/7763" target="_blank" rel="noopener"
-              >Algorand's Build a Bull hackathon</a
-            >
-          </h2>
+          <h2>{{ t('about.progressEyebrow') }}</h2>
           <p>
             {{ t('about.hackathonIntro') }}
             <a href="https://dorahacks.io/buidl/7763" target="_blank" rel="noopener"

@@ -7,6 +7,7 @@ import es from '../es.json'
 import hu from '../hu.json'
 import pl from '../pl.json'
 import zh from '../zh.json'
+import { aboutTimeline } from '../../views/aboutTimeline'
 
 const locales = { sk, cs, de, es, hu, pl, zh } as Record<string, any>
 
@@ -82,4 +83,19 @@ describe('about page translations', () => {
       }
     })
   }
+})
+
+describe('about timeline', () => {
+  it('has a text for every entry and no unused texts', () => {
+    const used = aboutTimeline.map(([, key]) => key).sort()
+    for (const [name, messages] of Object.entries({ en, ...locales })) {
+      const events = (messages as any).about.events as Record<string, string>
+      expect(Object.keys(events).sort(), name).toEqual(used)
+    }
+  })
+
+  it('is in chronological order', () => {
+    const months = aboutTimeline.map(([month]) => month)
+    expect([...months].sort()).toEqual(months)
+  })
 })
