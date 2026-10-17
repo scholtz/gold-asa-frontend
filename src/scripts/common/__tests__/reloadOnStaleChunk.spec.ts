@@ -1,7 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isStaleChunkError, reloadOnce, reloadOnStaleChunk } from '../reloadOnStaleChunk'
 
 const reload = vi.fn()
+const originalLocation = window.location
+
+afterEach(() => {
+  Object.defineProperty(window, 'location', { value: originalLocation, configurable: true })
+})
 
 beforeEach(() => {
   sessionStorage.clear()
@@ -33,12 +38,15 @@ describe('reloadOnce', () => {
 })
 
 describe('reloadOnStaleChunk', () => {
+  beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: Date.now() + 3_600_000 }))
+  afterEach(() => vi.useRealTimers())
   it('reloads on router chunk errors and on vite:preloadError', () => {
     let handler: (e: unknown) => void = () => {}
     reloadOnStaleChunk({ onError: (h) => (handler = h) })
     handler(new Error('Failed to fetch dynamically imported module'))
     expect(reload).toHaveBeenCalledTimes(1)
     sessionStorage.clear()
+    vi.setSystemTime(Date.now() + 60_000)
     window.dispatchEvent(new Event('vite:preloadError', { cancelable: true }))
     expect(reload).toHaveBeenCalledTimes(2)
   })
