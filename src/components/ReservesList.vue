@@ -16,6 +16,7 @@ import getAsa from '@/scripts/algo/getAsa'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 import { RouterLink } from 'vue-router'
 import UiIcon from '@/components/ui/UiIcon.vue'
+import { useRetryingLoad } from '@/scripts/common/retryingLoad'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -27,11 +28,12 @@ const state = reactive({
 
 const products = ref<IEshopItem[]>()
 
+useRetryingLoad({
+  load: () => ProductService.getProductsResult(),
+  onData: (data) => (products.value = data.filter((c) => c.state.state == 1))
+})
+
 onMounted(async () => {
-  const data = (await ProductService.getAllProducts()).filter((c) => c.state.state == 1)
-  if (data) {
-    products.value = data
-  }
   await loadMintedTokens()
 })
 
