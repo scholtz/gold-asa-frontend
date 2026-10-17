@@ -2,11 +2,11 @@
 import Layout from '@/layouts/AuthLayout.vue'
 import { getSwapRouter, effectiveRouterKind, routerLabel, routerUrl } from '@/scripts/router'
 import type { ISwapQuote, SwapMode } from '@/scripts/router'
-import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
 import InputNumber from '@/components/ui/UiInputNumber.vue'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import UiTag from '@/components/ui/UiTag.vue'
 import { useToast } from '@/components/ui/useToast'
 import { Buffer } from 'buffer'
 import SelectButton from '@/components/ui/UiSelectButton.vue'
@@ -66,6 +66,11 @@ const defaultState: IState = {
 }
 const state = reactive(defaultState)
 const refreshCount = ref(1)
+/** restarts the 30 s countdown bar; only changes when a refresh finishes */
+const countdownKey = ref(0)
+const loading = ref(false)
+const lastUpdated = ref('')
+const quickAmounts = [0.1, 0.5, 1, 5]
 
 const store = useAppStore()
 
@@ -157,25 +162,49 @@ async function loadQuotes(isStale: () => boolean): Promise<QuoteResult | null> {
 }
 
 let quoteRun = 0
-let refreshing = false
+/** amount of the quote request that is currently running (null when idle) */
+let requestedQuantity: number | null = null
+let unmounted = false
+let quantityTimer: ReturnType<typeof setTimeout> | undefined
+
+/** next automatic refresh 30 s after the last one finished, so the countdown bar is always in sync */
+function scheduleNext() {
+  if (unmounted) return
+  if (state.interval) clearTimeout(state.interval)
+  state.interval = setTimeout(async () => {
+    try {
+      await fetchQuotes()
+      await loadAccount()
+    } catch (e: any) {
+      console.error('automatic refresh failed', e)
+    }
+  }, 30000)
+}
 async function fetchQuotes() {
   const run = ++quoteRun
-  refreshing = true
+  requestedQuantity = state.quantity
+  loading.value = true
   try {
     const result = await loadQuotes(() => run !== quoteRun)
     if (!result) return
     Object.assign(state, result)
     const any = Object.entries(result).some(([key, value]) => key !== 'quantityQuote' && value)
     state.lastError = any ? '' : `No quotes were returned by ${routerName.value} right now.`
+    lastUpdated.value = any ? new Date().toLocaleTimeString() : ''
   } catch (e: any) {
     if (run !== quoteRun) return
     Object.assign(state, emptyQuotes())
+    state.quantityQuote = state.quantity // nothing is shown for it, so it must not block trading after a retry
+    lastUpdated.value = ''
     state.lastError = e.message
   } finally {
     // only the newest run owns the flag; an older run must not re-enable the interval refresh early
     if (run === quoteRun) {
-      refreshing = false
+      requestedQuantity = null
+      loading.value = false
+      countdownKey.value++
       refreshCount.value++
+      scheduleNext()
     }
   }
 }
@@ -203,22 +232,23 @@ const tokensDefault: ITokens = { data: {} }
 const tokens = reactive(tokensDefault)
 async function loadTokens() {
   const algodClient = getAlgodClient(store.state)
-  const gold = await getAsa({ client: algodClient, assetId: store.state.tokens.gold })
-  console.log('gold', gold)
-  tokens.data[store.state.tokens.gold] = gold
-  console.log('tokens.data[store.state.tokens.gold]', tokens)
-  tokens.data[store.state.tokens.algo] = await getAsa({
-    client: algodClient,
-    assetId: store.state.tokens.algo
-  })
-  tokens.data[store.state.tokens.usdc] = await getAsa({
-    client: algodClient,
-    assetId: store.state.tokens.usdc
-  })
-  tokens.data[store.state.tokens.btc] = await getAsa({
-    client: algodClient,
-    assetId: store.state.tokens.btc
-  })
+  const ids = [
+    store.state.tokens.gold,
+    store.state.tokens.algo,
+    store.state.tokens.usdc,
+    store.state.tokens.btc,
+    store.state.tokens.eur
+  ]
+  if (store.state.customToken) ids.push(store.state.customToken)
+  await Promise.all(
+    ids.map(async (assetId) => {
+      try {
+        tokens.data[assetId] = await getAsa({ client: algodClient, assetId })
+      } catch (e: any) {
+        console.error(`failed to load asset ${assetId}`, e)
+      }
+    })
+  )
   refreshCount.value++
 }
 watch(
@@ -231,29 +261,27 @@ watch(
   ],
   () => fetchQuotes()
 )
-let unmounted = false
 onMounted(async () => {
   await fetchQuotes()
-  await loadAccount()
-  await loadTokens()
-  if (unmounted) return
-
-  state.interval = setInterval(async () => {
-    // do not pile up refreshes when the previous one is still running
-    if (refreshing) return
-    await fetchQuotes()
-    await loadAccount()
-    console.log('log')
-  }, 30000)
+  // independent: a failing account lookup must not keep the asset names/decimals from loading
+  await loadTokens().catch((e) => console.error('failed to load tokens', e))
+  await loadAccount().catch((e) => console.error('failed to load account', e))
 })
+watch(
+  () => store.state.customToken,
+  async () => {
+    await loadTokens()
+    fetchQuotes()
+  }
+)
 onBeforeUnmount(() => {
   unmounted = true
   quoteRun++ // drop results of a refresh that is still running
   if (state.interval) {
-    console.log('clearing timer')
-    clearInterval(state.interval)
+    clearTimeout(state.interval)
     state.interval = null
   }
+  if (quantityTimer) clearTimeout(quantityTimer)
 })
 console.log('store', store)
 function delay(ms: number) {
@@ -270,6 +298,9 @@ async function executeQuote(quote: ISwapQuote) {
       await delay(1000)
       store.state.authComponent?.auth()
       return
+    }
+    if (state.quantity !== state.quantityQuote) {
+      throw new Error('The amount was changed, please wait for the new prices')
     }
     if (quote.router !== routerKind.value) {
       throw new Error('The quotes are outdated (router changed), please refresh and try again')
@@ -409,7 +440,9 @@ interface IPairRow {
   buy: ISwapQuote | null
   sell: ISwapQuote | null
 }
-function pairRows(): IPairRow[] {
+function buildRows(): IPairRow[] {
+  const custom = store.state.customToken
+  const customAsa = custom ? tokens.data[custom] : undefined
   return [
     {
       key: 'eur',
@@ -445,9 +478,22 @@ function pairRows(): IPairRow[] {
       optInLabel: 'Open BTC account',
       buy: state.quoteBtcGold,
       sell: state.quoteGoldBtc
-    }
+    },
+    ...(custom
+      ? [
+          {
+            key: 'custom',
+            unit: String(customAsa?.params?.['unit-name'] ?? `#${custom}`),
+            assetId: custom,
+            decimals: Number(customAsa?.params?.decimals ?? 6),
+            buy: state.quoteCustomGold,
+            sell: state.quoteGoldCustom
+          }
+        ]
+      : [])
   ]
 }
+const rows = computed(() => buildRows())
 function hasAsset(assetId: number) {
   return !!state.accountInformation?.assets.find((token) => token['asset-id'] == assetId)
 }
@@ -468,31 +514,104 @@ function goldBalance() {
     store.state.tokens.gold
   )
 }
-function unitPrice(quote: ISwapQuote | null, row: IPairRow) {
-  if (!quote?.quoteAmount) return ''
-  if (!state.quantityQuote) return ''
-  return (Number(quote.quoteAmount) / (state.quantityQuote * 10 ** row.decimals)).toFixed(4)
-}
 function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
-  return Number(quote?.quoteAmount) / 10 ** row.decimals
+  const total = Number(quote?.quoteAmount) / 10 ** row.decimals
+  // exact amount that is signed (trailing zeros trimmed down to 2 decimals)
+  const maxDigits = Math.min(row.decimals, 8)
+  return total.toLocaleString('en-US', {
+    minimumFractionDigits: Math.min(2, maxDigits),
+    maximumFractionDigits: maxDigits,
+    useGrouping: false
+  })
+}
+
+function setQuantity(amount: number) {
+  state.quantity = amount
+}
+/** the quotes on screen were requested for another amount than the one in the input */
+const quantityStale = computed(() => state.quantity !== state.quantityQuote)
+watch(
+  () => state.quantity,
+  () => {
+    // reprice shortly after the user stopped changing the amount
+    if (quantityTimer) clearTimeout(quantityTimer)
+    quantityTimer = setTimeout(() => {
+      if (unmounted || state.quantity === state.quantityQuote) return
+      if (requestedQuantity === state.quantity) return // that amount is already being priced
+      fetchQuotes()
+    }, 500)
+  }
+)
+/** price of 1 gram in the quote asset */
+function pricePerGram(quote: ISwapQuote | null, row: IPairRow): number | null {
+  if (!quote?.quoteAmount || !state.quantityQuote) return null
+  return Number(quote.quoteAmount) / (state.quantityQuote * 10 ** row.decimals)
+}
+/** more decimals for small prices (BTC) */
+function formatPricePerGram(price: number | null): string {
+  if (price === null || !Number.isFinite(price)) return ''
+  const decimals = price >= 100 ? 2 : price >= 1 ? 4 : 8
+  return price.toLocaleString('en-US', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  })
+}
+function hasPrice(quote: ISwapQuote | null, row: IPairRow): quote is ISwapQuote {
+  return pricePerGram(quote, row) !== null
+}
+function priceText(quote: ISwapQuote | null, row: IPairRow) {
+  return formatPricePerGram(pricePerGram(quote, row))
+}
+function midPrice(row: IPairRow) {
+  const buy = pricePerGram(row.buy, row)
+  const sell = pricePerGram(row.sell, row)
+  // a one-sided market has no reference price
+  if (buy === null || sell === null) return ''
+  return formatPricePerGram((buy + sell) / 2)
+}
+/** relative difference between buy and sell price, null without a two-sided market */
+function spreadValue(row: IPairRow): number | null {
+  const buy = pricePerGram(row.buy, row)
+  const sell = pricePerGram(row.sell, row)
+  if (buy === null || sell === null || buy <= 0) return null
+  return ((buy - sell) / buy) * 100
+}
+function spreadText(row: IPairRow) {
+  const spread = spreadValue(row)
+  return spread === null ? '-' : `${spread.toFixed(2)} %`
+}
+/** buy price below sell price: quotes disagree, flag it */
+function spreadNegative(row: IPairRow) {
+  return (spreadValue(row) ?? 0) < 0
 }
 </script>
 <template>
   <Layout :hideTopMenu="false">
-    <header class="page-hero">
-      <div class="container">
-        <h1>{{ t('trading.exploreDecentralizedTrading') }}</h1>
-        <p>Facilitated by Algorand blockchain and the {{ routerName }} DEX aggregator.</p>
+    <header class="page-hero trade-hero">
+      <div class="container trade-hero__inner">
+        <div>
+          <h1>{{ t('trading.exploreDecentralizedTrading') }}</h1>
+          <p>Facilitated by Algorand blockchain and the {{ routerName }} DEX aggregator.</p>
+        </div>
+        <ul class="ticker" aria-label="Gold reference prices">
+          <li v-for="row in rows" :key="row.key" class="ticker__item">
+            <span class="ticker__pair">Gold / {{ row.unit }}</span>
+            <span class="ticker__price">{{ midPrice(row) || '-' }}</span>
+          </li>
+        </ul>
       </div>
     </header>
 
-    <section class="section">
-      <div class="container stack">
-        <div class="toolbar">
-          <div class="toolbar__field">
-            <label for="minmax-buttons" class="toolbar__label">Amount of gold</label>
+    <section class="section trade-section">
+      <div class="container trade">
+        <!-- order settings -->
+        <aside class="ticket" aria-label="Trade settings">
+          <h2 class="ticket__title">Order</h2>
+
+          <div class="ticket__field">
+            <label for="minmax-buttons" class="ticket__label">Amount of gold</label>
             <InputNumber
-              class="toolbar__input"
+              class="ticket__input"
               v-model="state.quantity"
               id="minmax-buttons"
               showButtons
@@ -502,9 +621,22 @@ function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
               :minFractionDigits="6"
               suffix=" g"
             />
+            <div class="chips" role="group" aria-label="Quick amounts">
+              <button
+                v-for="amount in quickAmounts"
+                :key="amount"
+                type="button"
+                class="chip"
+                :class="{ 'is-active': state.quantity === amount }"
+                @click="setQuantity(amount)"
+              >
+                {{ amount }} g
+              </button>
+            </div>
           </div>
-          <div class="toolbar__field toolbar__field--router">
-            <span id="router-label" class="toolbar__label">Swap router</span>
+
+          <div class="ticket__field">
+            <span id="router-label" class="ticket__label">Swap router</span>
             <SelectButton
               :modelValue="routerKind"
               :disabled="store.state.env !== 'mainnet-v1.0'"
@@ -516,196 +648,665 @@ function totalAmount(quote: ISwapQuote | null, row: IPairRow) {
               aria-labelledby="router-label"
             />
           </div>
-          <Button class="toolbar__btn" severity="secondary" @click="fetchQuotes()"
+
+          <Button
+            class="ticket__refresh"
+            severity="secondary"
+            :loading="loading"
+            @click="fetchQuotes()"
             >Refresh quotes</Button
           >
-        </div>
 
-        <Panel :header="t('trading.dexTrading')">
-          <Message v-if="routerFallback" class="trading-error" severity="info">
-            Biatec Router is available on Algorand mainnet only. Using Folks Router on this network.
-          </Message>
-          <Message
-            v-if="state.lastError"
-            class="trading-error"
-            severity="error"
-            closable
-            @close="state.lastError = ''"
-            >{{ state.lastError }}</Message
-          >
+          <dl v-if="store.state.authState.isAuthenticated" class="balances">
+            <div class="balances__row">
+              <dt>Gold balance</dt>
+              <dd>{{ goldBalance() }} g</dd>
+            </div>
+            <div v-for="row in rows" :key="row.key" class="balances__row">
+              <dt>{{ row.unit }}</dt>
+              <dd>{{ balanceOf(row) }}</dd>
+            </div>
+          </dl>
+          <p v-else class="ticket__hint">Log in to trade. Prices are shown without logging in.</p>
+        </aside>
 
-          <div class="table-wrap trading">
-            <table :class="refreshCount" id="tradingtable" class="table">
+        <!-- market -->
+        <div class="market">
+          <div class="market__head">
+            <div class="market__title">
+              <span class="live-dot" :class="{ 'is-loading': loading }" aria-hidden="true"></span>
+              <h2>{{ t('trading.dexTrading') }}</h2>
+              <UiTag severity="contrast" rounded>{{ routerName }}</UiTag>
+            </div>
+            <div class="market__meta">
+              <span v-if="lastUpdated">Updated {{ lastUpdated }}</span>
+              <span v-else>Loading prices…</span>
+              <span class="market__qty">for {{ state.quantityQuote }} g</span>
+            </div>
+          </div>
+          <div class="live" aria-hidden="true">
+            <span :key="countdownKey"></span>
+          </div>
+
+          <div class="market__notices">
+            <Message v-if="routerFallback" severity="info">
+              Biatec Router is available on Algorand mainnet only. Using Folks Router on this
+              network.
+            </Message>
+            <Message
+              v-if="state.lastError"
+              severity="error"
+              closable
+              @close="state.lastError = ''"
+              >{{ state.lastError }}</Message
+            >
+          </div>
+
+          <div class="market__scroll">
+            <table :class="refreshCount" id="tradingtable" class="mkt">
               <thead>
                 <tr id="tradingtable-tr">
-                  <th v-if="store.state.authState.isAuthenticated" class="num col-balance">
-                    Your balance
-                  </th>
-                  <th class="col-action">Buy gold</th>
-                  <th class="col-pair">Pair</th>
-                  <th class="num col-price">Buy price</th>
-                  <th class="num col-price">Sell price</th>
-                  <th class="col-action">Sell gold</th>
-                  <th v-if="store.state.authState.isAuthenticated" class="num col-balance">
-                    Gold balance
-                  </th>
+                  <th class="mkt__pair">Pair</th>
+                  <th class="num">Sell price</th>
+                  <th class="num">Buy price</th>
+                  <th class="num mkt__spread">Spread</th>
+                  <th class="mkt__actions">Trade</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-if="needsOptIn(store.state.tokens.gold)">
-                  <td colspan="7" class="optin">
+                <tr v-if="needsOptIn(store.state.tokens.gold)" class="mkt__optin">
+                  <td colspan="5">
                     <Button
                       severity="secondary"
+                      size="small"
                       @click="optIn(store.state.tokens.gold)"
                       :title="`Opt in to asset ${store.state.tokens.gold}`"
                       >Open Gold account</Button
                     >
                   </td>
                 </tr>
-                <template v-for="row in pairRows()" :key="row.key">
-                  <tr v-if="row.optInLabel && needsOptIn(row.assetId)">
-                    <td colspan="7" class="optin">
-                      <Button severity="secondary" @click="optIn(row.assetId)">{{
+                <template v-for="row in rows" :key="row.key">
+                  <tr v-if="row.optInLabel && needsOptIn(row.assetId)" class="mkt__optin">
+                    <td colspan="5">
+                      <Button severity="secondary" size="small" @click="optIn(row.assetId)">{{
                         row.optInLabel
                       }}</Button>
                     </td>
                   </tr>
                   <tr v-else>
-                    <td v-if="store.state.authState.isAuthenticated" class="num col-balance">
-                      {{ balanceOf(row) }}
+                    <td class="mkt__pair" data-label="Pair">
+                      <span class="coin" :class="`coin--${row.key}`" aria-hidden="true">{{
+                        row.unit.charAt(0)
+                      }}</span>
+                      <strong class="mkt__name"
+                        ><span :title="String(store.state.tokens.gold)">Gold (g)</span> /
+                        <span :title="String(row.assetId)">{{ row.unit }}</span></strong
+                      >
                     </td>
-                    <td class="col-action">
-                      <Button
-                        v-if="row.buy"
-                        class="trade-btn"
-                        severity="success"
+                    <td class="num mkt__sell" data-label="Sell price">
+                      <template v-if="priceText(row.sell, row)">{{
+                        priceText(row.sell, row)
+                      }}</template>
+                      <span v-else class="no-quote" :class="{ 'is-loading': loading }"
+                        >No quote</span
+                      >
+                    </td>
+                    <td class="num mkt__buy" data-label="Buy price">
+                      <template v-if="priceText(row.buy, row)">{{
+                        priceText(row.buy, row)
+                      }}</template>
+                      <span v-else class="no-quote" :class="{ 'is-loading': loading }"
+                        >No quote</span
+                      >
+                    </td>
+                    <td
+                      class="num mkt__spread"
+                      :class="{ 'is-inverted': spreadNegative(row) }"
+                      data-label="Spread"
+                      :title="
+                        spreadNegative(row)
+                          ? 'Buy price is below sell price: quotes are out of sync'
+                          : undefined
+                      "
+                    >
+                      {{ spreadText(row) }}
+                    </td>
+                    <td class="mkt__actions">
+                      <button
+                        v-if="hasPrice(row.buy, row)"
+                        type="button"
+                        class="act act--buy"
+                        :disabled="quantityStale"
+                        :aria-label="`Buy ${state.quantityQuote} grams of gold for ${totalAmount(row.buy, row)} ${row.unit}`"
                         @click="executeQuote(row.buy)"
-                        >Buy {{ state.quantityQuote }} grams of gold <br />for
-                        {{ totalAmount(row.buy, row) }} {{ row.unit }}</Button
                       >
-                      <span v-else class="no-quote">No quote</span>
-                    </td>
-                    <td class="col-pair">
-                      <span :title="String(store.state.tokens.gold)">Gold (g)</span> /
-                      <span :title="String(row.assetId)">{{ row.unit }}</span>
-                    </td>
-                    <td class="num col-price">{{ unitPrice(row.buy, row) || 'No quote' }}</td>
-                    <td class="num col-price">{{ unitPrice(row.sell, row) || 'No quote' }}</td>
-                    <td class="col-action">
-                      <Button
-                        v-if="row.sell"
-                        class="trade-btn"
-                        severity="danger"
-                        outlined
+                        <span class="act__verb">Buy</span>
+                        <span class="act__sub">{{ totalAmount(row.buy, row) }} {{ row.unit }}</span>
+                      </button>
+                      <span v-else class="act act--off">Buy</span>
+                      <button
+                        v-if="hasPrice(row.sell, row)"
+                        type="button"
+                        class="act act--sell"
+                        :disabled="quantityStale"
+                        :aria-label="`Sell ${state.quantityQuote} grams of gold for ${totalAmount(row.sell, row)} ${row.unit}`"
                         @click="executeQuote(row.sell)"
-                        >Sell {{ state.quantityQuote }} grams of gold <br />for
-                        {{ totalAmount(row.sell, row) }} {{ row.unit }}</Button
                       >
-                      <span v-else class="no-quote">No quote</span>
-                    </td>
-                    <td v-if="store.state.authState.isAuthenticated" class="num col-balance">
-                      {{ goldBalance() }}
+                        <span class="act__verb">Sell</span>
+                        <span class="act__sub"
+                          >{{ totalAmount(row.sell, row) }} {{ row.unit }}</span
+                        >
+                      </button>
+                      <span v-else class="act act--off">Sell</span>
                     </td>
                   </tr>
                 </template>
               </tbody>
             </table>
           </div>
-        </Panel>
 
-        <p class="note">
-          Blockchain DEX trading is using DEX aggregator
-          <a :href="routerUrl(routerKind)" target="_blank" rel="noopener">{{ routerName }}.</a>
-          <span v-if="store.state.authState.account">
-            Your account is
-            <AlgorandAddress :address="store.state.authState.account"></AlgorandAddress>.
-          </span>
-        </p>
+          <p class="note">
+            Blockchain DEX trading is using DEX aggregator
+            <a :href="routerUrl(routerKind)" target="_blank" rel="noopener">{{ routerName }}.</a>
+            Prices refresh every 30 seconds.
+            <span v-if="store.state.authState.account">
+              Your account is
+              <AlgorandAddress :address="store.state.authState.account"></AlgorandAddress>.
+            </span>
+          </p>
+        </div>
       </div>
     </section>
   </Layout>
 </template>
+
 <style scoped>
-.toolbar {
+/* ---- hero with price ticker ---- */
+.trade-hero {
+  padding: 2rem 0 1.75rem;
+}
+.trade-hero__inner {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 1rem;
-  padding: 1.1rem 1.25rem;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.trade-hero h1 {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  margin-bottom: 0.3rem;
+}
+.ticker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ticker__item {
+  display: flex;
+  flex-direction: column;
+  min-width: 7.5rem;
+  padding: 0.5rem 0.85rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+}
+.ticker__pair {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+}
+.ticker__price {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--gold-300);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- layout ---- */
+.trade-section {
+  padding-top: 2rem;
+}
+.trade {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+@media (min-width: 992px) {
+  .trade {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-areas: 'market ticket';
+  }
+  .market {
+    grid-area: market;
+  }
+  .ticket {
+    grid-area: ticket;
+    position: sticky;
+    top: calc(var(--header-height) + 1rem);
+  }
+}
+
+/* ---- order ticket (light card) ---- */
+.ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.25rem;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
-.toolbar__field {
+.ticket__title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.ticket__field {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  flex: 1 1 14rem;
-  max-width: 24rem;
+  gap: 0.45rem;
 }
-.toolbar__label {
-  font-size: 0.8rem;
+.ticket__label {
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
-.toolbar__input {
+.ticket__input {
   width: 100%;
 }
-.trading-error {
-  margin-bottom: 1rem;
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
-.trading-login {
-  margin-left: 0.75rem;
+.chip {
+  padding: 0.25rem 0.7rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
 }
-.trading {
-  box-shadow: none;
-}
-.trading :deep(.table td) {
-  padding: 0.75rem 0.9rem;
-}
-.col-action {
-  text-align: center;
-}
-.col-pair {
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-.trade-btn {
-  width: 100%;
-  min-width: 0;
-  padding-inline: 0.6rem;
-  font-size: 0.85rem;
-  line-height: 1.35;
-  text-align: center;
-}
-.no-quote {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-.optin {
-  text-align: center;
+.chip:hover,
+.chip.is-active {
+  color: var(--gold-700);
   background: var(--gold-50);
+  border-color: var(--gold-500);
 }
-.note {
-  margin: 1rem 0 0;
-  font-size: 0.9rem;
+.ticket__refresh {
+  width: 100%;
+}
+.ticket__hint {
+  margin: 0;
+  font-size: 0.85rem;
   color: var(--muted);
 }
-.col-balance,
-.col-price {
-  display: none;
+.balances {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
 }
-@media (min-width: 576px) {
-  .col-price {
-    display: table-cell;
+.balances__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.balances dt {
+  color: var(--muted);
+}
+.balances dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- market (dark trading panel) ---- */
+.market {
+  min-width: 0;
+  color: var(--on-dark);
+  background: var(--dark);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.market__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.market__title {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.market__title h2 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--on-dark);
+}
+.market__meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--on-dark-muted);
+}
+.market__qty {
+  color: var(--gold-300);
+  font-weight: 600;
+}
+.live-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--trade-up);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--trade-up) 60%, transparent);
+  animation: pulse 2s infinite;
+}
+.live-dot.is-loading {
+  background: var(--gold-500);
+}
+@keyframes pulse {
+  70% {
+    box-shadow: 0 0 0 0.5rem color-mix(in srgb, var(--trade-up) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--trade-up) 0%, transparent);
   }
 }
-@media (min-width: 992px) {
-  .col-balance {
-    display: table-cell;
+/* countdown to the next automatic refresh (30 s) */
+.live {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.live span {
+  display: block;
+  height: 100%;
+  background: var(--gold-500);
+  transform-origin: left;
+  animation: countdown 30s linear forwards;
+}
+@keyframes countdown {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.market__notices:not(:empty) {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1rem 1.25rem 0;
+}
+.market__scroll {
+  overflow-x: auto;
+}
+
+.mkt {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.mkt th,
+.mkt td {
+  padding: 0.9rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.mkt thead th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-dark-muted);
+  white-space: nowrap;
+}
+.mkt tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+.mkt .num {
+  text-align: right;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.98rem;
+  white-space: nowrap;
+}
+.mkt thead .num {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+}
+.mkt__sell {
+  color: var(--trade-sell-text);
+}
+.mkt__buy {
+  color: var(--trade-buy-text);
+}
+.mkt__spread {
+  color: var(--on-dark-muted);
+  font-size: 0.85rem;
+}
+.mkt__spread.is-inverted {
+  color: var(--gold-300);
+}
+.mkt__pair {
+  white-space: nowrap;
+}
+.coin {
+  display: inline-grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  margin-right: 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--on-accent);
+  vertical-align: middle;
+  background: var(--coin-default);
+  border-radius: 50%;
+}
+.coin--eur {
+  background: var(--coin-eur);
+}
+.coin--usdc {
+  background: var(--coin-usdc);
+}
+.coin--algo {
+  background: var(--coin-algo);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.coin--btc {
+  background: var(--coin-btc);
+}
+.mkt__actions {
+  text-align: right;
+}
+.mkt td.mkt__actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+.act {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 6.2rem;
+  padding: 0.4rem 0.8rem;
+  font: inherit;
+  line-height: 1.2;
+  color: var(--on-accent);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.05s ease;
+}
+.act:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.act:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.act__verb {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.act__sub {
+  max-width: 9rem;
+  overflow: hidden;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  opacity: 0.92;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.act--buy {
+  background: var(--trade-buy);
+}
+.act--buy:hover {
+  background: var(--trade-buy-hover);
+}
+.act--sell {
+  background: var(--trade-sell);
+}
+.act--sell:hover {
+  background: var(--trade-sell-hover);
+}
+.act--off {
+  justify-content: center;
+  color: var(--on-dark-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  cursor: default;
+}
+.no-quote {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--on-dark-muted);
+}
+.no-quote.is-loading {
+  display: inline-block;
+  width: 4.5rem;
+  height: 0.9rem;
+  overflow: hidden;
+  color: transparent;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 1.3s ease-in-out infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.mkt__optin td {
+  background: rgba(201, 162, 39, 0.08);
+}
+
+.note {
+  margin: 0;
+  padding: 1rem 1.25rem 1.25rem;
+  font-size: 0.82rem;
+  color: var(--on-dark-muted);
+}
+.note a {
+  color: var(--gold-300);
+}
+
+/* ---- small screens: each pair becomes a card ---- */
+@media (max-width: 767px) {
+  .market__scroll {
+    overflow: visible;
+  }
+  .mkt thead {
+    display: none;
+  }
+  .mkt,
+  .mkt tbody {
+    display: block;
+  }
+  .mkt tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.35rem 0.75rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  .mkt th,
+  .mkt td {
+    padding: 0;
+    border: 0;
+  }
+  .mkt tbody tr:hover td {
+    background: transparent;
+  }
+  .mkt td.mkt__pair {
+    grid-column: 1 / -1;
+  }
+  .mkt td[data-label]:not(.mkt__pair)::before {
+    display: block;
+    margin-bottom: 0.15rem;
+    content: attr(data-label);
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--on-dark-muted);
+  }
+  .mkt .num {
+    text-align: left;
+  }
+  .mkt td.mkt__actions {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+  }
+  .mkt__actions .act {
+    flex: 1;
+  }
+  .mkt__optin {
+    display: block;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live span,
+  .live-dot,
+  .no-quote.is-loading {
+    animation: none;
   }
 }
 </style>

@@ -32,6 +32,22 @@
   --info: #1f5fa8;
   --info-bg: #e4eefa;
 
+  /* trading screen */
+  --trade-up: #19b37f;
+  --trade-buy: #0e8f6c;
+  --trade-buy-hover: #0a7a5b;
+  --trade-buy-text: #3fd1a0;
+  --trade-sell: #c0392b;
+  --trade-sell-hover: #a42f23;
+  --trade-sell-text: #ff7a7a;
+  --on-accent: #ffffff;
+  /* asset brand colours */
+  --coin-default: #5b6676;
+  --coin-eur: #2b6cb0;
+  --coin-usdc: #2775ca;
+  --coin-algo: #1f2933;
+  --coin-btc: #f7931a;
+
   /* shape and depth */
   --radius-sm: 6px;
   --radius: 10px;
