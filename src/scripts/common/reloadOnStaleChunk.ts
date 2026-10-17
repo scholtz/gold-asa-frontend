@@ -36,15 +36,18 @@ export const reloadOnce = (now = Date.now(), target?: string): boolean => {
 /** Reload when a new deployment removed the chunks this (old) page still references. */
 export const reloadOnStaleChunk = (router: {
   onError: (handler: (error: unknown, to?: { fullPath: string }) => void) => unknown
+  resolve: (to: string) => { href: string }
 }) => {
   // thrown by Vite when a dynamic import or its CSS fails to preload
   window.addEventListener('vite:preloadError', (event) => {
-    // only swallow the error when we are reloading; otherwise let it surface
-    if (reloadOnce()) event.preventDefault()
+    // Defer so that router.onError (which knows the target route) gets the error first; this
+    // covers lazy components that are not loaded by a navigation. The error is not swallowed.
+    setTimeout(() => reloadOnce(), 0)
   })
   // route navigation to a lazy view whose chunk is gone; the navigation would otherwise stay stuck
   router.onError((error, to) => {
-    if (isStaleChunkError(error) && reloadOnce(Date.now(), to?.fullPath)) return
+    if (isStaleChunkError(error) && reloadOnce(Date.now(), to && router.resolve(to.fullPath).href))
+      return
     console.error(error)
   })
 }

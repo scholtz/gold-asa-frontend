@@ -40,17 +40,20 @@ describe('reloadOnce', () => {
 })
 
 describe('reloadOnStaleChunk', () => {
-  beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: Date.now() + 3_600_000 }))
+  beforeEach(() =>
+    vi.useFakeTimers({ toFake: ['Date', 'setTimeout'], now: Date.now() + 3_600_000 })
+  )
   afterEach(() => vi.useRealTimers())
   it('reloads on router chunk errors and on vite:preloadError', () => {
     let handler: (e: unknown) => void = () => {}
-    reloadOnStaleChunk({ onError: (h) => (handler = h) })
+    reloadOnStaleChunk({ onError: (h) => (handler = h), resolve: (to) => ({ href: `/base${to}` }) })
     handler(new Error('Failed to fetch dynamically imported module'), { fullPath: '/gdpr' })
-    expect(assign).toHaveBeenCalledWith('/gdpr')
+    expect(assign).toHaveBeenCalledWith('/base/gdpr')
     expect(reload).not.toHaveBeenCalled()
     sessionStorage.clear()
     vi.setSystemTime(Date.now() + 60_000)
     window.dispatchEvent(new Event('vite:preloadError', { cancelable: true }))
+    vi.runAllTimers()
     expect(reload).toHaveBeenCalledTimes(1)
   })
 })
