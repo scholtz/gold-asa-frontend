@@ -2,39 +2,29 @@ import axios from 'axios'
 import safeGetItem from '@/scripts/common/safeGetItem'
 import safeSetItem from '@/scripts/common/safeSetItem'
 interface ICache {
+  time: string
   data: any
 }
 
-/**
- * ARC-3 metadata is a JSON object with a name and/or properties. Anything else (an HTML page,
- * a JSON error body such as {"error":"..."}) must never be returned or cached, because cached
- * entries do not expire.
- */
-const isMetadata = (data: unknown): boolean => {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return false
-  const { name, properties } = data as Record<string, unknown>
-  return typeof name === 'string' || (!!properties && typeof properties === 'object')
-}
+const isMetadata = (data: unknown) => !!data && typeof data === 'object' && !Array.isArray(data)
 
 // The BFF is the primary source. The public gateways are best-effort fallbacks
 // (cloudflare-ipfs.com no longer exists; gateway.ipfs.io is an alias of ipfs.io).
 const primaryGateway = 'bff.asa.gold'
 const ipfsGateways = [primaryGateway, 'ipfs.io', 'dweb.link']
-const requestTimeoutMs = 5000
+const requestTimeoutMs = 8000
+const cacheDays = 30
 const retryDelayMs = 500
 
 class BadBodyError extends Error {}
 
-/**
- * IPFS content is addressed by its hash and therefore immutable, so a cached entry never
- * expires. Entries cached by older versions that are not metadata objects are ignored.
- */
-const readCache = (cacheKey: string): any | null => {
+/** Entries cached by older versions that are not metadata objects are ignored */
+const readCache = (cacheKey: string): ICache | null => {
   const cache = safeGetItem(cacheKey)
   if (!cache) return null
   try {
     const cacheObj = JSON.parse(cache) as ICache
-    return isMetadata(cacheObj?.data) ? cacheObj.data : null
+    return isMetadata(cacheObj?.data) ? cacheObj : null
   } catch (e: any) {
     console.log(`Error deserializing ipfs data ${cacheKey}: ${e.message}`)
     return null
@@ -74,7 +64,7 @@ const fetchAndCache = async (hash: string, cacheKey: string) => {
   for (let i = 0; i < ipfsGateways.length; i++) {
     const data = await fetchFromGateway(ipfsGateways[i], hash, ipfsGateways[i] === primaryGateway)
     if (data) {
-      const cacheValue: ICache = { data }
+      const cacheValue: ICache = { time: new Date().toISOString(), data }
       safeSetItem(cacheKey, JSON.stringify(cacheValue))
       return data
     }
@@ -87,7 +77,11 @@ const inFlight = new Map<string, Promise<any>>()
 export const loadIPFSFile = async (hash: string) => {
   const cacheKey = `ipfs-${hash}`
   const cached = readCache(cacheKey)
-  if (cached) return cached
+  if (cached) {
+    const compareTime = new Date()
+    compareTime.setDate(compareTime.getDate() - cacheDays)
+    if (new Date(cached.time) > compareTime) return cached.data
+  }
 
   let request = inFlight.get(hash)
   if (!request) {
@@ -96,7 +90,9 @@ export const loadIPFSFile = async (hash: string) => {
   }
   // every caller gets its own copy, like a cache hit does
   const data = await request
-  return data ? JSON.parse(JSON.stringify(data)) : null
+  if (data) return JSON.parse(JSON.stringify(data))
+  // IPFS content is immutable, so an expired entry is still better than losing the coin
+  return cached?.data ?? null
 }
 
 export default loadIPFSFile

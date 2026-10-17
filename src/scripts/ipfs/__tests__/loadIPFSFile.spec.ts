@@ -6,11 +6,15 @@ vi.mock('axios', () => ({ default: { get: (...args: unknown[]) => get(...args) }
 import loadIPFSFile from '../loadIPFSFile'
 
 const store = new Map<string, string>()
-vi.stubGlobal('localStorage', {
+const storage = {
   getItem: (k: string) => store.get(k) ?? null,
   setItem: (k: string, v: string) => void store.set(k, v),
+  removeItem: (k: string) => void store.delete(k),
   clear: () => store.clear()
-})
+}
+const daysAgo = (days: number) => new Date(Date.now() - days * 24 * 3600 * 1000).toISOString()
+const seed = (hash: string, days: number, data: unknown = { name: 'coin', properties: {} }) =>
+  localStorage.setItem(`ipfs-${hash}`, JSON.stringify({ time: daysAgo(days), data }))
 
 const meta = { name: 'coin', properties: {} }
 const html = { data: '<html>error</html>' }
@@ -24,21 +28,43 @@ const load = async (hash: string) => {
 
 describe('loadIPFSFile', () => {
   beforeEach(() => {
+    vi.stubGlobal('localStorage', storage)
     vi.useFakeTimers()
     localStorage.clear()
     get.mockReset()
     vi.spyOn(console, 'log').mockImplementation(() => {})
   })
-  afterEach(() => vi.useRealTimers())
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+  })
 
-  it('returns a cached entry of any age without a request', async () => {
-    localStorage.setItem('ipfs-h1', JSON.stringify({ data: meta }))
+  it('returns a fresh cache entry without a request', async () => {
+    seed('h1', 1)
     expect(await load('h1')).toEqual(meta)
     expect(get).not.toHaveBeenCalled()
   })
 
+  it('refetches an expired entry and replaces it', async () => {
+    seed('h1b', 40, { name: 'old' })
+    get.mockResolvedValue({ data: meta })
+    expect(await load('h1b')).toEqual(meta)
+    expect(JSON.parse(localStorage.getItem('ipfs-h1b')!).data).toEqual(meta)
+  })
+
+  it('falls back to an expired entry when every gateway fails', async () => {
+    seed('h1c', 40)
+    get.mockRejectedValue(status(404))
+    expect(await load('h1c')).toEqual(meta)
+  })
+
+  it('accepts valid metadata without name and properties', async () => {
+    get.mockResolvedValue({ data: { image: 'ipfs://x' } })
+    expect(await load('h1d')).toEqual({ image: 'ipfs://x' })
+  })
+
   it('ignores a cached entry that is not a metadata object', async () => {
-    localStorage.setItem('ipfs-h2', JSON.stringify({ data: 'x' }))
+    localStorage.setItem('ipfs-h2', JSON.stringify({ time: daysAgo(1), data: 'x' }))
     get.mockResolvedValue({ data: meta })
     expect(await load('h2')).toEqual(meta)
     expect(get).toHaveBeenCalledTimes(1)
@@ -48,18 +74,6 @@ describe('loadIPFSFile', () => {
     localStorage.setItem('ipfs-h2b', '{not json')
     get.mockResolvedValue({ data: meta })
     expect(await load('h2b')).toEqual(meta)
-  })
-
-  it('treats a JSON error body like a bad body: retries, never caches it', async () => {
-    get.mockResolvedValue({ data: { error: 'not found' } })
-    expect(await load('h2c')).toBeNull()
-    expect(urls()).toEqual([
-      'https://bff.asa.gold/ipfs/h2c',
-      'https://bff.asa.gold/ipfs/h2c',
-      'https://ipfs.io/ipfs/h2c',
-      'https://dweb.link/ipfs/h2c'
-    ])
-    expect(localStorage.getItem('ipfs-h2c')).toBeNull()
   })
 
   it('fetches from the BFF and caches the result', async () => {
