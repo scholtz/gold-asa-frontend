@@ -30,8 +30,7 @@ describe('loadIPFSFile', () => {
     expect(get).not.toHaveBeenCalled()
   })
 
-  it('fetches from the BFF and caches when the cache is expired', async () => {
-    seed('h2', 40, { name: 'old' })
+  it('fetches from the BFF and caches when nothing is cached', async () => {
     get.mockResolvedValue({ data: meta })
     expect(await loadIPFSFile('h2')).toEqual(meta)
     expect(get).toHaveBeenCalledTimes(1)
@@ -39,7 +38,7 @@ describe('loadIPFSFile', () => {
     expect(JSON.parse(localStorage.getItem('ipfs-h2')!).data).toEqual(meta)
   })
 
-  it('retries the BFF once before falling back to the next gateway', async () => {
+  it('retries the BFF once on a network error before using the next gateway', async () => {
     get.mockRejectedValueOnce(new Error('net')).mockResolvedValueOnce({ data: meta })
     expect(await loadIPFSFile('h3')).toEqual(meta)
     expect(get.mock.calls.map((c) => c[0])).toEqual([
@@ -48,24 +47,47 @@ describe('loadIPFSFile', () => {
     ])
   })
 
-  it('skips gateways that return a non-metadata body', async () => {
-    get
-      .mockResolvedValueOnce({ data: '<html>error</html>' })
-      .mockResolvedValueOnce({ data: '<html>error</html>' })
-      .mockResolvedValueOnce({ data: meta })
-    expect(await loadIPFSFile('h4')).toEqual(meta)
-    expect(get.mock.calls[2][0]).toBe('https://ipfs.io/ipfs/h4')
+  it('does not retry a 404, it moves on to the next gateway', async () => {
+    get.mockRejectedValueOnce({ response: { status: 404 } }).mockResolvedValueOnce({ data: meta })
+    expect(await loadIPFSFile('h3b')).toEqual(meta)
+    expect(get.mock.calls.map((c) => c[0])).toEqual([
+      'https://bff.asa.gold/ipfs/h3b',
+      'https://ipfs.io/ipfs/h3b'
+    ])
   })
 
-  it('falls back to the expired cache when every gateway fails', async () => {
-    seed('h5', 40)
-    get.mockRejectedValue(new Error('net'))
-    expect(await loadIPFSFile('h5')).toEqual(meta)
+  it('skips gateways that return a non-metadata body', async () => {
+    get.mockResolvedValueOnce({ data: '<html>error</html>' }).mockResolvedValueOnce({ data: meta })
+    expect(await loadIPFSFile('h4')).toEqual(meta)
+    expect(get.mock.calls[1][0]).toBe('https://ipfs.io/ipfs/h4')
+  })
+
+  it('returns an expired cache entry immediately and refreshes it in the background', async () => {
+    seed('h5', 40, { name: 'old', properties: {} })
+    get.mockResolvedValue({ data: meta })
+    expect(await loadIPFSFile('h5')).toEqual({ name: 'old', properties: {} })
+    await vi.waitFor(() => expect(JSON.parse(localStorage.getItem('ipfs-h5')!).data).toEqual(meta))
+  })
+
+  it('keeps the expired entry when the background refresh fails', async () => {
+    seed('h5b', 40)
+    get.mockRejectedValue({ response: { status: 404 } })
+    expect(await loadIPFSFile('h5b')).toEqual(meta)
+    await vi.waitFor(() => expect(get).toHaveBeenCalledTimes(3))
+    expect(JSON.parse(localStorage.getItem('ipfs-h5b')!).data).toEqual(meta)
   })
 
   it('returns null when nothing is cached and every gateway fails', async () => {
-    get.mockRejectedValue(new Error('net'))
+    get.mockRejectedValue({ response: { status: 404 } })
     expect(await loadIPFSFile('h6')).toBeNull()
+  })
+
+  it('shares one request between concurrent calls for the same hash', async () => {
+    get.mockResolvedValue({ data: meta })
+    const [a, b] = await Promise.all([loadIPFSFile('h8'), loadIPFSFile('h8')])
+    expect(a).toEqual(meta)
+    expect(b).toEqual(meta)
+    expect(get).toHaveBeenCalledTimes(1)
   })
 
   it('ignores a cached entry that is not a metadata object', async () => {

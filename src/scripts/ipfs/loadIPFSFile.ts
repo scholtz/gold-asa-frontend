@@ -12,6 +12,7 @@ const isMetadata = (data: unknown) => !!data && typeof data === 'object' && !Arr
 // (cloudflare-ipfs.com no longer exists; gateway.ipfs.io is an alias of ipfs.io).
 const ipfsGateways = ['bff.asa.gold', 'ipfs.io', 'dweb.link']
 const cacheDays = 30
+const retryDelayMs = 500
 
 const readCache = (cacheKey: string): ICache | null => {
   const cache = safeGetItem(cacheKey)
@@ -26,15 +27,50 @@ const readCache = (cacheKey: string): ICache | null => {
   }
 }
 
-const fetchFromGateway = async (gateway: string, hash: string) => {
+/** Network errors (no response), rate limiting and server errors can succeed on a second try */
+const isTransient = (e: any) => {
+  const status = e?.response?.status
+  return status === undefined || status === 429 || status >= 500
+}
+
+const fetchFromGateway = async (gateway: string, hash: string, retry: boolean): Promise<any> => {
   try {
     const response = await axios.get(`https://${gateway}/ipfs/${hash}`, { timeout: 8000 })
     // an HTML error page or other non-JSON body from a gateway is not metadata
     return isMetadata(response?.data) ? response.data : null
   } catch (e) {
     console.log(`Unable to fetch ${hash} from ${gateway}`, e)
-    return null
+    if (!retry || !isTransient(e)) return null
+    await new Promise((resolve) => setTimeout(resolve, retryDelayMs))
+    return fetchFromGateway(gateway, hash, false)
   }
+}
+
+const fetchAndCache = async (hash: string, cacheKey: string) => {
+  // try every gateway, some are often down; only the primary one is retried, because a
+  // transient failure there (e.g. a mobile network hiccup) would otherwise drop the coin
+  for (let i = 0; i < ipfsGateways.length; i++) {
+    const data = await fetchFromGateway(ipfsGateways[i], hash, i === 0)
+    if (data) {
+      const cacheValue: ICache = { time: new Date().toISOString(), data }
+      safeSetItem(cacheKey, JSON.stringify(cacheValue))
+      return data
+    }
+  }
+  return null
+}
+
+const inFlight = new Map<string, Promise<any>>()
+
+const refresh = (hash: string, cacheKey: string) => {
+  let request = inFlight.get(hash)
+  if (!request) {
+    request = fetchAndCache(hash, cacheKey)
+      .catch(() => null)
+      .finally(() => inFlight.delete(hash))
+    inFlight.set(hash, request)
+  }
+  return request
 }
 
 export const loadIPFSFile = async (hash: string) => {
@@ -43,23 +79,13 @@ export const loadIPFSFile = async (hash: string) => {
   if (cached) {
     const compareTime = new Date()
     compareTime.setDate(compareTime.getDate() - cacheDays)
-    if (new Date(cached.time) > compareTime) return cached.data
+    // IPFS content is immutable, so an expired (or undated) entry is still correct. Return it
+    // right away instead of making the coin wait for slow or failing gateways, and refresh
+    // it in the background.
+    if (!(new Date(cached.time) > compareTime)) void refresh(hash, cacheKey)
+    return cached.data
   }
-
-  // try every gateway, some are often down; the primary one gets a second chance because a
-  // transient failure there (e.g. a mobile network hiccup) would otherwise drop the coin
-  const attempts = [ipfsGateways[0], ...ipfsGateways]
-  for (const gateway of attempts) {
-    const data = await fetchFromGateway(gateway, hash)
-    if (data) {
-      const cacheValue: ICache = { time: new Date().toISOString(), data }
-      safeSetItem(cacheKey, JSON.stringify(cacheValue))
-      return data
-    }
-  }
-
-  // IPFS content is immutable, so an expired cache entry is still better than no data
-  return cached?.data ?? null
+  return refresh(hash, cacheKey)
 }
 
 export default loadIPFSFile
