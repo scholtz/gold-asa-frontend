@@ -1,4 +1,6 @@
 import type algosdk from 'algosdk2'
+import safeGetItem from '@/scripts/common/safeGetItem'
+import safeSetItem from '@/scripts/common/safeSetItem'
 interface ICache {
   time: string
   asset: Record<string, any>
@@ -25,7 +27,7 @@ const getAsa = async (input: IInput): Promise<Record<string, any> | undefined> =
     }
   }
   const cacheKey = `asset-${assetId}`
-  const cache = localStorage.getItem(cacheKey)
+  const cache = safeGetItem(cacheKey)
   if (cache) {
     try {
       const cacheObj = JSON.parse(cache) as ICache
@@ -44,7 +46,7 @@ const getAsa = async (input: IInput): Promise<Record<string, any> | undefined> =
   //console.log('asset', asset)
   if (asset.params) {
     const cacheValue: ICache = { time: new Date().toISOString(), asset: asset }
-    localStorage.setItem(cacheKey, JSON.stringify(cacheValue))
+    safeSetItem(cacheKey, JSON.stringify(cacheValue))
     return asset
   }
   return undefined

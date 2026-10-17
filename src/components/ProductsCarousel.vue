@@ -22,14 +22,16 @@
 import Carousel from '@/components/ui/UiCarousel.vue'
 import Skeleton from '@/components/ui/UiSkeleton.vue'
 import ProductBox from './ProductBox.vue'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
+import { useRetryingLoad } from '@/scripts/common/retryingLoad'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-onMounted(async () => {
-  products.value = (await ProductService.getProductsSmall()).slice(0, 9)
+useRetryingLoad({
+  load: () => ProductService.getProductsResult(),
+  onData: (data) => (products.value = ProductService.filterSmall(data).slice(0, 9))
 })
 const products = ref<IEshopItem[]>()
 </script>

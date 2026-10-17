@@ -15,6 +15,7 @@ import getAsa from '@/scripts/algo/getAsa'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
 import Button from '@/components/ui/UiButton.vue'
 import UiIcon from '@/components/ui/UiIcon.vue'
+import { useRetryingLoad } from '@/scripts/common/retryingLoad'
 import { useI18n } from 'vue-i18n'
 import coinsImg from '@/assets/all-coins-2.jpg'
 
@@ -25,11 +26,12 @@ const state = reactive({
   mintedTokens: ''
 })
 
+useRetryingLoad({
+  load: () => ProductService.getProductsResult(),
+  onData: (data) => (products.value = data.filter((c) => c.state.state == 1))
+})
+
 onMounted(async () => {
-  const data = (await ProductService.getAllProducts()).filter((c) => c.state.state == 1)
-  if (data) {
-    products.value = data
-  }
   await loadMintedTokens()
 
   AOS.init({

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Layout from '@/layouts/AuthLayout.vue'
-import { onMounted, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { ProductService } from '@/service/ProductService'
 import type IEshopItem from '@/types/IEshopItem'
 import { useRoute } from 'vue-router'
@@ -20,6 +20,7 @@ import { useAppStore } from '@/stores/app'
 import getARC0003Details from '@/scripts/algo/getARC0003Details'
 import getAlgodClient from '@/scripts/algo/getAlgodClient'
 import formatAssetPrice from '@/scripts/algo/formatAssetPrice'
+import { useRetryingLoad } from '@/scripts/common/retryingLoad'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -30,10 +31,16 @@ const state = reactive({
 })
 const store = useAppStore()
 const route = useRoute()
-onMounted(async () => {
-  console.log('GoldCoinDetail.onMounted')
-  const products = await ProductService.getAllProducts()
-  product.value = products.find((p) => p.nft.properties.slugName == route.params.slugName)
+useRetryingLoad({
+  load: async () => {
+    const result = await ProductService.getProductsResult()
+    const found = result.data.find((p) => p.nft.properties.slugName == route.params.slugName)
+    // keep retrying while the coin is missing and some assets failed to load
+    return { data: found, complete: result.complete || !!found }
+  },
+  onData: (found) => {
+    if (found) product.value = found
+  }
 })
 const product = ref<IEshopItem>()
 const activeIndex = ref(0)
@@ -43,7 +50,13 @@ const onChange = async () => {
   resetView()
   if (!product.value) return
   var client = getAlgodClient(store.state)
-  const detail = await getARC0003Details({ assetId: product.value.asa, client })
+  let detail
+  try {
+    detail = await getARC0003Details({ assetId: product.value.asa, client })
+  } catch (e: any) {
+    console.error(`Unable to refresh coin ${product.value.asa}: ${e?.message ?? e}`)
+    return
+  }
   if (!detail) return
   console.log('onChange.detail', detail)
   product.value.state = detail.state
