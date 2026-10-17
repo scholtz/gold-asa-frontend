@@ -39,7 +39,7 @@ const isTransient = (e: any) => {
   if (e instanceof BadBodyError) return true
   const status = e?.response?.status
   if (status !== undefined) return status === 429 || status >= 500
-  return e?.code === 'ERR_NETWORK'
+  return ['ERR_NETWORK', 'ECONNRESET', 'ETIMEDOUT', 'ERR_BAD_RESPONSE'].includes(e?.code)
 }
 
 const fetchFromGateway = async (gateway: string, hash: string, retry: boolean): Promise<any> => {
