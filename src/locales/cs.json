@@ -192,11 +192,12 @@
   },
   "reserves": {
     "sumOfGoldInReserves": "Součet zlata v rezervách",
-    "learnAboutProofOfReserves": "Naučte se o důkazu rezerv",
+    "learnAboutProofOfReserves": "Veřejný důkaz rezerv",
     "weBringRevolutionToGoldMarket": "Přinášíme revoluci na trh se zlatem",
     "asaGoldTokenId": "ID tokenu Asa.Gold",
     "mintedTokens": "Ražené tokeny",
-    "reserves": "Rezervy"
+    "reserves": "Rezervy",
+    "listIntro": "Níže je seznam fyzických zlatých mincí v rezervách ASA.Gold. Kdokoli si může kteroukoli minci koupit přímo ze zlaté rezervy a osobně ji zkontrolovat, takže veřejnost dohlíží na rezervy a může ověřit, že zlato skutečně existuje."
   },
   "productDetails": {
     "serialNumber": "Sériové číslo",

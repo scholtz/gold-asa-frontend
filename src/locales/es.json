@@ -192,11 +192,12 @@
   },
   "reserves": {
     "sumOfGoldInReserves": "Suma de oro en reservas",
-    "learnAboutProofOfReserves": "Aprende sobre la prueba de reservas",
+    "learnAboutProofOfReserves": "Prueba de reservas pública",
     "weBringRevolutionToGoldMarket": "Traemos revolución al mercado del oro",
     "asaGoldTokenId": "ID del token Asa.Gold",
     "mintedTokens": "Tokens acuñados",
-    "reserves": "Reservas"
+    "reserves": "Reservas",
+    "listIntro": "A continuación se muestra la lista de monedas de oro físicas de las reservas de ASA.Gold. Cualquiera puede comprar cualquiera de estas monedas directamente de la reserva de oro y comprobarla en persona, de modo que el público supervisa las reservas y puede verificar que el oro realmente existe."
   },
   "productDetails": {
     "serialNumber": "Número de serie",

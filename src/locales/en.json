@@ -192,11 +192,12 @@
   },
   "reserves": {
     "sumOfGoldInReserves": "Sum of gold in reserves",
-    "learnAboutProofOfReserves": "Learn About Proof Of Reserves",
+    "learnAboutProofOfReserves": "Public Proof Of Reserves",
     "weBringRevolutionToGoldMarket": "We Bring Revolution To Gold Market",
     "asaGoldTokenId": "Asa.Gold Token ID",
     "mintedTokens": "Minted Tokens",
-    "reserves": "Reserves"
+    "reserves": "Reserves",
+    "listIntro": "Below is the list of the physical gold coins held in the ASA.Gold reserves. Anyone can buy any of these coins straight from the gold reserve and inspect it in person, so the public can oversee the reserves and verify that the gold really exists."
   },
   "productDetails": {
     "serialNumber": "Serial number",
