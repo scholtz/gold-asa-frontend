@@ -14,10 +14,11 @@ let reloadedAt = 0
 
 /**
  * Reload the page once so the browser fetches the new index.html and its current chunk names.
+ * With `target` it loads that URL instead, so a failed navigation still lands where the user clicked.
  * Returns false (and does nothing) if we already reloaded a moment ago, to avoid a reload loop
  * when the file is really missing.
  */
-export const reloadOnce = (now = Date.now()): boolean => {
+export const reloadOnce = (now = Date.now(), target?: string): boolean => {
   if (now - reloadedAt < MIN_INTERVAL_MS) return false
   try {
     const last = Number(sessionStorage.getItem(KEY) ?? 0)
@@ -27,13 +28,14 @@ export const reloadOnce = (now = Date.now()): boolean => {
     // storage unavailable: the in-memory guard above still limits it to one reload per page load
   }
   reloadedAt = now
-  window.location.reload()
+  if (target) window.location.assign(target)
+  else window.location.reload()
   return true
 }
 
 /** Reload when a new deployment removed the chunks this (old) page still references. */
 export const reloadOnStaleChunk = (router: {
-  onError: (handler: (error: unknown) => void) => unknown
+  onError: (handler: (error: unknown, to?: { fullPath: string }) => void) => unknown
 }) => {
   // thrown by Vite when a dynamic import or its CSS fails to preload
   window.addEventListener('vite:preloadError', (event) => {
@@ -41,8 +43,8 @@ export const reloadOnStaleChunk = (router: {
     if (reloadOnce()) event.preventDefault()
   })
   // route navigation to a lazy view whose chunk is gone; the navigation would otherwise stay stuck
-  router.onError((error) => {
-    if (isStaleChunkError(error) && reloadOnce()) return
+  router.onError((error, to) => {
+    if (isStaleChunkError(error) && reloadOnce(Date.now(), to?.fullPath)) return
     console.error(error)
   })
 }
