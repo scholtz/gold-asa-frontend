@@ -10,39 +10,43 @@ const { t, locale } = useI18n()
 
 const formatMonth = (month: string) => {
   const [year, m] = month.split('-').map(Number)
-  return new Intl.DateTimeFormat(locale.value, { year: 'numeric', month: 'long' }).format(
-    new Date(Date.UTC(year, m - 1, 1))
-  )
+  return new Intl.DateTimeFormat(locale.value, {
+    year: 'numeric',
+    month: 'long',
+    timeZone: 'UTC'
+  }).format(new Date(Date.UTC(year, m - 1, 1)))
 }
 
 // months only; the texts live in the locale files under about.events
+const timeline = [
+  ['2023-10', 'auth'],
+  ['2023-10', 'domain'],
+  ['2023-10', 'folks'],
+  ['2023-11', 'email'],
+  ['2023-11', 'contract'],
+  ['2023-11', 'npm'],
+  ['2023-11', 'eshop'],
+  ['2023-11', 'testnet'],
+  ['2023-11', 'mainnet'],
+  ['2023-12', 'design2023'],
+  ['2024-01', 'coin2024'],
+  ['2024-02', 'eurDex'],
+  ['2024-03', 'xframe'],
+  ['2024-04', 'asaId'],
+  ['2024-06', 'explorer'],
+  ['2024-11', 'ux2024'],
+  ['2024-12', 'coins1516'],
+  ['2025-05', 'design2025'],
+  ['2025-09', 'node22'],
+  ['2025-09', 'languages'],
+  ['2026-06', 'footerLang'],
+  ['2026-09', 'liquidity'],
+  ['2026-10', 'wallet'],
+  ['2026-10', 'router']
+]
+
 const events = computed(() =>
-  [
-    ['2023-10', 'auth'],
-    ['2023-10', 'domain'],
-    ['2023-10', 'folks'],
-    ['2023-11', 'email'],
-    ['2023-11', 'contract'],
-    ['2023-11', 'npm'],
-    ['2023-11', 'eshop'],
-    ['2023-11', 'testnet'],
-    ['2023-11', 'mainnet'],
-    ['2023-12', 'design2023'],
-    ['2024-01', 'coin2024'],
-    ['2024-02', 'eurDex'],
-    ['2024-03', 'xframe'],
-    ['2024-04', 'asaId'],
-    ['2024-06', 'explorer'],
-    ['2024-11', 'ux2024'],
-    ['2024-12', 'coins1516'],
-    ['2025-05', 'design2025'],
-    ['2025-09', 'node22'],
-    ['2025-09', 'languages'],
-    ['2026-06', 'footerLang'],
-    ['2026-09', 'liquidity'],
-    ['2026-10', 'wallet'],
-    ['2026-10', 'router']
-  ].map(([month, key]) => ({
+  timeline.map(([month, key]) => ({
     date: formatMonth(month),
     content: t(`about.events.${key}`)
   }))
@@ -53,7 +57,7 @@ const repos = [
   { label: 'BFF', icon: 'cog', href: 'https://github.com/scholtz/AsaGoldBff' },
   { label: 'RepoApi', icon: 'list', href: 'https://github.com/scholtz/AsaGoldRepository' },
   {
-    label: 'about.repoEshop',
+    labelKey: 'about.repoEshop',
     icon: 'shield',
     href: 'https://github.com/scholtz/gold-asa-frontend/tree/main/asa-gold-smartcontract'
   },
@@ -62,7 +66,11 @@ const repos = [
     icon: 'user',
     href: 'https://github.com/scholtz/algorand-authentication-component-vue'
   },
-  { label: 'about.repoNpm', icon: 'coins', href: 'https://www.npmjs.com/package/algorand-asa-gold' }
+  {
+    labelKey: 'about.repoNpm',
+    icon: 'coins',
+    href: 'https://www.npmjs.com/package/algorand-asa-gold'
+  }
 ]
 
 const team = [
@@ -159,9 +167,7 @@ const team = [
           <li v-for="repo in repos" :key="repo.href">
             <a :href="repo.href" target="_blank" rel="noopener" class="repo">
               <span class="repo__icon"><UiIcon :name="repo.icon" /></span>
-              <span class="repo__label">{{
-                repo.label.startsWith('about.') ? t(repo.label) : repo.label
-              }}</span>
+              <span class="repo__label">{{ repo.labelKey ? t(repo.labelKey) : repo.label }}</span>
               <UiIcon name="chevron-right" class="repo__arrow" />
             </a>
           </li>

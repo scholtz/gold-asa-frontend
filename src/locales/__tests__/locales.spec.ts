@@ -70,7 +70,7 @@ describe('about page translations', () => {
   const get = (messages: any, path: string) => path.split('.').reduce((o, k) => o?.[k], messages)
 
   for (const [name, messages] of Object.entries(locales)) {
-    it(`${name} translates every about and contact text`, () => {
+    it(`${name} has every about and contact text without interpolation syntax`, () => {
       for (const path of [...leaves(en.about, 'about'), ...leaves(en.contact, 'contact')].filter(
         (path) => !path.endsWith('Email')
       )) {
@@ -78,6 +78,7 @@ describe('about page translations', () => {
         expect(value, `${name}.${path}`).toBeTypeOf('string')
         expect(value.trim(), `${name}.${path}`).not.toBe('')
         expect(value, `${name}.${path}`).not.toMatch(/[|@$]/)
+        expect(value, `${name}.${path}`).not.toMatch(/[{}]/)
       }
     })
   }
