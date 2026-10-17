@@ -2,7 +2,6 @@
 import Layout from '@/layouts/AuthLayout.vue'
 import { getSwapRouter, effectiveRouterKind, routerLabel, routerUrl } from '@/scripts/router'
 import type { ISwapQuote, SwapMode } from '@/scripts/router'
-import Panel from '@/components/ui/UiPanel.vue'
 import Button from '@/components/ui/UiButton.vue'
 import { useAppStore } from '@/stores/app'
 import InputNumber from '@/components/ui/UiInputNumber.vue'
@@ -67,6 +66,8 @@ const defaultState: IState = {
 }
 const state = reactive(defaultState)
 const refreshCount = ref(1)
+/** restarts the 30 s countdown bar; only changes when a refresh finishes */
+const countdownKey = ref(0)
 const loading = ref(false)
 const lastUpdated = ref('')
 const quickAmounts = [0.1, 0.5, 1, 5]
@@ -172,16 +173,18 @@ async function fetchQuotes() {
     Object.assign(state, result)
     const any = Object.entries(result).some(([key, value]) => key !== 'quantityQuote' && value)
     state.lastError = any ? '' : `No quotes were returned by ${routerName.value} right now.`
-    if (any) lastUpdated.value = new Date().toLocaleTimeString()
+    lastUpdated.value = any ? new Date().toLocaleTimeString() : ''
   } catch (e: any) {
     if (run !== quoteRun) return
     Object.assign(state, emptyQuotes())
+    lastUpdated.value = ''
     state.lastError = e.message
   } finally {
     // only the newest run owns the flag; an older run must not re-enable the interval refresh early
     if (run === quoteRun) {
       refreshing = false
       loading.value = false
+      countdownKey.value++
       refreshCount.value++
     }
   }
@@ -416,7 +419,7 @@ interface IPairRow {
   buy: ISwapQuote | null
   sell: ISwapQuote | null
 }
-function pairRows(): IPairRow[] {
+function buildRows(): IPairRow[] {
   return [
     {
       key: 'eur',
@@ -455,6 +458,7 @@ function pairRows(): IPairRow[] {
     }
   ]
 }
+const rows = computed(() => buildRows())
 function hasAsset(assetId: number) {
   return !!state.accountInformation?.assets.find((token) => token['asset-id'] == assetId)
 }
@@ -496,7 +500,7 @@ function pricePerGram(quote: ISwapQuote | null, row: IPairRow): number | null {
   return Number(quote.quoteAmount) / (state.quantityQuote * 10 ** row.decimals)
 }
 /** more decimals for small prices (BTC) */
-function formatPrice(price: number | null): string {
+function formatPricePerGram(price: number | null): string {
   if (price === null || !Number.isFinite(price)) return ''
   const decimals = price >= 100 ? 2 : price >= 1 ? 4 : 8
   return price.toLocaleString('en-US', {
@@ -504,14 +508,18 @@ function formatPrice(price: number | null): string {
     maximumFractionDigits: decimals
   })
 }
+function hasPrice(quote: ISwapQuote | null, row: IPairRow): quote is ISwapQuote {
+  return pricePerGram(quote, row) !== null
+}
 function priceText(quote: ISwapQuote | null, row: IPairRow) {
-  return formatPrice(pricePerGram(quote, row))
+  return formatPricePerGram(pricePerGram(quote, row))
 }
 function midPrice(row: IPairRow) {
   const buy = pricePerGram(row.buy, row)
   const sell = pricePerGram(row.sell, row)
-  if (buy === null || sell === null) return formatPrice(buy ?? sell)
-  return formatPrice((buy + sell) / 2)
+  // a one-sided market has no reference price
+  if (buy === null || sell === null) return ''
+  return formatPricePerGram((buy + sell) / 2)
 }
 /** relative difference between buy and sell price */
 function spreadText(row: IPairRow) {
@@ -519,6 +527,12 @@ function spreadText(row: IPairRow) {
   const sell = pricePerGram(row.sell, row)
   if (buy === null || sell === null || buy <= 0) return '-'
   return `${(((buy - sell) / buy) * 100).toFixed(2)} %`
+}
+/** buy price below sell price: quotes disagree, flag it */
+function spreadNegative(row: IPairRow) {
+  const buy = pricePerGram(row.buy, row)
+  const sell = pricePerGram(row.sell, row)
+  return buy !== null && sell !== null && buy < sell
 }
 </script>
 <template>
@@ -530,7 +544,7 @@ function spreadText(row: IPairRow) {
           <p>Facilitated by Algorand blockchain and the {{ routerName }} DEX aggregator.</p>
         </div>
         <ul class="ticker" aria-label="Gold reference prices">
-          <li v-for="row in pairRows()" :key="row.key" class="ticker__item">
+          <li v-for="row in rows" :key="row.key" class="ticker__item">
             <span class="ticker__pair">Gold / {{ row.unit }}</span>
             <span class="ticker__price">{{ midPrice(row) || '-' }}</span>
           </li>
@@ -598,7 +612,7 @@ function spreadText(row: IPairRow) {
               <dt>Gold balance</dt>
               <dd>{{ goldBalance() }} g</dd>
             </div>
-            <div v-for="row in pairRows()" :key="row.key" class="balances__row">
+            <div v-for="row in rows" :key="row.key" class="balances__row">
               <dt>{{ row.unit }}</dt>
               <dd>{{ balanceOf(row) }}</dd>
             </div>
@@ -621,7 +635,7 @@ function spreadText(row: IPairRow) {
             </div>
           </div>
           <div class="live" aria-hidden="true">
-            <span :key="refreshCount"></span>
+            <span :key="countdownKey"></span>
           </div>
 
           <div class="market__notices">
@@ -661,7 +675,7 @@ function spreadText(row: IPairRow) {
                     >
                   </td>
                 </tr>
-                <template v-for="row in pairRows()" :key="row.key">
+                <template v-for="row in rows" :key="row.key">
                   <tr v-if="row.optInLabel && needsOptIn(row.assetId)" class="mkt__optin">
                     <td colspan="5">
                       <Button severity="secondary" size="small" @click="optIn(row.assetId)">{{
@@ -695,10 +709,21 @@ function spreadText(row: IPairRow) {
                         >No quote</span
                       >
                     </td>
-                    <td class="num mkt__spread" data-label="Spread">{{ spreadText(row) }}</td>
+                    <td
+                      class="num mkt__spread"
+                      :class="{ 'is-inverted': spreadNegative(row) }"
+                      data-label="Spread"
+                      :title="
+                        spreadNegative(row)
+                          ? 'Buy price is below sell price: quotes are out of sync'
+                          : undefined
+                      "
+                    >
+                      {{ spreadText(row) }}
+                    </td>
                     <td class="mkt__actions">
                       <button
-                        v-if="row.buy"
+                        v-if="hasPrice(row.buy, row)"
                         type="button"
                         class="act act--buy"
                         :aria-label="`Buy ${state.quantityQuote} grams of gold for ${totalAmount(row.buy, row)} ${row.unit}`"
@@ -709,7 +734,7 @@ function spreadText(row: IPairRow) {
                       </button>
                       <span v-else class="act act--off">Buy</span>
                       <button
-                        v-if="row.sell"
+                        v-if="hasPrice(row.sell, row)"
                         type="button"
                         class="act act--sell"
                         :aria-label="`Sell ${state.quantityQuote} grams of gold for ${totalAmount(row.sell, row)} ${row.unit}`"
@@ -942,9 +967,9 @@ function spreadText(row: IPairRow) {
 .live-dot {
   width: 0.6rem;
   height: 0.6rem;
-  background: #19b37f;
+  background: var(--trade-up);
   border-radius: 50%;
-  box-shadow: 0 0 0 0 rgba(25, 179, 127, 0.6);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--trade-up) 60%, transparent);
   animation: pulse 2s infinite;
 }
 .live-dot.is-loading {
@@ -952,10 +977,10 @@ function spreadText(row: IPairRow) {
 }
 @keyframes pulse {
   70% {
-    box-shadow: 0 0 0 0.5rem rgba(25, 179, 127, 0);
+    box-shadow: 0 0 0 0.5rem color-mix(in srgb, var(--trade-up) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(25, 179, 127, 0);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--trade-up) 0%, transparent);
   }
 }
 /* countdown to the next automatic refresh (30 s) */
@@ -1020,14 +1045,17 @@ function spreadText(row: IPairRow) {
   font-size: 0.7rem;
 }
 .mkt__sell {
-  color: #ff7a7a;
+  color: var(--trade-sell-text);
 }
 .mkt__buy {
-  color: #3fd1a0;
+  color: var(--trade-buy-text);
 }
 .mkt__spread {
   color: var(--on-dark-muted);
   font-size: 0.85rem;
+}
+.mkt__spread.is-inverted {
+  color: var(--gold-300);
 }
 .mkt__pair {
   white-space: nowrap;
@@ -1040,23 +1068,23 @@ function spreadText(row: IPairRow) {
   margin-right: 0.7rem;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-accent);
   vertical-align: middle;
-  background: #5b6676;
+  background: var(--coin-default);
   border-radius: 50%;
 }
 .coin--eur {
-  background: #2b6cb0;
+  background: var(--coin-eur);
 }
 .coin--usdc {
-  background: #2775ca;
+  background: var(--coin-usdc);
 }
 .coin--algo {
-  background: #1f2933;
+  background: var(--coin-algo);
   border: 1px solid rgba(255, 255, 255, 0.25);
 }
 .coin--btc {
-  background: #f7931a;
+  background: var(--coin-btc);
 }
 .mkt__actions {
   text-align: right;
@@ -1074,7 +1102,7 @@ function spreadText(row: IPairRow) {
   padding: 0.4rem 0.8rem;
   font: inherit;
   line-height: 1.2;
-  color: #fff;
+  color: var(--on-accent);
   border: 1px solid transparent;
   border-radius: var(--radius);
   cursor: pointer;
@@ -1101,16 +1129,16 @@ function spreadText(row: IPairRow) {
   white-space: nowrap;
 }
 .act--buy {
-  background: #0e8f6c;
+  background: var(--trade-buy);
 }
 .act--buy:hover {
-  background: #0a7a5b;
+  background: var(--trade-buy-hover);
 }
 .act--sell {
-  background: #c0392b;
+  background: var(--trade-sell);
 }
 .act--sell:hover {
-  background: #a42f23;
+  background: var(--trade-sell-hover);
 }
 .act--off {
   justify-content: center;
